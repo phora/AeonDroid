@@ -1,5 +1,9 @@
 package io.github.phora.aeondroid;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.os.Bundle;
@@ -9,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 
 import swisseph.SweDate;
@@ -18,7 +23,7 @@ import swisseph.SweDate;
  */
 public class MainActivityFragment extends ListFragment {
 
-    private volatile CheckPlanetaryHoursThread checking_thread = null;
+    private boolean _autoScrolledOnce;
 
     public MainActivityFragment() {
     }
@@ -34,99 +39,42 @@ public class MainActivityFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         MainActivity ma = (MainActivity)getActivity();
-        if (ma != null && !(ma.isUsingGPS() && ma.isGpsAvailable())) {
-            refreshFragment();
-        }
+        IntentFilter filter_highlight = new IntentFilter(Events.FOUND_HOUR);
+        IntentFilter filter_refresh = new IntentFilter(Events.REFRESH_HOURS);
+
+        getActivity().registerReceiver(new HighlightReceiver(), filter_highlight);
+        getActivity().registerReceiver(new RefreshReceiver(),   filter_refresh);
     }
 
     public synchronized void refreshFragment() {
         MainActivity ma = (MainActivity)getActivity();
-        if (ma != null) {
-            Date d = new Date();
-            PlanetaryHoursAdapter pha = new PlanetaryHoursAdapter(ma, ma.getEphmeris().getPlanetaryHours(d));
+        if (ma != null && ma.getServiceReference() != null) {
+            ArrayList<PlanetaryHour> phl = ma.getServiceReference().getPlanetaryHours();
+            PlanetaryHoursAdapter pha = new PlanetaryHoursAdapter(ma, phl);
             setListAdapter(pha);
-            if (checking_thread == null) {
-                checking_thread = new CheckPlanetaryHoursThread(this, 1000);
-                checking_thread.start();
-            }
-            else {
-                Thread moribund = checking_thread;
-                checking_thread = null;
-                moribund.interrupt();
-                checking_thread = new CheckPlanetaryHoursThread(this, 1000);
-                checking_thread.start();
-            }
         }
     }
 
-    private class CheckPlanetaryHoursThread extends Thread {
-        private int sleepVal;
-        private Fragment fragment;
-        private int lastIndex = -1;
-        private boolean _autoScrolledOnce;
-
-        public CheckPlanetaryHoursThread(Fragment f, int milliseconds) {
-            this.sleepVal = milliseconds;
-            this.fragment = f;
-        }
-
+    private class HighlightReceiver extends BroadcastReceiver {
         @Override
-        public void run() {
-            try {
-                while (!isInterrupted()) {
-                    Thread.sleep(this.sleepVal);
-
-                    Date d = new Date();
-
-                    final PlanetaryHoursAdapter pha = (PlanetaryHoursAdapter)getListAdapter();
-                    int item_count = pha.getCount();
-
-                    if (lastIndex == -1) {
-                        for (int i=0; i<item_count;i++) {
-                            PlanetaryHour ph = pha.getItem(i);
-                            Date hour_d = SweDate.getDate(ph.getHourStamp());
-                            Date hour_end_d = SweDate.getDate(ph.getHourStamp()+ph.getHourLength());
-                            if (hour_d.compareTo(d) <= 0 && hour_end_d.compareTo(d) >= 0) {
-                                lastIndex = i;
-                                break;
-                            }
-                        }
-                    }
-                    else {
-                        for (int i=lastIndex; i<item_count;i++) {
-                            PlanetaryHour ph = pha.getItem(i);
-                            Date hour_d = SweDate.getDate(ph.getHourStamp());
-                            Date hour_end_d = SweDate.getDate(ph.getHourStamp()+ph.getHourLength());
-                            if (hour_d.compareTo(d) <= 0 && hour_end_d.compareTo(d) >= 0) {
-                                lastIndex = i;
-                                break;
-                            }
-                        }
-                    }
-
-
-
-                    if (!_autoScrolledOnce) {
-                        fragment.getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                //Log.d("CheckPHoursThread", "Current hour is " + lastIndex);
-                                getListView().setSelection(lastIndex);
-                            }
-                        });
-                        _autoScrolledOnce = true;
-                    }
-
-                    fragment.getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            pha.setHourSelection(lastIndex);
-                        }
-                    });
-                }
-            } catch (InterruptedException e) {
-
+        public void onReceive(Context context, Intent intent) {
+            int selected_row = intent.getIntExtra(Events.EXTRA_HOUR_INDEX, -1);
+            if (!_autoScrolledOnce) {
+                getListView().setSelection(selected_row);
+                _autoScrolledOnce = true;
             }
+            PlanetaryHoursAdapter pha = (PlanetaryHoursAdapter)getListAdapter();
+            pha.setHourSelection(selected_row);
+        }
+    }
+
+    private class RefreshReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            MainActivity ma = (MainActivity)getActivity();
+            ArrayList<PlanetaryHour> phl = ma.getServiceReference().getPlanetaryHours();
+            PlanetaryHoursAdapter pha = new PlanetaryHoursAdapter(getActivity(), phl);
+            setListAdapter(pha);
         }
     }
 }

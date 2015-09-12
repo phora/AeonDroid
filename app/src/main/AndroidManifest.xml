@@ -23,6 +23,9 @@
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
+
+        <service android:name=".AeonDroidService"
+            android:enabled="true" />
     </application>
 
 </manifest>
