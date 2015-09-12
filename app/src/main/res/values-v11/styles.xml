@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="android:Theme.Holo.Light">
+        <!-- Customize your theme here. -->
+        <item name="PlanetaryHours.Current">#33B5E5</item>
+    </style>
+
+    <style name="AppThemeDark" parent="android:Theme.Holo">
+        <!-- Customize your theme here. -->
+        <item name="PlanetaryHours.Current">#33B5E5</item>
+    </style>
+</resources>

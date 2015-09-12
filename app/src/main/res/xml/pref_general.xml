@@ -1,0 +1,57 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:key="isDark"
+        android:title="@string/pref_title_is_dark"
+        android:summary="@string/pref_description_is_dark"
+        android:defaultValue="true" />
+
+    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+    <PreferenceCategory
+        android:title="@string/pref_general_location"
+        android:key="pref_key_general_location">
+
+        <CheckBoxPreference
+            android:key="CurrentLoc.Auto"
+            android:title="@string/pref_title_location_auto"
+            android:hint="@string/pref_description_location_auto"
+            android:defaultValue="false" />
+
+        <EditTextPreference
+            android:key="CurrentLoc.Longitude"
+            android:title="@string/pref_title_longitude"
+            android:hint="@string/pref_summary_longitude"
+            android:defaultValue="0.0"
+            android:selectAllOnFocus="true"
+            android:inputType="numberDecimal|numberSigned"
+            android:singleLine="true"
+            android:maxLines="1" />
+
+        <EditTextPreference
+            android:key="CurrentLoc.Latitude"
+            android:title="@string/pref_title_latitude"
+            android:hint="@string/pref_summary_latitude"
+            android:defaultValue="0.0"
+            android:selectAllOnFocus="true"
+            android:inputType="numberDecimal|numberSigned"
+            android:singleLine="true"
+            android:maxLines="1" />
+
+        <EditTextPreference
+            android:key="CurrentLoc.Altitude"
+            android:title="@string/pref_title_altitude"
+            android:summary="@string/pref_summary_altitude"
+            android:defaultValue="0.0"
+            android:selectAllOnFocus="true"
+            android:inputType="numberDecimal|numberSigned"
+            android:singleLine="true"
+            android:maxLines="1" />
+
+    </PreferenceCategory>
+
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+
+</PreferenceScreen>

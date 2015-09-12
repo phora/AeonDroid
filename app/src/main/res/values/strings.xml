@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">AeonDroid</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="pref_title_location_auto">Retrieve location from GPS?</string>
+    <string name="pref_description_location_auto">The below values will be used if this is turned off and/or if service is unavailable</string>
+    <string name="FragmentMain.LockingOntoGPS">Locking onto GPS...</string>
+
+
+    <string-array name="PlanetNames">
+        <item>Sun</item>
+        <item>Venus</item>
+        <item>Mercury</item>
+        <item>Moon</item>
+        <item>Saturn</item>
+        <item>Jupiter</item>
+        <item>Mars</item>
+    </string-array>
+</resources>
