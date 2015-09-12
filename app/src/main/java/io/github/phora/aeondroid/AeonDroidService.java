@@ -111,12 +111,12 @@ public class AeonDroidService extends Service {
         gpsAvailable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
         if (usingGPS && gpsAvailable) {
-            Log.d("MainActivity", "Using GPS location");
+            Log.d("ADService", "Using GPS location");
             locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER, 5000, 10, locUpdater);
         }
         else {
-            Log.d("MainActivity", "Using manually entered location");
+            Log.d("ADService", "Using manually entered location");
             double longitude = Double.valueOf(preferences.getString("CurrentLoc.Longitude", "0"));
             double latitude = Double.valueOf(preferences.getString("CurrentLoc.Latitude", "0"));
             ephmeris.setObserver(longitude, latitude, 0.);
@@ -190,6 +190,7 @@ public class AeonDroidService extends Service {
 
                     final Date d = new Date();
                     boolean found_hour = false;
+                    boolean hour_different = false;
 
                     if (planetaryHours == null) {
                         continue;
@@ -202,6 +203,7 @@ public class AeonDroidService extends Service {
                             Date hour_d = SweDate.getDate(ph.getHourStamp());
                             Date hour_end_d = SweDate.getDate(ph.getHourStamp()+ph.getHourLength());
                             if (hour_d.compareTo(d) <= 0 && hour_end_d.compareTo(d) >= 0) {
+                                hour_different = (lastIndex != i);
                                 lastIndex = i;
                                 found_hour = true;
                                 break;
@@ -214,6 +216,7 @@ public class AeonDroidService extends Service {
                             Date hour_d = SweDate.getDate(ph.getHourStamp());
                             Date hour_end_d = SweDate.getDate(ph.getHourStamp()+ph.getHourLength());
                             if (hour_d.compareTo(d) <= 0 && hour_end_d.compareTo(d) >= 0) {
+                                hour_different = (lastIndex != i);
                                 lastIndex = i;
                                 found_hour = true;
                                 break;
@@ -227,7 +230,7 @@ public class AeonDroidService extends Service {
                         lastIndex = -1;
                         refreshPlanetaryHours(d);
                         sendBroadcast(intent);
-                    } else {
+                    } else if (hour_different) {
                         intent.setAction(Events.FOUND_HOUR);
                         PlanetaryHour ph = planetaryHours.get(lastIndex);
                         String[] planets = getResources().getStringArray(R.array.PlanetNames);

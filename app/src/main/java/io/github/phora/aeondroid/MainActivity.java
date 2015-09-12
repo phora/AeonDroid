@@ -23,6 +23,8 @@ import android.widget.Toast;
 public class MainActivity extends FragmentActivity {
 
     private final static int NOTI_REQUEST_CODE = 116;
+    private LocUpdateReceiver locUpdateReceiver;
+    private IntentFilter filterLocUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +42,9 @@ public class MainActivity extends FragmentActivity {
         startService(intent);
         sendNotification();
 
-        IntentFilter filter_loc_update = new IntentFilter(Events.UPDATED_LOCATION);
-        registerReceiver(new LocUpdateReceiver(), filter_loc_update);
+        filterLocUpdate = new IntentFilter(Events.UPDATED_LOCATION);
+        locUpdateReceiver = new LocUpdateReceiver();
+        registerReceiver(locUpdateReceiver, filterLocUpdate);
     }
 
     public AeonDroidService getServiceReference() {
@@ -120,11 +123,18 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(locUpdateReceiver);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (isBound && serviceReference != null) {
             serviceReference.recheckGps();
         }
+        registerReceiver(locUpdateReceiver, filterLocUpdate);
     }
 
     @Override

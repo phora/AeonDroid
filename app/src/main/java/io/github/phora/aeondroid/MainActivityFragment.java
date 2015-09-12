@@ -24,8 +24,18 @@ import swisseph.SweDate;
 public class MainActivityFragment extends ListFragment {
 
     private boolean _autoScrolledOnce;
+    private HighlightReceiver highlightReceiver;
+    private RefreshReceiver refreshReceiver;
+
+    private IntentFilter filterHighlight;
+    private IntentFilter filterRefresh;
 
     public MainActivityFragment() {
+        filterHighlight = new IntentFilter(Events.FOUND_HOUR);
+        filterRefresh = new IntentFilter(Events.REFRESH_HOURS);
+
+        highlightReceiver = new HighlightReceiver();
+        refreshReceiver = new RefreshReceiver();
     }
 
     @Override
@@ -38,12 +48,24 @@ public class MainActivityFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MainActivity ma = (MainActivity)getActivity();
-        IntentFilter filter_highlight = new IntentFilter(Events.FOUND_HOUR);
-        IntentFilter filter_refresh = new IntentFilter(Events.REFRESH_HOURS);
+    }
 
-        getActivity().registerReceiver(new HighlightReceiver(), filter_highlight);
-        getActivity().registerReceiver(new RefreshReceiver(),   filter_refresh);
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (getActivity() != null) {
+            getActivity().unregisterReceiver(highlightReceiver);
+            getActivity().unregisterReceiver(refreshReceiver);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() != null) {
+            getActivity().registerReceiver(highlightReceiver, filterHighlight);
+            getActivity().registerReceiver(refreshReceiver, filterRefresh);
+        }
     }
 
     public synchronized void refreshFragment() {
