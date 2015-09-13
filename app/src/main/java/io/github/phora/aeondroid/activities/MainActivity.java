@@ -92,7 +92,6 @@ public class MainActivity extends FragmentActivity {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(getString(R.string.app_name))
-                .setTicker("")
                 .setWhen(System.currentTimeMillis())
                 .setOngoing(true);
         Intent startIntent = new Intent(this, MainActivity.class);

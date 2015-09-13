@@ -241,6 +241,7 @@ public class AeonDroidService extends Service {
                         if (hour_different) {
                             NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(AeonDroidService.this)
                                     .setContentTitle(getString(R.string.app_name))
+                                    .setTicker(content_text)
                                     .setContentText(content_text)
                                     .setSmallIcon(R.mipmap.ic_launcher);
                             notificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());
