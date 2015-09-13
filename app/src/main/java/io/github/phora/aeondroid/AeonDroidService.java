@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
+import io.github.phora.aeondroid.model.PlanetaryHour;
 import swisseph.SweDate;
 
 public class AeonDroidService extends Service {
@@ -76,7 +77,7 @@ public class AeonDroidService extends Service {
     }
 
     public class AeonDroidBinder extends Binder {
-        AeonDroidService getService() {
+        public AeonDroidService getService() {
             return AeonDroidService.this;
         }
     }

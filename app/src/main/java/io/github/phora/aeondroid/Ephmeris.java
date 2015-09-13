@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
+import io.github.phora.aeondroid.model.PlanetaryHour;
+import io.github.phora.aeondroid.model.PlanetaryHoursAdapter;
 import swisseph.DblObj;
 import swisseph.SweConst;
 import swisseph.SweDate;

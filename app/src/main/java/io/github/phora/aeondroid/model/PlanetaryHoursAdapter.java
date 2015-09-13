@@ -1,17 +1,14 @@
-package io.github.phora.aeondroid;
+package io.github.phora.aeondroid.model;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -19,6 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import io.github.phora.aeondroid.R;
+import io.github.phora.aeondroid.drawables.EquilateralTriangle;
+import io.github.phora.aeondroid.drawables.Rhombus;
 import swisseph.SweDate;
 
 /**

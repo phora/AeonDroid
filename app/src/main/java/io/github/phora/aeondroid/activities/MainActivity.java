@@ -1,4 +1,4 @@
-package io.github.phora.aeondroid;
+package io.github.phora.aeondroid.activities;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -19,6 +19,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import io.github.phora.aeondroid.AeonDroidService;
+import io.github.phora.aeondroid.Events;
+import io.github.phora.aeondroid.fragments.MainActivityFragment;
+import io.github.phora.aeondroid.R;
 
 public class MainActivity extends FragmentActivity {
 

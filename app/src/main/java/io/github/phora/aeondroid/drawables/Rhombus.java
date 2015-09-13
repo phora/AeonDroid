@@ -1,4 +1,4 @@
-package io.github.phora.aeondroid;
+package io.github.phora.aeondroid.drawables;
 
 /**
  * Created by phora on 9/10/15.

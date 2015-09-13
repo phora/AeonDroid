@@ -3,15 +3,11 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="io.github.phora.aeondroid.SettingsActivity$GeneralPreferenceFragment"
+        android:fragment="io.github.phora.aeondroid.activities.SettingsActivity$GeneralPreferenceFragment"
         android:title="@string/pref_header_general"/>
 
     <header
-        android:fragment="io.github.phora.aeondroid.SettingsActivity$NotificationPreferenceFragment"
+        android:fragment="io.github.phora.aeondroid.activities.SettingsActivity$NotificationPreferenceFragment"
         android:title="@string/pref_header_notifications"/>
-
-    <header
-        android:fragment="io.github.phora.aeondroid.SettingsActivity$DataSyncPreferenceFragment"
-        android:title="@string/pref_header_data_sync"/>
 
 </preference-headers>

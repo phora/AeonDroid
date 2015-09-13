@@ -1,4 +1,4 @@
-package io.github.phora.aeondroid;
+package io.github.phora.aeondroid.model;
 
 /**
  * Created by phora on 9/9/15.

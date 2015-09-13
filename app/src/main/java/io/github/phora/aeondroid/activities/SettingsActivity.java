@@ -1,4 +1,4 @@
-package io.github.phora.aeondroid;
+package io.github.phora.aeondroid.activities;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -20,6 +20,8 @@ import android.preference.RingtonePreference;
 import android.text.TextUtils;
 
 import java.util.List;
+
+import io.github.phora.aeondroid.R;
 
 
 /**

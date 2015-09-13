@@ -1,22 +1,22 @@
-package io.github.phora.aeondroid;
+package io.github.phora.aeondroid.fragments;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 
-import swisseph.SweDate;
+import io.github.phora.aeondroid.Events;
+import io.github.phora.aeondroid.model.PlanetaryHour;
+import io.github.phora.aeondroid.model.PlanetaryHoursAdapter;
+import io.github.phora.aeondroid.R;
+import io.github.phora.aeondroid.activities.MainActivity;
 
 /**
  * A placeholder fragment containing a simple view.
