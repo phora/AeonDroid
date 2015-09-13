@@ -26,6 +26,7 @@ public class MainActivityFragment extends ListFragment {
     private boolean _autoScrolledOnce;
     private HighlightReceiver highlightReceiver;
     private RefreshReceiver refreshReceiver;
+    private PlanetaryHoursAdapter pha;
 
     private IntentFilter filterHighlight;
     private IntentFilter filterRefresh;
@@ -68,11 +69,16 @@ public class MainActivityFragment extends ListFragment {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
     public synchronized void refreshFragment() {
         MainActivity ma = (MainActivity)getActivity();
         if (ma != null && ma.getServiceReference() != null) {
             ArrayList<PlanetaryHour> phl = ma.getServiceReference().getPlanetaryHours();
-            PlanetaryHoursAdapter pha = new PlanetaryHoursAdapter(ma, phl);
+            pha = new PlanetaryHoursAdapter(ma, phl);
             setListAdapter(pha);
         }
     }
@@ -85,7 +91,6 @@ public class MainActivityFragment extends ListFragment {
                 getListView().setSelection(selected_row);
                 _autoScrolledOnce = true;
             }
-            PlanetaryHoursAdapter pha = (PlanetaryHoursAdapter)getListAdapter();
             pha.setHourSelection(selected_row);
         }
     }
@@ -93,9 +98,10 @@ public class MainActivityFragment extends ListFragment {
     private class RefreshReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            _autoScrolledOnce = false;
             MainActivity ma = (MainActivity)getActivity();
             ArrayList<PlanetaryHour> phl = ma.getServiceReference().getPlanetaryHours();
-            PlanetaryHoursAdapter pha = new PlanetaryHoursAdapter(getActivity(), phl);
+            pha = new PlanetaryHoursAdapter(getActivity(), phl);
             setListAdapter(pha);
         }
     }
