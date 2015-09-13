@@ -101,9 +101,19 @@ public class Ephmeris {
         cal.setTime(date);
         cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
 
-        Double sunrise = getBodyRise(date, SweConst.SE_SUN);
-        Double sunset = getBodySet(date, SweConst.SE_SUN);
-        Double next_sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
+        Double sunrise, sunset, next_sunrise;
+
+        sunrise = getBodyRise(date, SweConst.SE_SUN);
+        if (date.before(SweDate.getDate(sunrise))) {
+            cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-2);
+            next_sunrise = sunrise.doubleValue();
+            sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
+            sunset = getBodyRise(cal.getTime(), SweConst.SE_SUN);
+        }
+        else {
+            sunset = getBodySet(date, SweConst.SE_SUN);
+            next_sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
+        }
 
         double day_length = sunset - sunrise;
         double night_length = next_sunrise - sunset;
