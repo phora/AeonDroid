@@ -131,6 +131,9 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (!isBound) {
+            doBindService();
+        }
         if (isBound && serviceReference != null) {
             serviceReference.recheckGps();
         }

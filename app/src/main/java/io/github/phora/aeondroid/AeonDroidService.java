@@ -230,17 +230,21 @@ public class AeonDroidService extends Service {
                         lastIndex = -1;
                         refreshPlanetaryHours(d);
                         sendBroadcast(intent);
-                    } else if (hour_different) {
+                    } else {
                         intent.setAction(Events.FOUND_HOUR);
                         PlanetaryHour ph = planetaryHours.get(lastIndex);
                         String[] planets = getResources().getStringArray(R.array.PlanetNames);
                         String planetname = planets[ph.getPlanetType()];
                         String content_text = String.format("Current planetary hour is %1$s", planetname);
-                        NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(AeonDroidService.this)
-                                .setContentTitle(getString(R.string.app_name))
-                                .setContentText(content_text)
-                                .setSmallIcon(R.mipmap.ic_launcher);
-                        notificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());
+
+                        if (hour_different) {
+                            NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(AeonDroidService.this)
+                                    .setContentTitle(getString(R.string.app_name))
+                                    .setContentText(content_text)
+                                    .setSmallIcon(R.mipmap.ic_launcher);
+                            notificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());
+                        }
+
                         intent.putExtra(Events.EXTRA_HOUR_INDEX, lastIndex);
                         sendBroadcast(intent);
                     }
