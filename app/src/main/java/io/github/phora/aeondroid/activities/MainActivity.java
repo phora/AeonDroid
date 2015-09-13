@@ -27,7 +27,6 @@ import io.github.phora.aeondroid.R;
 
 public class MainActivity extends FragmentActivity {
 
-    private final static int NOTI_REQUEST_CODE = 116;
     private LocUpdateReceiver locUpdateReceiver;
     private IntentFilter filterLocUpdate;
 
@@ -45,7 +44,6 @@ public class MainActivity extends FragmentActivity {
 
         Intent intent = new Intent(this, AeonDroidService.class);
         startService(intent);
-        sendNotification();
 
         filterLocUpdate = new IntentFilter(Events.UPDATED_LOCATION);
         locUpdateReceiver = new LocUpdateReceiver();
@@ -87,22 +85,6 @@ public class MainActivity extends FragmentActivity {
             isBound = false;
         }
     };
-
-    private void sendNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(getString(R.string.app_name))
-                .setWhen(System.currentTimeMillis())
-                .setOngoing(true);
-        Intent startIntent = new Intent(this, MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this,
-                NOTI_REQUEST_CODE, startIntent, 0);
-        builder.setContentIntent(contentIntent);
-        Notification notification = builder.build();
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(AeonDroidService.NOTIFICATION_ID, notification);
-    }
 
     private boolean getIsDark() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);

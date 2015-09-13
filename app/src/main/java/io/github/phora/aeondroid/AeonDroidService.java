@@ -1,6 +1,8 @@
 package io.github.phora.aeondroid;
 
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
+import io.github.phora.aeondroid.activities.MainActivity;
 import io.github.phora.aeondroid.model.PlanetaryHour;
 import swisseph.SweDate;
 
@@ -31,7 +34,8 @@ public class AeonDroidService extends Service {
     private boolean usingGPS;
     private boolean gpsAvailable;
 
-    public final static int NOTIFICATION_ID = 117;
+    private final static int NOTI_REQUEST_CODE = 116;
+    private final static int NOTIFICATION_ID = 117;
     private final AeonDroidBinder myBinder = new AeonDroidBinder();
     private LocUpdater locUpdater;
     private CheckPlanetaryHoursThread cpht = null;
@@ -93,6 +97,8 @@ public class AeonDroidService extends Service {
 
         notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        createNotification();
+
         ephmeris = new Ephmeris(getApplicationContext().getFilesDir() + File.separator + "/ephe", 0, 0, 0);
         locUpdater = new LocUpdater();
 
@@ -100,6 +106,20 @@ public class AeonDroidService extends Service {
 
         cpht = new CheckPlanetaryHoursThread(1000);
         cpht.start();
+    }
+
+    private void createNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(getString(R.string.app_name))
+                .setWhen(System.currentTimeMillis())
+                .setOngoing(true);
+        Intent startIntent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this,
+                NOTI_REQUEST_CODE, startIntent, 0);
+        builder.setContentIntent(contentIntent);
+        Notification notification = builder.build();
+        notificationManager.notify(NOTIFICATION_ID, notification);
     }
 
     public void recheckGps() {
