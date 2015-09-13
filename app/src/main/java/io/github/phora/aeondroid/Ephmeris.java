@@ -105,12 +105,14 @@ public class Ephmeris {
 
         sunrise = getBodyRise(date, SweConst.SE_SUN);
         if (date.before(SweDate.getDate(sunrise))) {
+            Log.d("Ephmeris", "Getting the hours for the day before, sun didn't rise yet");
             cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-2);
             next_sunrise = sunrise.doubleValue();
             sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
             sunset = getBodyRise(cal.getTime(), SweConst.SE_SUN);
         }
         else {
+            Log.d("Ephmeris", "Getting the hours for the current day, sun rose");
             sunset = getBodySet(date, SweConst.SE_SUN);
             next_sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
         }

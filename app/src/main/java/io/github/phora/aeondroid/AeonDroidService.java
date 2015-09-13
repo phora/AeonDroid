@@ -143,7 +143,8 @@ public class AeonDroidService extends Service {
             Log.d("ADService", "Using manually entered location");
             double longitude = Double.valueOf(preferences.getString("CurrentLoc.Longitude", "0"));
             double latitude = Double.valueOf(preferences.getString("CurrentLoc.Latitude", "0"));
-            ephmeris.setObserver(longitude, latitude, 0.);
+            double altitude = Double.valueOf(preferences.getString("CurrentLoc.Altitude", "0"));
+            ephmeris.setObserver(longitude, latitude, altitude);
 
             if (usingGPS != prevUsingGPS) {
                 Intent intent = new Intent();
@@ -266,7 +267,8 @@ public class AeonDroidService extends Service {
                                     .setContentTitle(getString(R.string.app_name))
                                     .setTicker(content_text)
                                     .setContentText(content_text)
-                                    .setSmallIcon(R.mipmap.ic_launcher);
+                                    .setSmallIcon(R.mipmap.ic_launcher)
+                                    .setOngoing(true);
                             notificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());
                         }
 
