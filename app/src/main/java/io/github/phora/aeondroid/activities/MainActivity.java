@@ -15,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,7 +48,6 @@ public class MainActivity extends FragmentActivity {
 
         filterLocUpdate = new IntentFilter(Events.UPDATED_LOCATION);
         locUpdateReceiver = new LocUpdateReceiver();
-        registerReceiver(locUpdateReceiver, filterLocUpdate);
     }
 
     public AeonDroidService getServiceReference() {
@@ -71,7 +71,8 @@ public class MainActivity extends FragmentActivity {
 
             Intent intent = new Intent();
             intent.setAction(Events.REFRESH_HOURS);
-            sendBroadcast(intent);
+            LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
+            lbm.sendBroadcast(intent);
         }
 
         @Override
@@ -111,7 +112,8 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(locUpdateReceiver);
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
+        lbm.unregisterReceiver(locUpdateReceiver);
     }
 
     @Override
@@ -123,7 +125,8 @@ public class MainActivity extends FragmentActivity {
         if (isBound && serviceReference != null) {
             serviceReference.recheckGps();
         }
-        registerReceiver(locUpdateReceiver, filterLocUpdate);
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
+        lbm.registerReceiver(locUpdateReceiver, filterLocUpdate);
     }
 
     @Override

@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ public class AeonDroidService extends Service {
     private LocUpdater locUpdater;
     private CheckPlanetaryHoursThread cpht = null;
     private NotificationManager notificationManager;
+    private LocalBroadcastManager localBroadcastManager;
 
     public Ephmeris getEphmeris() {
         return ephmeris;
@@ -98,6 +100,7 @@ public class AeonDroidService extends Service {
         notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         createNotification();
+        localBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
 
         ephmeris = new Ephmeris(getApplicationContext().getFilesDir() + File.separator + "/ephe", 0, 0, 0);
         locUpdater = new LocUpdater();
@@ -145,7 +148,7 @@ public class AeonDroidService extends Service {
             if (usingGPS != prevUsingGPS) {
                 Intent intent = new Intent();
                 intent.setAction(Events.UPDATED_LOCATION);
-                sendBroadcast(intent);
+                localBroadcastManager.sendBroadcast(intent);
             }
         }
     }
@@ -172,7 +175,7 @@ public class AeonDroidService extends Service {
             ephmeris.setObserver(location.getLongitude(), location.getLatitude(), 0);
             Intent intent = new Intent();
             intent.setAction(Events.UPDATED_LOCATION);
-            sendBroadcast(intent);
+            localBroadcastManager.sendBroadcast(intent);
         }
 
         @Override
@@ -250,7 +253,7 @@ public class AeonDroidService extends Service {
                         intent.setAction(Events.REFRESH_HOURS);
                         lastIndex = -1;
                         refreshPlanetaryHours(d);
-                        sendBroadcast(intent);
+                        localBroadcastManager.sendBroadcast(intent);
                     } else {
                         intent.setAction(Events.FOUND_HOUR);
                         PlanetaryHour ph = planetaryHours.get(lastIndex);
@@ -268,7 +271,7 @@ public class AeonDroidService extends Service {
                         }
 
                         intent.putExtra(Events.EXTRA_HOUR_INDEX, lastIndex);
-                        sendBroadcast(intent);
+                        localBroadcastManager.sendBroadcast(intent);
                     }
                 }
             } catch (InterruptedException e) {

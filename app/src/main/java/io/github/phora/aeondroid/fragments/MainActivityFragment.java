@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.app.ListFragment;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,8 +56,10 @@ public class MainActivityFragment extends ListFragment {
     public void onPause() {
         super.onPause();
         if (getActivity() != null) {
-            getActivity().unregisterReceiver(highlightReceiver);
-            getActivity().unregisterReceiver(refreshReceiver);
+            Context app = getActivity().getApplicationContext();
+            LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(app);
+            lbm.unregisterReceiver(highlightReceiver);
+            lbm.unregisterReceiver(refreshReceiver);
         }
     }
 
@@ -64,8 +67,10 @@ public class MainActivityFragment extends ListFragment {
     public void onResume() {
         super.onResume();
         if (getActivity() != null) {
-            getActivity().registerReceiver(highlightReceiver, filterHighlight);
-            getActivity().registerReceiver(refreshReceiver, filterRefresh);
+            Context app = getActivity().getApplicationContext();
+            LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(app);
+            lbm.registerReceiver(highlightReceiver, filterHighlight);
+            lbm.registerReceiver(refreshReceiver, filterRefresh);
         }
     }
 
