@@ -11,11 +11,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import io.github.phora.aeondroid.EphemerisUtils;
 import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.drawables.EquilateralTriangle;
 import io.github.phora.aeondroid.drawables.Rhombus;
@@ -25,7 +24,6 @@ import swisseph.SweDate;
  * Created by phora on 9/9/15.
  */
 public class PlanetaryHoursAdapter extends ArrayAdapter<PlanetaryHour> {
-    public final static DateFormat DATE_FMT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private static Drawable BASE_CHAKRA = null;
     private static Drawable SACRAL_CHAKRA = null;
@@ -70,7 +68,7 @@ public class PlanetaryHoursAdapter extends ArrayAdapter<PlanetaryHour> {
             convertView.setBackgroundResource(0);
         }
 
-        pHoursTime.setText(DATE_FMT.format(d));
+        pHoursTime.setText(EphemerisUtils.DATE_FMT.format(d));
         pHoursName.setText(planets[ph.getPlanetType()]);
         //Log.d("PlanetaryHoursAdapter", "Is night?: " + ph.isNight());
         if (!ph.isNight()) {

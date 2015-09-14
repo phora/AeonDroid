@@ -1,8 +1,5 @@
 package io.github.phora.aeondroid.activities;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,24 +9,31 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import io.github.phora.aeondroid.AeonDroidService;
 import io.github.phora.aeondroid.Events;
-import io.github.phora.aeondroid.fragments.MainActivityFragment;
+import io.github.phora.aeondroid.fragments.MoonPhaseFragment;
+import io.github.phora.aeondroid.fragments.PlanetaryHoursFragment;
 import io.github.phora.aeondroid.R;
 
 public class MainActivity extends FragmentActivity {
 
     private LocUpdateReceiver locUpdateReceiver;
     private IntentFilter filterLocUpdate;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +49,9 @@ public class MainActivity extends FragmentActivity {
 
         Intent intent = new Intent(this, AeonDroidService.class);
         startService(intent);
+
+        viewPager = (ViewPager)findViewById(R.id.pager);
+        viewPager.setAdapter(new MainTabsAdapter(getSupportFragmentManager()));
 
         filterLocUpdate = new IntentFilter(Events.UPDATED_LOCATION);
         locUpdateReceiver = new LocUpdateReceiver();
@@ -72,6 +79,9 @@ public class MainActivity extends FragmentActivity {
             Intent intent = new Intent();
             intent.setAction(Events.REFRESH_HOURS);
             LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
+            lbm.sendBroadcast(intent);
+            intent = new Intent();
+            intent.setAction(Events.REFRESH_MOON_PHASE);
             lbm.sendBroadcast(intent);
         }
 
@@ -187,11 +197,72 @@ public class MainActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private class MainTabsAdapter extends FragmentPagerAdapter {
+
+        private ArrayList<Fragment> pages;
+
+        public MainTabsAdapter(FragmentManager fm) {
+            super(fm);
+            pages = new ArrayList<Fragment>();
+            pages.add(null);
+            pages.add(null);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Fragment fraggy = pages.get(position);
+            switch (position) {
+                case 0:
+                    if (fraggy == null) {
+                        fraggy = PlanetaryHoursFragment.newInstance();
+                        pages.set(0, fraggy);
+                        return fraggy;
+                    }
+                    else {
+                        return fraggy;
+                    }
+                case 1:
+                    if (fraggy == null) {
+
+                    }
+                    if (fraggy == null) {
+                        fraggy = MoonPhaseFragment.newInstance();
+                        pages.set(1, fraggy);
+                        return fraggy;
+                    }
+                    else {
+                        return fraggy;
+                    }
+            }
+            return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch(position) {
+                case 0:
+                    return getString(R.string.planetary_hours);
+                case 1:
+                    return getString(R.string.moon_phases);
+                default:
+                    return null;
+            }
+        }
+    }
+
     private class LocUpdateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            MainActivityFragment maf = (MainActivityFragment)getSupportFragmentManager().findFragmentById(R.id.Fragment_PHours);
-            maf.refreshFragment();
+            MainTabsAdapter pagesAdapter = (MainTabsAdapter)viewPager.getAdapter();
+            PlanetaryHoursFragment maf = (PlanetaryHoursFragment)pagesAdapter.getItem(0);
+            if (maf != null) {
+                maf.refreshFragment();
+            }
         }
     }
 }

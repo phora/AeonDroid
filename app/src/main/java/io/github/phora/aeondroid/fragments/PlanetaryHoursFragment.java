@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -22,7 +23,7 @@ import io.github.phora.aeondroid.activities.MainActivity;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends ListFragment {
+public class PlanetaryHoursFragment extends ListFragment {
 
     private boolean _autoScrolledOnce;
     private HighlightReceiver highlightReceiver;
@@ -32,7 +33,7 @@ public class MainActivityFragment extends ListFragment {
     private IntentFilter filterHighlight;
     private IntentFilter filterRefresh;
 
-    public MainActivityFragment() {
+    public PlanetaryHoursFragment() {
         filterHighlight = new IntentFilter(Events.FOUND_HOUR);
         filterRefresh = new IntentFilter(Events.REFRESH_HOURS);
 
@@ -44,7 +45,7 @@ public class MainActivityFragment extends ListFragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        return inflater.inflate(R.layout.fragment_phours, container, false);
     }
 
     @Override
@@ -86,6 +87,11 @@ public class MainActivityFragment extends ListFragment {
             pha = new PlanetaryHoursAdapter(ma, phl);
             setListAdapter(pha);
         }
+    }
+
+    public static Fragment newInstance() {
+        Fragment fragment = new PlanetaryHoursFragment();
+        return fragment;
     }
 
     private class HighlightReceiver extends BroadcastReceiver {

@@ -7,8 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import io.github.phora.aeondroid.model.MoonPhase;
 import io.github.phora.aeondroid.model.PlanetaryHour;
-import io.github.phora.aeondroid.model.PlanetaryHoursAdapter;
 import swisseph.DblObj;
 import swisseph.SweConst;
 import swisseph.SweDate;
@@ -17,21 +17,20 @@ import swisseph.SwissEph;
 /**
  * Created by phora on 9/8/15.
  */
-public class Ephmeris {
-    SwissEph sw;
-
+public class Ephemeris {
+    private SwissEph sw;
     private double[] observer;
 
-    public Ephmeris(String search_path) {
+    public Ephemeris(String search_path) {
         sw = new SwissEph(search_path);
     }
 
-    public Ephmeris(String search_path, double longitude, double latitude, double height) {
+    public Ephemeris(String search_path, double longitude, double latitude, double height) {
         sw = new SwissEph(search_path);
         this.observer = new double[]{longitude, latitude, height};
     }
 
-    public Ephmeris(String search_path, double[] observer) {
+    public Ephemeris(String search_path, double[] observer) {
         sw = new SwissEph(search_path);
         if (observer.length == 3) {
             this.observer = observer;
@@ -49,7 +48,47 @@ public class Ephmeris {
         this.observer = new double[]{longitude, latitude, height};
     }
 
+    public Double getMoonSunDiff(double day) {
+        StringBuffer sb = new StringBuffer();
 
+        double[] resarray = new double[6];
+        double[] resarray2 = new double[6];
+
+        int retcode = sw.swe_calc_ut(day, SweConst.SE_MOON,
+                SweConst.SEFLG_SWIEPH,
+                resarray, sb);
+        int retcode2 = sw.swe_calc_ut(day, SweConst.SE_SUN,
+                SweConst.SEFLG_SWIEPH,
+                resarray2, sb);
+
+        if (retcode == SweConst.ERR)
+            return null;
+        if (retcode2 == SweConst.ERR)
+            return null;
+
+        return EphemerisUtils.angleSubtract(resarray2[0], resarray[0]);
+    }
+
+    public Date predictMoonPhase(double cycles, int offset, double target_angle) {
+        if (target_angle < -90 || target_angle > 180) {
+            return null;
+        }
+        cycles = ((int)cycles)+offset;
+        double diff = Double.POSITIVE_INFINITY;
+        while (Math.abs(diff) >= 1E-3) {
+            double angle_diff = getMoonSunDiff(EphemerisUtils.moonCyclesToJulian(cycles));
+            angle_diff = EphemerisUtils.angleSubtract(angle_diff, target_angle);
+            cycles += angle_diff / 360.;
+            diff = angle_diff;
+        }
+        return SweDate.getDate(EphemerisUtils.moonCyclesToJulian(cycles));
+    }
+
+    public Date predictMoonPhase(Date date, int offset, double target_angle) {
+        double cycles_with_excess = EphemerisUtils.dateToMoonCycles(date);
+
+        return predictMoonPhase(cycles_with_excess, offset, target_angle);
+    }
 
     public Double getBodyRise(Date date, int celestial_body) {
         Calendar cal = new GregorianCalendar();
@@ -126,8 +165,8 @@ public class Ephmeris {
         ArrayList<PlanetaryHour> hours = new ArrayList<PlanetaryHour>();
         int day_offset = SweDate.getDayOfWeekNr(sunrise);
         Log.d("Ephmeris", "Day offset: " + day_offset);
-        Log.d("Ephmeris", PlanetaryHoursAdapter.DATE_FMT.format(date));
-        Log.d("Ephmeris", PlanetaryHoursAdapter.DATE_FMT.format(cal.getTime()));
+        Log.d("Ephmeris", EphemerisUtils.DATE_FMT.format(date));
+        Log.d("Ephmeris", EphemerisUtils.DATE_FMT.format(cal.getTime()));
 
         for (int i=0;i<12;i++) {
             double timestamp = ((double)i)*day_hour_length+sunrise;
@@ -153,5 +192,75 @@ public class Ephmeris {
         }
 
         return hours;
+    }
+
+    public MoonPhase makeMoonPhaseForDate(Date date) {
+        return makeMoonPhaseForDate(date, predictMoonPhase(date, 0, 180));
+    }
+
+    public MoonPhase makeMoonPhaseForDate(Date date, Date full_moon) {
+        StringBuffer sb = new StringBuffer();
+        double[] resarray = new double[20];
+        double julday = EphemerisUtils.dateToSweDate(date).getJulDay();
+        //crashes here?
+        int retcode = sw.swe_pheno_ut(julday, SweConst.SE_MOON,
+                SweConst.SEFLG_SWIEPH,
+                resarray,
+                sb);
+        if (retcode == SweConst.OK) {
+            boolean waxing = date.compareTo(full_moon) <= 0;
+            double illumination = resarray[1]*100;
+            double elongation = resarray[2];
+
+            MoonPhase.PhaseType pt;
+
+            if (elongation <= 5.) {
+                pt = MoonPhase.PhaseType.NEW;
+            }
+            else if (elongation <= 88.) {
+                pt = MoonPhase.PhaseType.CRESCENT;
+            }
+            else if (elongation <= 94.) {
+                pt = MoonPhase.PhaseType.QUARTER;
+            }
+            else if (elongation <= 175.) {
+                pt = MoonPhase.PhaseType.GIBBOUS;
+            }
+            else {
+                pt = MoonPhase.PhaseType.FULL;
+            }
+
+            return new MoonPhase(waxing, illumination, pt, date);
+        }
+        else {
+            return null;
+        }
+    }
+
+    public ArrayList<MoonPhase> getMoonCycle(Date date) {
+        double moon_cycles = EphemerisUtils.dateToMoonCycles(date);
+
+        Date new_moon_start = predictMoonPhase(moon_cycles, 0, 0);
+        Date first_quarter = predictMoonPhase(moon_cycles, 0, -90);
+        Date full_moon = predictMoonPhase(moon_cycles, 0, 180);
+        Date last_quarter = predictMoonPhase(moon_cycles, 1, 90);
+        Date new_moon_end = predictMoonPhase(moon_cycles, 1, 0);
+
+        Date[] tmp = new Date[]{new_moon_start, first_quarter,
+                full_moon, last_quarter, new_moon_end};
+
+        ArrayList<MoonPhase> output = new ArrayList<>();
+
+        for (Date d: tmp) {
+            MoonPhase mp = makeMoonPhaseForDate(d, full_moon);
+            if (mp != null) {
+                output.add(mp);
+            }
+            else {
+                return null;
+            }
+        }
+
+        return output;
     }
 }

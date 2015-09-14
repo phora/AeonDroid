@@ -10,4 +10,5 @@ public class Events {
     public final static String REFRESH_HOURS = "io.github.phora.aeondroid.REFRESH_HOURS";
 
     public final static String UPDATED_LOCATION = "io.github.phora.aeondroid.UPDATED_LOCATION";
+    public static final String REFRESH_MOON_PHASE = "io.github.phora.aeondroid.REFRESH_MOON_PHASE";
 }

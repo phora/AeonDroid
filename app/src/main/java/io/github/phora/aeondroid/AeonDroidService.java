@@ -24,12 +24,13 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import io.github.phora.aeondroid.activities.MainActivity;
+import io.github.phora.aeondroid.model.MoonPhase;
 import io.github.phora.aeondroid.model.PlanetaryHour;
 import swisseph.SweDate;
 
 public class AeonDroidService extends Service {
 
-    private Ephmeris ephmeris = null;
+    private Ephemeris ephemeris = null;
     private ArrayList<PlanetaryHour> planetaryHours = null;
     private int lastIndex = -1;
     private boolean usingGPS;
@@ -42,13 +43,14 @@ public class AeonDroidService extends Service {
     private CheckPlanetaryHoursThread cpht = null;
     private NotificationManager notificationManager;
     private LocalBroadcastManager localBroadcastManager;
+    private ArrayList<MoonPhase> moonPhases;
 
-    public Ephmeris getEphmeris() {
-        return ephmeris;
+    public Ephemeris getEphemeris() {
+        return ephemeris;
     }
 
-    public void setEphmeris(Ephmeris ephmeris) {
-        this.ephmeris = ephmeris;
+    public void setEphemeris(Ephemeris ephemeris) {
+        this.ephemeris = ephemeris;
     }
 
     public boolean isGpsAvailable() {
@@ -75,11 +77,26 @@ public class AeonDroidService extends Service {
     }
 
     public void refreshPlanetaryHours(Date d) {
-        planetaryHours = ephmeris.getPlanetaryHours(d);
+        planetaryHours = ephemeris.getPlanetaryHours(d);
     }
 
     public void refreshPlanetaryHours() {
-        planetaryHours = ephmeris.getPlanetaryHours(new Date());
+        planetaryHours = ephemeris.getPlanetaryHours(new Date());
+    }
+
+    public ArrayList<MoonPhase> getMoonPhases() {
+        if (moonPhases == null) {
+            refreshMoonPhases();
+        }
+        return moonPhases;
+    }
+
+    public void refreshMoonPhases() {
+        refreshMoonPhases(new Date());
+    }
+
+    public void refreshMoonPhases(Date d) {
+        moonPhases = ephemeris.getMoonCycle(d);
     }
 
     public class AeonDroidBinder extends Binder {
@@ -102,7 +119,7 @@ public class AeonDroidService extends Service {
         createNotification();
         localBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
 
-        ephmeris = new Ephmeris(getApplicationContext().getFilesDir() + File.separator + "/ephe", 0, 0, 0);
+        ephemeris = new Ephemeris(getApplicationContext().getFilesDir() + File.separator + "/ephe", 0, 0, 0);
         locUpdater = new LocUpdater();
 
         recheckGps();
@@ -144,7 +161,7 @@ public class AeonDroidService extends Service {
             double longitude = Double.valueOf(preferences.getString("CurrentLoc.Longitude", "0"));
             double latitude = Double.valueOf(preferences.getString("CurrentLoc.Latitude", "0"));
             double altitude = Double.valueOf(preferences.getString("CurrentLoc.Altitude", "0"));
-            ephmeris.setObserver(longitude, latitude, altitude);
+            ephemeris.setObserver(longitude, latitude, altitude);
 
             if (usingGPS != prevUsingGPS) {
                 Intent intent = new Intent();
@@ -173,7 +190,7 @@ public class AeonDroidService extends Service {
         public void onLocationChanged(Location location) {
             Log.d("LocUpdater", "New location, refreshing displayed data");
             Toast.makeText(AeonDroidService.this, "New location, refreshing displayed data", Toast.LENGTH_SHORT).show();
-            ephmeris.setObserver(location.getLongitude(), location.getLatitude(), 0);
+            ephemeris.setObserver(location.getLongitude(), location.getLatitude(), 0);
             Intent intent = new Intent();
             intent.setAction(Events.UPDATED_LOCATION);
             localBroadcastManager.sendBroadcast(intent);

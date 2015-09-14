@@ -5,6 +5,18 @@
     <string name="pref_title_location_auto">Retrieve location from GPS?</string>
     <string name="pref_description_location_auto">The below values will be used if this is turned off and/or if service is unavailable</string>
     <string name="FragmentMain.LockingOntoGPS">Locking onto GPS...</string>
+    <string name="waxwanefmt">%1$s %2$s Moon</string>
+    <string name="new_moon">New Moon</string>
+    <string name="full_moon">Full Moon</string>
+    <string name="first_quarter">First</string>
+    <string name="last_quarter">Last</string>
+    <string name="quarter_sfx">Quarter</string>
+    <string name="crescent_moon">Crescent</string>
+    <string name="gibbous_moon">Gibbous</string>
+    <string name="waxing_moon">Waxing</string>
+    <string name="waning_moon">Waning</string>
+    <string name="planetary_hours">Planetary Hours</string>
+    <string name="moon_phases">Moon Phases</string>
 
 
     <string-array name="PlanetNames">
