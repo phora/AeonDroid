@@ -1,0 +1,26 @@
+apply plugin: 'java'
+
+task PrecompileCompile(type:JavaCompile) {
+    classpath = files('src')
+    source = file('src/Precompile.java')
+    destinationDir = file('src')
+}
+
+task Precompile(type:JavaExec) {
+    workingDir = 'src'
+    classpath = files('src')
+    main = 'Precompile'
+    args = ['-qfc', '-iswesrc', '-DTRANSITS']
+}
+
+Precompile.dependsOn(PrecompileCompile)
+compileJava.dependsOn(Precompile)
+
+compileJava {
+    classpath = files('src/swisseph')
+    source = files('src/swisseph')
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}

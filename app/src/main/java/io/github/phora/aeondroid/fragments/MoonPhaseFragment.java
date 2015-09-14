@@ -19,7 +19,6 @@ import android.widget.TextView;
 import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.activities.MainActivity;
-import io.github.phora.aeondroid.fragments.dummy.DummyContent;
 import io.github.phora.aeondroid.model.MoonPhaseAdapter;
 
 /**
@@ -145,7 +144,7 @@ public class MoonPhaseFragment extends ListFragment implements AbsListView.OnIte
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
+            //mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
         }
     }
 
