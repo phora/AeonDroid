@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.os.Bundle;
@@ -72,21 +74,17 @@ public class PlanetaryHoursFragment extends ListFragment {
             LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(app);
             lbm.registerReceiver(refreshReceiver, filterRefresh);
             lbm.registerReceiver(highlightReceiver, filterHighlight);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(app);
+            int hoursStyle = Integer.valueOf(preferences.getString("phoursIndicator", "0"));
+            if (pha != null) {
+                pha.setHourStyle(hoursStyle);
+            }
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-    }
-
-    public synchronized void refreshFragment() {
-        MainActivity ma = (MainActivity)getActivity();
-        if (ma != null && ma.getServiceReference() != null) {
-            ArrayList<PlanetaryHour> phl = ma.getServiceReference().getPlanetaryHours();
-            pha = new PlanetaryHoursAdapter(ma, phl);
-            setListAdapter(pha);
-        }
     }
 
     public static Fragment newInstance() {

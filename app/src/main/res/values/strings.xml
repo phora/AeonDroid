@@ -17,6 +17,7 @@
     <string name="waning_moon">Waning</string>
     <string name="planetary_hours">Planetary Hours</string>
     <string name="moon_phases">Moon Phases</string>
+    <string name="pref_ringtone_silent">Silent</string>
 
 
     <string-array name="PlanetNames">

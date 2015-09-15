@@ -1,8 +1,11 @@
 package io.github.phora.aeondroid.model;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +37,7 @@ public class PlanetaryHoursAdapter extends ArrayAdapter<PlanetaryHour> {
     private static Drawable CROWN_CHAKRA = null;
 
     private int hourSelection = -1;
+    private int hourStyle = 0;
 
     public PlanetaryHoursAdapter(Context context, ArrayList<PlanetaryHour> phours) {
         super(context, 0, phours);
@@ -79,9 +83,62 @@ public class PlanetaryHoursAdapter extends ArrayAdapter<PlanetaryHour> {
         }
         //Log.d("PlanetaryHoursAdapter", "Drawable set: "+ph.getPlanetType());
 
-        pHoursIcon.setImageDrawable(getChakraDrawable(ph.getPlanetType()));
+        if (hourStyle == 0) {
+            pHoursIcon.setImageDrawable(getChakraDrawable(ph.getPlanetType()));
+        }
+        else if (hourStyle == 1) {
+            pHoursIcon.setImageResource(getPlanetSymbol(ph.getPlanetType()));
+        }
 
         return convertView;
+    }
+
+    private boolean getIsDark() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        boolean isdark = preferences.getBoolean("isDark", false);
+        return isdark;
+    }
+    
+    private int getPlanetSymbol(int i) {
+        if (getIsDark()) {
+            switch (i) {
+                case 0:
+                    return R.drawable.sun_dark;
+                case 1:
+                    return R.drawable.venus_dark;
+                case 2:
+                    return R.drawable.mercury_dark;
+                case 3:
+                    return R.drawable.moon_dark;
+                case 4:
+                    return R.drawable.saturn_dark;
+                case 5:
+                    return R.drawable.jupiter_dark;
+                case 6:
+                    return R.drawable.mars_dark;
+                default:
+                    return 0;
+            }
+        } else {
+            switch (i) {
+                case 0:
+                    return R.drawable.sun_light;
+                case 1:
+                    return R.drawable.venus_light;
+                case 2:
+                    return R.drawable.mercury_light;
+                case 3:
+                    return R.drawable.moon_light;
+                case 4:
+                    return R.drawable.saturn_light;
+                case 5:
+                    return R.drawable.jupiter_light;
+                case 6:
+                    return R.drawable.mars_light;
+                default:
+                    return 0;
+            }            
+        }
     }
 
     private Drawable getChakraDrawable(int i) {
@@ -149,5 +206,17 @@ public class PlanetaryHoursAdapter extends ArrayAdapter<PlanetaryHour> {
 
     public int getHourSelection() {
         return hourSelection;
+    }
+
+    public int getHourStyle() {
+        return hourStyle;
+    }
+
+    public void setHourStyle(int hourStyle) {
+        boolean call_invalidate = (this.hourStyle != hourStyle);
+        this.hourStyle = hourStyle;
+        if (call_invalidate) {
+            notifyDataSetChanged();
+        }
     }
 }

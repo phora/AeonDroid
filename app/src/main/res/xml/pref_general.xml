@@ -1,16 +1,24 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <CheckBoxPreference
-        android:key="isDark"
-        android:title="@string/pref_title_is_dark"
-        android:summary="@string/pref_description_is_dark"
-        android:defaultValue="true" />
+    <PreferenceCategory android:title="@string/pref_appearance">
+        <CheckBoxPreference
+            android:key="isDark"
+            android:title="@string/pref_title_is_dark"
+            android:summary="@string/pref_description_is_dark"
+            android:defaultValue="true" />
+
+        <ListPreference
+            android:key="phoursIndicator"
+            android:title="@string/pref_title_phours_style"
+            android:entries="@array/pref_phours_style_titles"
+            android:entryValues="@array/pref_phours_style_values"
+            android:defaultValue="0"
+            />
+    </PreferenceCategory>
 
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
-    <PreferenceCategory
-        android:title="@string/pref_general_location"
-        android:key="pref_key_general_location">
+    <PreferenceCategory android:title="@string/pref_general_location">
 
         <CheckBoxPreference
             android:key="CurrentLoc.Auto"

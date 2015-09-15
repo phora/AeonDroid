@@ -6,8 +6,4 @@
         android:fragment="io.github.phora.aeondroid.activities.SettingsActivity$GeneralPreferenceFragment"
         android:title="@string/pref_header_general"/>
 
-    <header
-        android:fragment="io.github.phora.aeondroid.activities.SettingsActivity$NotificationPreferenceFragment"
-        android:title="@string/pref_header_notifications"/>
-
 </preference-headers>
