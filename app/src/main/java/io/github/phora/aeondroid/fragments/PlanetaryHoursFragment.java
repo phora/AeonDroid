@@ -98,6 +98,14 @@ public class PlanetaryHoursFragment extends ListFragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             int selected_row = intent.getIntExtra(Events.EXTRA_HOUR_INDEX, -1);
+            if (pha == null) {
+                MainActivity ma = (MainActivity)getActivity();
+                if (ma != null && ma.getServiceReference() != null) {
+                    ArrayList<PlanetaryHour> phl = ma.getServiceReference().getPlanetaryHours();
+                    pha = new PlanetaryHoursAdapter(ma, phl);
+                    setListAdapter(pha);
+                }
+            }
             if (!_autoScrolledOnce) {
                 getListView().setSelection(selected_row);
                 _autoScrolledOnce = true;

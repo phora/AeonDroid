@@ -31,7 +31,6 @@ import io.github.phora.aeondroid.R;
 
 public class MainActivity extends FragmentActivity {
 
-    private LocUpdateReceiver locUpdateReceiver;
     private IntentFilter filterLocUpdate;
     private ViewPager viewPager;
 
@@ -52,9 +51,6 @@ public class MainActivity extends FragmentActivity {
 
         viewPager = (ViewPager)findViewById(R.id.pager);
         viewPager.setAdapter(new MainTabsAdapter(getSupportFragmentManager()));
-
-        filterLocUpdate = new IntentFilter(Events.UPDATED_LOCATION);
-        locUpdateReceiver = new LocUpdateReceiver();
     }
 
     public AeonDroidService getServiceReference() {
@@ -77,10 +73,10 @@ public class MainActivity extends FragmentActivity {
             isBound = true;
 
             Intent intent = new Intent();
-            intent.setAction(Events.REFRESH_HOURS);
+            //intent.setAction(Events.REFRESH_HOURS);
             LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
-            lbm.sendBroadcast(intent);
-            intent = new Intent();
+            //lbm.sendBroadcast(intent);
+            //intent = new Intent();
             intent.setAction(Events.REFRESH_MOON_PHASE);
             lbm.sendBroadcast(intent);
         }
@@ -123,7 +119,6 @@ public class MainActivity extends FragmentActivity {
     protected void onPause() {
         super.onPause();
         LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
-        lbm.unregisterReceiver(locUpdateReceiver);
     }
 
     @Override
@@ -133,10 +128,9 @@ public class MainActivity extends FragmentActivity {
             doBindService();
         }
         if (isBound && serviceReference != null) {
+            // we call this in case we manually changed our gps settings
             serviceReference.recheckGps();
         }
-        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
-        lbm.registerReceiver(locUpdateReceiver, filterLocUpdate);
     }
 
     @Override
@@ -251,17 +245,6 @@ public class MainActivity extends FragmentActivity {
                     return getString(R.string.moon_phases);
                 default:
                     return null;
-            }
-        }
-    }
-
-    private class LocUpdateReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            MainTabsAdapter pagesAdapter = (MainTabsAdapter)viewPager.getAdapter();
-            PlanetaryHoursFragment maf = (PlanetaryHoursFragment)pagesAdapter.getItem(0);
-            if (maf != null) {
-                maf.refreshFragment();
             }
         }
     }

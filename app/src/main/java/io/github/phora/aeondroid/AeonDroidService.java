@@ -123,9 +123,6 @@ public class AeonDroidService extends Service {
         locUpdater = new LocUpdater();
 
         recheckGps();
-
-        cpht = new CheckPlanetaryHoursThread(1000);
-        cpht.start();
     }
 
     private void createNotification() {
@@ -139,7 +136,7 @@ public class AeonDroidService extends Service {
                 NOTI_REQUEST_CODE, startIntent, 0);
         builder.setContentIntent(contentIntent);
         Notification notification = builder.build();
-        notificationManager.notify(NOTIFICATION_ID, notification);
+        startForeground(NOTIFICATION_ID, notification);
     }
 
     public void recheckGps() {
@@ -157,15 +154,24 @@ public class AeonDroidService extends Service {
                     LocationManager.GPS_PROVIDER, 5000, 10, locUpdater);
         }
         else {
+            locationManager.removeUpdates(locUpdater);
             Log.d("ADService", "Using manually entered location");
             double longitude = Double.valueOf(preferences.getString("CurrentLoc.Longitude", "0"));
             double latitude = Double.valueOf(preferences.getString("CurrentLoc.Latitude", "0"));
             double altitude = Double.valueOf(preferences.getString("CurrentLoc.Altitude", "0"));
             ephemeris.setObserver(longitude, latitude, altitude);
+            refreshPlanetaryHours();
+
+            Thread dummy = cpht;
+            cpht = new CheckPlanetaryHoursThread(1000);
+            if (dummy != null) {
+                dummy.interrupt();
+            }
+            cpht.start();
 
             if (usingGPS != prevUsingGPS) {
                 Intent intent = new Intent();
-                intent.setAction(Events.UPDATED_LOCATION);
+                intent.setAction(Events.REFRESH_HOURS);
                 localBroadcastManager.sendBroadcast(intent);
             }
         }
@@ -191,14 +197,24 @@ public class AeonDroidService extends Service {
             Log.d("LocUpdater", "New location, refreshing displayed data");
             Toast.makeText(AeonDroidService.this, "New location, refreshing displayed data", Toast.LENGTH_SHORT).show();
             ephemeris.setObserver(location.getLongitude(), location.getLatitude(), 0);
+
+            Thread dummy = cpht;
+            cpht = new CheckPlanetaryHoursThread(1000);
+            if (dummy != null) {
+                dummy.interrupt();
+            }
+
+            refreshPlanetaryHours();
+
             Intent intent = new Intent();
-            intent.setAction(Events.UPDATED_LOCATION);
+            intent.setAction(Events.REFRESH_HOURS);
             localBroadcastManager.sendBroadcast(intent);
+
+            cpht.start();
         }
 
         @Override
         public void onStatusChanged(String s, int i, Bundle bundle) {
-
         }
 
         @Override
@@ -233,8 +249,13 @@ public class AeonDroidService extends Service {
                     final Date d = new Date();
                     boolean found_hour = false;
                     boolean hour_different = false;
+                    Intent intent = new Intent();
 
                     if (planetaryHours == null) {
+                        lastIndex = -1;
+                        intent.setAction(Events.REFRESH_HOURS);
+                        refreshPlanetaryHours(d);
+                        localBroadcastManager.sendBroadcast(intent);
                         continue;
                     }
                     int item_count = planetaryHours.size();
@@ -266,7 +287,6 @@ public class AeonDroidService extends Service {
                         }
                     }
 
-                    Intent intent = new Intent();
                     if (!found_hour) {
                         intent.setAction(Events.REFRESH_HOURS);
                         lastIndex = -1;
