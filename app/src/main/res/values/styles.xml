@@ -3,12 +3,12 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme">
         <!-- Customize your theme here. -->
-        <item name="PlanetaryHours.Current">#33B5E5</item>
+        <item name="PlanetaryHours.Current">#007DA3</item>
     </style>
 
     <!-- Base application theme. -->
     <style name="AppThemeDark" parent="android:Theme.Black">
         <!-- Customize your theme here. -->
-        <item name="PlanetaryHours.Current">#33B5E5</item>
+        <item name="PlanetaryHours.Current">#007DA3</item>
     </style>
 </resources>
