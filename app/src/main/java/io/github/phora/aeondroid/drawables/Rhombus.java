@@ -47,7 +47,7 @@ public class Rhombus extends Drawable {
         Paint p = new Paint();
         p.setStyle(Style.FILL);
         p.setColor(getColor());
-        Path path = getEquilateralTriangle();
+        Path path = getRhombus();
         canvas.drawPath(path, p);
 
     }
@@ -80,7 +80,7 @@ public class Rhombus extends Drawable {
     /* see http://tech.chitgoks.com/2012/07/08/android-draw-equilateral-triangle-shapes-in-canvas/
     *
     */
-    private Path getEquilateralTriangle() {
+    private Path getRhombus() {
         Point startPoint = null, p2 = null, p3 = null, p4 = null;
         Rect bounds = getBounds();
         int width = bounds.right - bounds.left;
