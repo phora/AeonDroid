@@ -59,8 +59,8 @@ public class PlanetaryHoursFragment extends ListFragment {
         if (getActivity() != null) {
             Context app = getActivity().getApplicationContext();
             LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(app);
-            lbm.unregisterReceiver(highlightReceiver);
             lbm.unregisterReceiver(refreshReceiver);
+            lbm.unregisterReceiver(highlightReceiver);
         }
     }
 
@@ -70,8 +70,8 @@ public class PlanetaryHoursFragment extends ListFragment {
         if (getActivity() != null) {
             Context app = getActivity().getApplicationContext();
             LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(app);
-            lbm.registerReceiver(highlightReceiver, filterHighlight);
             lbm.registerReceiver(refreshReceiver, filterRefresh);
+            lbm.registerReceiver(highlightReceiver, filterHighlight);
         }
     }
 
@@ -110,7 +110,9 @@ public class PlanetaryHoursFragment extends ListFragment {
                 getListView().setSelection(selected_row);
                 _autoScrolledOnce = true;
             }
-            pha.setHourSelection(selected_row);
+            if (pha != null) {
+                pha.setHourSelection(selected_row);
+            }
         }
     }
 

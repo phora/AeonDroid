@@ -69,18 +69,18 @@ public class AeonDroidService extends Service {
         this.usingGPS = usingGPS;
     }
 
-    public ArrayList<PlanetaryHour> getPlanetaryHours() {
+    public synchronized ArrayList<PlanetaryHour> getPlanetaryHours() {
         if (planetaryHours == null) {
             refreshPlanetaryHours();
         }
         return planetaryHours;
     }
 
-    public void refreshPlanetaryHours(Date d) {
+    public synchronized void refreshPlanetaryHours(Date d) {
         planetaryHours = ephemeris.getPlanetaryHours(d);
     }
 
-    public void refreshPlanetaryHours() {
+    public synchronized void refreshPlanetaryHours() {
         planetaryHours = ephemeris.getPlanetaryHours(new Date());
     }
 
@@ -255,7 +255,7 @@ public class AeonDroidService extends Service {
                         lastIndex = -1;
                         intent.setAction(Events.REFRESH_HOURS);
                         refreshPlanetaryHours(d);
-                        localBroadcastManager.sendBroadcast(intent);
+                        localBroadcastManager.sendBroadcastSync(intent);
                         continue;
                     }
                     int item_count = planetaryHours.size();
@@ -288,10 +288,10 @@ public class AeonDroidService extends Service {
                     }
 
                     if (!found_hour) {
-                        intent.setAction(Events.REFRESH_HOURS);
                         lastIndex = -1;
+                        intent.setAction(Events.REFRESH_HOURS);
                         refreshPlanetaryHours(d);
-                        localBroadcastManager.sendBroadcast(intent);
+                        localBroadcastManager.sendBroadcastSync(intent);
                     } else {
                         intent.setAction(Events.FOUND_HOUR);
                         PlanetaryHour ph = planetaryHours.get(lastIndex);
