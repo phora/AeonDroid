@@ -45,6 +45,8 @@ public class AeonDroidService extends Service {
     private LocalBroadcastManager localBroadcastManager;
     private ArrayList<MoonPhase> moonPhases;
 
+    private PendingIntent contentIntent;
+
     public Ephemeris getEphemeris() {
         return ephemeris;
     }
@@ -132,7 +134,7 @@ public class AeonDroidService extends Service {
                 .setWhen(System.currentTimeMillis())
                 .setOngoing(true);
         Intent startIntent = new Intent(this, MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this,
+        contentIntent = PendingIntent.getActivity(this,
                 NOTI_REQUEST_CODE, startIntent, 0);
         builder.setContentIntent(contentIntent);
         Notification notification = builder.build();
@@ -304,8 +306,10 @@ public class AeonDroidService extends Service {
                                     .setContentTitle(getString(R.string.app_name))
                                     .setTicker(content_text)
                                     .setContentText(content_text)
+                                    .setContentIntent(contentIntent)
                                     .setSmallIcon(R.mipmap.ic_launcher)
                                     .setOngoing(true);
+
                             notificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());
                         }
 
