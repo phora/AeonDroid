@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -31,11 +32,48 @@ public class MoonPhaseAdapter extends ArrayAdapter<MoonPhase> {
 
         TextView stampView = (TextView)convertView.findViewById(R.id.MoonPhase_Time);
         TextView phaseView = (TextView)convertView.findViewById(R.id.MoonPhase_PhaseString);
+        ImageView phaseImage = (ImageView)convertView.findViewById(R.id.MoonPhase_Image);
 
         stampView.setText(EphemerisUtils.DATE_FMT.format(mp.getTimeStamp()));
         phaseView.setText(getPhaseString(mp));
+        phaseImage.setImageResource(getPhaseImage(mp));
 
         return convertView;
+    }
+
+    private int getPhaseImage(MoonPhase mp) {
+        if (mp.getPhaseType() == MoonPhase.PhaseType.NEW) {
+            return R.drawable.moon_new;
+        }
+        else if (mp.getPhaseType() == MoonPhase.PhaseType.FULL) {
+            return R.drawable.moon_full;
+        }
+        else if (mp.getPhaseType() == MoonPhase.PhaseType.QUARTER) {
+            if (mp.isWaxing()) {
+                return R.drawable.moon_first_quarter;
+            }
+            else {
+                return R.drawable.moon_last_quarter;
+            }
+        }
+        else {
+            if (mp.getPhaseType() == MoonPhase.PhaseType.CRESCENT) {
+                if (mp.isWaxing()) {
+                    return R.drawable.moon_waxing_crescent;
+                }
+                else {
+                    return R.drawable.moon_waning_crescent;
+                }
+            }
+            else {
+                if (mp.isWaxing()) {
+                    return R.drawable.moon_waxing_gibbous;
+                }
+                else {
+                    return R.drawable.moon_waning_gibbous;
+                }
+            }
+        }
     }
 
     private String getPhaseString(MoonPhase mp) {

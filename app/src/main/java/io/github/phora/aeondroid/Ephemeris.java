@@ -70,7 +70,7 @@ public class Ephemeris {
     }
 
     public Date predictMoonPhase(double cycles, int offset, double target_angle) {
-        if (target_angle < -90 || target_angle > 180) {
+        if (target_angle < -180 || target_angle > 180) {
             return null;
         }
         cycles = ((int)cycles)+offset;
@@ -241,13 +241,18 @@ public class Ephemeris {
         double moon_cycles = EphemerisUtils.dateToMoonCycles(date);
 
         Date new_moon_start = predictMoonPhase(moon_cycles, 0, 0);
+        Date waxing_crescent = predictMoonPhase(moon_cycles, 0, -45);
         Date first_quarter = predictMoonPhase(moon_cycles, 0, -90);
+        Date waxing_gibbous = predictMoonPhase(moon_cycles, 0, -135);
         Date full_moon = predictMoonPhase(moon_cycles, 0, 180);
+        Date waning_gibbous = predictMoonPhase(moon_cycles, 1, 135);
         Date last_quarter = predictMoonPhase(moon_cycles, 1, 90);
+        Date waning_crescent = predictMoonPhase(moon_cycles, 1, 45);
         Date new_moon_end = predictMoonPhase(moon_cycles, 1, 0);
 
-        Date[] tmp = new Date[]{new_moon_start, first_quarter,
-                full_moon, last_quarter, new_moon_end};
+        Date[] tmp = new Date[]{new_moon_start, waxing_crescent, first_quarter,
+                waxing_gibbous, full_moon, waning_gibbous,
+                last_quarter, waning_crescent, new_moon_end};
 
         ArrayList<MoonPhase> output = new ArrayList<>();
 
