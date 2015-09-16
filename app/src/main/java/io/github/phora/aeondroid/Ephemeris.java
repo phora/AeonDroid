@@ -148,7 +148,7 @@ public class Ephemeris {
             cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-2);
             next_sunrise = sunrise.doubleValue();
             sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
-            sunset = getBodyRise(cal.getTime(), SweConst.SE_SUN);
+            sunset = getBodySet(cal.getTime(), SweConst.SE_SUN);
         }
         else {
             Log.d("Ephmeris", "Getting the hours for the current day, sun rose");
