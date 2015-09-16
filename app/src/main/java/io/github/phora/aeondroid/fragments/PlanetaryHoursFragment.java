@@ -110,8 +110,12 @@ public class PlanetaryHoursFragment extends ListFragment implements BroadcastRec
             Log.d("PHFragment", "Received highlight update");
             int selected_row = intent.getIntExtra(Events.EXTRA_HOUR_INDEX, -1);
             if (!_autoScrolledOnce) {
-                getListView().setSelection(selected_row);
-                _autoScrolledOnce = true;
+                try {
+                    getListView().setSelection(selected_row);
+                    _autoScrolledOnce = true;
+                } catch (IllegalStateException e) {
+                    Log.d("PHFragment", "Don't scroll yet, the view's not ready");
+                }
             }
             if (pha != null) {
                 pha.setHourSelection(selected_row);

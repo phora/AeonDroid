@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -115,6 +116,15 @@ public class MainActivity extends FragmentActivity {
             isBound = bindService(bindIntent, myConnection,
                     Context.BIND_AUTO_CREATE);
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
+        Intent intent = new Intent();
+        intent.setAction(Events.REFRESH_HOURS);
+        lbm.sendBroadcastSync(intent);
     }
 
     @Override
