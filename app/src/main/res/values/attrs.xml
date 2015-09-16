@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <attr name="PlanetaryHours.Current" format="reference|color" />
+    <attr name="PlanetaryHours.Sun" format="reference" />
+    <attr name="PlanetaryHours.Mercury" format="reference" />
+    <attr name="PlanetaryHours.Venus" format="reference" />
+    <attr name="PlanetaryHours.Moon" format="reference" />
+    <attr name="PlanetaryHours.Mars" format="reference" />
+    <attr name="PlanetaryHours.Jupiter" format="reference" />
+    <attr name="PlanetaryHours.Saturn" format="reference" />
 </resources>

@@ -4,11 +4,25 @@
     <style name="AppTheme" parent="android:Theme">
         <!-- Customize your theme here. -->
         <item name="PlanetaryHours.Current">#007DA3</item>
+        <item name="PlanetaryHours.Sun" >@drawable/sun_light</item>
+        <item name="PlanetaryHours.Mercury">@drawable/mercury_light</item>
+        <item name="PlanetaryHours.Venus">@drawable/venus_light</item>
+        <item name="PlanetaryHours.Moon">@drawable/moon_light</item>
+        <item name="PlanetaryHours.Mars">@drawable/mars_light</item>
+        <item name="PlanetaryHours.Jupiter">@drawable/jupiter_light</item>
+        <item name="PlanetaryHours.Saturn">@drawable/saturn_light</item>
     </style>
 
     <!-- Base application theme. -->
     <style name="AppThemeDark" parent="android:Theme.Black">
         <!-- Customize your theme here. -->
         <item name="PlanetaryHours.Current">#007DA3</item>
+        <item name="PlanetaryHours.Sun" >@drawable/sun_dark</item>
+        <item name="PlanetaryHours.Mercury">@drawable/mercury_dark</item>
+        <item name="PlanetaryHours.Venus">@drawable/venus_dark</item>
+        <item name="PlanetaryHours.Moon">@drawable/moon_dark</item>
+        <item name="PlanetaryHours.Mars">@drawable/mars_dark</item>
+        <item name="PlanetaryHours.Jupiter">@drawable/jupiter_dark</item>
+        <item name="PlanetaryHours.Saturn">@drawable/saturn_dark</item>
     </style>
 </resources>

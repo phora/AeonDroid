@@ -46,6 +46,9 @@ public class AeonDroidService extends Service {
     private ArrayList<MoonPhase> moonPhases;
 
     private PendingIntent contentIntent;
+    private boolean _firstRun = true;
+
+
 
     public Ephemeris getEphemeris() {
         return ephemeris;
@@ -123,8 +126,6 @@ public class AeonDroidService extends Service {
 
         ephemeris = new Ephemeris(getApplicationContext().getFilesDir() + File.separator + "/ephe", 0, 0, 0);
         locUpdater = new LocUpdater();
-
-        recheckGps();
     }
 
     private void createNotification() {
@@ -161,21 +162,28 @@ public class AeonDroidService extends Service {
             double longitude = Double.valueOf(preferences.getString("CurrentLoc.Longitude", "0"));
             double latitude = Double.valueOf(preferences.getString("CurrentLoc.Latitude", "0"));
             double altitude = Double.valueOf(preferences.getString("CurrentLoc.Altitude", "0"));
-            ephemeris.setObserver(longitude, latitude, altitude);
-            refreshPlanetaryHours();
 
             Thread dummy = cpht;
             cpht = new CheckPlanetaryHoursThread(1000);
             if (dummy != null) {
                 dummy.interrupt();
             }
-            cpht.start();
 
-            if (usingGPS != prevUsingGPS) {
+            boolean observer_different;
+            double[] cur_obv = ephemeris.getObserver();
+            observer_different = (cur_obv[0] != longitude) || (cur_obv[1] != latitude) || (cur_obv[2] != altitude);
+
+            ephemeris.setObserver(longitude, latitude, altitude);
+            refreshPlanetaryHours();
+
+            if ((usingGPS != prevUsingGPS) || observer_different || _firstRun) {
+                _firstRun = false;
                 Intent intent = new Intent();
                 intent.setAction(Events.REFRESH_HOURS);
-                localBroadcastManager.sendBroadcast(intent);
+                localBroadcastManager.sendBroadcastSync(intent);
             }
+
+            cpht.start();
         }
     }
 

@@ -32,7 +32,7 @@ public class Ephemeris {
 
     public Ephemeris(String search_path, double[] observer) {
         sw = new SwissEph(search_path);
-        if (observer.length == 3) {
+        if (observer != null && observer.length == 3) {
             this.observer = observer;
         }
         else {

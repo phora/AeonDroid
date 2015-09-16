@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,7 +27,7 @@ import swisseph.SweDate;
 /**
  * Created by phora on 9/9/15.
  */
-public class PlanetaryHoursAdapter extends ArrayAdapter<PlanetaryHour> {
+public class PlanetaryHoursAdapter extends BaseAdapter {
 
     private static Drawable BASE_CHAKRA = null;
     private static Drawable SACRAL_CHAKRA = null;
@@ -39,8 +40,28 @@ public class PlanetaryHoursAdapter extends ArrayAdapter<PlanetaryHour> {
     private int hourSelection = -1;
     private int hourStyle = 0;
 
+    private Context mContext;
+    private ArrayList<PlanetaryHour> mPhours;
+
     public PlanetaryHoursAdapter(Context context, ArrayList<PlanetaryHour> phours) {
-        super(context, 0, phours);
+        super();
+        mContext = context;
+        mPhours = phours;
+    }
+
+    @Override
+    public int getCount() {
+        return mPhours.size();
+    }
+
+    @Override
+    public PlanetaryHour getItem(int i) {
+        return mPhours.get(i);
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return i;
     }
 
     @Override
@@ -48,7 +69,7 @@ public class PlanetaryHoursAdapter extends ArrayAdapter<PlanetaryHour> {
         PlanetaryHour ph = getItem(position);
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.phours_item, parent, false);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.phours_item, parent, false);
         }
 
         ImageView pHoursIcon = (ImageView)convertView.findViewById(R.id.PlanetaryHours_Icon);
@@ -56,12 +77,12 @@ public class PlanetaryHoursAdapter extends ArrayAdapter<PlanetaryHour> {
         TextView pHoursTime = (TextView)convertView.findViewById(R.id.PlanetaryHours_Time);
         View pDayStripe = convertView.findViewById(R.id.PlanetaryHours_DayStripe);
 
-        String[] planets = getContext().getResources().getStringArray(R.array.PlanetNames);
+        String[] planets = mContext.getResources().getStringArray(R.array.PlanetNames);
         Date d = SweDate.getDate(ph.getHourStamp());
 
         if (hourSelection == position) {
             TypedValue typedValue = new TypedValue();
-            getContext().getTheme().resolveAttribute(R.attr.PlanetaryHours_Current, typedValue, true);
+            mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Current, typedValue, true);
             if (typedValue.type == TypedValue.TYPE_REFERENCE) {
                 convertView.setBackgroundResource(typedValue.resourceId);
             } else {
@@ -92,52 +113,33 @@ public class PlanetaryHoursAdapter extends ArrayAdapter<PlanetaryHour> {
 
         return convertView;
     }
-
-    private boolean getIsDark() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        boolean isdark = preferences.getBoolean("isDark", false);
-        return isdark;
-    }
     
     private int getPlanetSymbol(int i) {
-        if (getIsDark()) {
-            switch (i) {
-                case 0:
-                    return R.drawable.sun_dark;
-                case 1:
-                    return R.drawable.venus_dark;
-                case 2:
-                    return R.drawable.mercury_dark;
-                case 3:
-                    return R.drawable.moon_dark;
-                case 4:
-                    return R.drawable.saturn_dark;
-                case 5:
-                    return R.drawable.jupiter_dark;
-                case 6:
-                    return R.drawable.mars_dark;
-                default:
-                    return 0;
-            }
-        } else {
-            switch (i) {
-                case 0:
-                    return R.drawable.sun_light;
-                case 1:
-                    return R.drawable.venus_light;
-                case 2:
-                    return R.drawable.mercury_light;
-                case 3:
-                    return R.drawable.moon_light;
-                case 4:
-                    return R.drawable.saturn_light;
-                case 5:
-                    return R.drawable.jupiter_light;
-                case 6:
-                    return R.drawable.mars_light;
-                default:
-                    return 0;
-            }            
+        TypedValue tv = new TypedValue();
+        switch (i) {
+            case 0:
+                mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Sun, tv, false);
+                return tv.data;
+            case 1:
+                mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Venus, tv, false);
+                return tv.data;
+            case 2:
+                mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Mercury, tv, false);
+                return tv.data;
+            case 3:
+                mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Moon, tv, false);
+                return tv.data;
+            case 4:
+                mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Saturn, tv, false);
+                return tv.data;
+            case 5:
+                mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Jupiter, tv, false);
+                return tv.data;
+            case 6:
+                mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Mars, tv, false);
+                return tv.data;
+            default:
+                return 0;
         }
     }
 

@@ -1,10 +1,8 @@
 package io.github.phora.aeondroid.activities;
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.IBinder;
@@ -25,13 +23,14 @@ import java.util.ArrayList;
 
 import io.github.phora.aeondroid.AeonDroidService;
 import io.github.phora.aeondroid.Events;
+import io.github.phora.aeondroid.fragments.BroadcastReceivable;
 import io.github.phora.aeondroid.fragments.MoonPhaseFragment;
 import io.github.phora.aeondroid.fragments.PlanetaryHoursFragment;
 import io.github.phora.aeondroid.R;
+import io.github.phora.aeondroid.fragments.ReceiverFilterPair;
 
 public class MainActivity extends FragmentActivity {
 
-    private IntentFilter filterLocUpdate;
     private ViewPager viewPager;
 
     @Override
@@ -46,11 +45,12 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = new Intent(this, AeonDroidService.class);
-        startService(intent);
-
         viewPager = (ViewPager)findViewById(R.id.pager);
-        viewPager.setAdapter(new MainTabsAdapter(getSupportFragmentManager()));
+        mainTabsAdapter = new MainTabsAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(mainTabsAdapter);
+
+        Intent intent = new Intent(getApplicationContext(), AeonDroidService.class);
+        startService(intent);
     }
 
     public AeonDroidService getServiceReference() {
@@ -59,6 +59,7 @@ public class MainActivity extends FragmentActivity {
 
     private AeonDroidService serviceReference;
     private boolean isBound;
+    private MainTabsAdapter mainTabsAdapter;
 
     private ServiceConnection myConnection =  new ServiceConnection() {
         @Override
@@ -71,6 +72,7 @@ public class MainActivity extends FragmentActivity {
             Log.i("MainActivity", "Bound service connected");
             serviceReference = ((AeonDroidService.AeonDroidBinder) service).getService();
             isBound = true;
+            serviceReference.recheckGps();
 
             Intent intent = new Intent();
             //intent.setAction(Events.REFRESH_HOURS);
@@ -118,12 +120,43 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
         LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
+
+        for (int i = 0; i < mainTabsAdapter.getCount(); i++) {
+            try {
+                BroadcastReceivable br = (BroadcastReceivable) mainTabsAdapter.getItem(i);
+                if (br.hasReceivers()) {
+                    for (ReceiverFilterPair rfp : br.getReceivers()) {
+                        rfp.unregister(lbm);
+                    }
+                }
+            }
+            catch (ClassCastException e) {
+                continue;
+            }
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
+
+        for (int i = 0; i < mainTabsAdapter.getCount(); i++) {
+            try {
+                BroadcastReceivable br = (BroadcastReceivable) mainTabsAdapter.getItem(i);
+                if (br.hasReceivers()) {
+                    for (ReceiverFilterPair rfp : br.getReceivers()) {
+                        rfp.register(lbm);
+                    }
+                }
+            } catch (ClassCastException e) {
+                continue;
+            }
+        }
+
         if (!isBound) {
             doBindService();
         }

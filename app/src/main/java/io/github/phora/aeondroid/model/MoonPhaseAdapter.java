@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,10 +17,30 @@ import io.github.phora.aeondroid.R;
 /**
  * Created by phora on 9/13/15.
  */
-public class MoonPhaseAdapter extends ArrayAdapter<MoonPhase> {
-    
+public class MoonPhaseAdapter extends BaseAdapter {
+
+    private final Context mContext;
+    private final ArrayList<MoonPhase> mPhases;
+
     public MoonPhaseAdapter(Context context, ArrayList<MoonPhase> phases) {
-        super(context, 0, phases);
+        super();
+        mContext = context;
+        mPhases = phases;
+    }
+
+    @Override
+    public int getCount() {
+        return mPhases.size();
+    }
+
+    @Override
+    public MoonPhase getItem(int i) {
+        return mPhases.get(i);
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return i;
     }
 
     @Override
@@ -27,7 +48,7 @@ public class MoonPhaseAdapter extends ArrayAdapter<MoonPhase> {
         MoonPhase mp = getItem(position);
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.moonphase_item, parent, false);
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.moonphase_item, parent, false);
         }
 
         TextView stampView = (TextView)convertView.findViewById(R.id.MoonPhase_Time);
@@ -77,7 +98,7 @@ public class MoonPhaseAdapter extends ArrayAdapter<MoonPhase> {
     }
 
     private String getPhaseString(MoonPhase mp) {
-        Context context = getContext();
+        Context context = mContext;
         String fmt = context.getString(R.string.waxwanefmt);
 
         if (mp.getPhaseType() == MoonPhase.PhaseType.NEW) {

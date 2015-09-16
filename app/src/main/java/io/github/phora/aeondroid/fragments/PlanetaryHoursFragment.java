@@ -9,13 +9,16 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
+import io.github.phora.aeondroid.AeonDroidService;
 import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.model.PlanetaryHour;
 import io.github.phora.aeondroid.model.PlanetaryHoursAdapter;
@@ -25,26 +28,30 @@ import io.github.phora.aeondroid.activities.MainActivity;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PlanetaryHoursFragment extends ListFragment {
+public class PlanetaryHoursFragment extends ListFragment implements BroadcastReceivable {
 
     private boolean _autoScrolledOnce;
-    private HighlightReceiver highlightReceiver;
-    private RefreshReceiver refreshReceiver;
     private PlanetaryHoursAdapter pha;
 
-    private IntentFilter filterHighlight;
-    private IntentFilter filterRefresh;
+    private List<ReceiverFilterPair> backingStore;
+
+    private boolean _styleLateSet;
+    private int _delayedHourStyle;
 
     public PlanetaryHoursFragment() {
-        filterHighlight = new IntentFilter(Events.FOUND_HOUR);
-        filterRefresh = new IntentFilter(Events.REFRESH_HOURS);
+        backingStore = new LinkedList<>();
 
-        highlightReceiver = new HighlightReceiver();
-        refreshReceiver = new RefreshReceiver();
+        IntentFilter filterHighlight = new IntentFilter(Events.FOUND_HOUR);
+        IntentFilter filterRefresh = new IntentFilter(Events.REFRESH_HOURS);
+
+        HighlightReceiver highlightReceiver = new HighlightReceiver();
+        RefreshReceiver refreshReceiver = new RefreshReceiver();
+
+        backingStore.add(new ReceiverFilterPair(refreshReceiver, filterRefresh));
+        backingStore.add(new ReceiverFilterPair(highlightReceiver, filterHighlight));
     }
 
     @Override
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_phours, container, false);
@@ -58,26 +65,21 @@ public class PlanetaryHoursFragment extends ListFragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (getActivity() != null) {
-            Context app = getActivity().getApplicationContext();
-            LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(app);
-            lbm.unregisterReceiver(refreshReceiver);
-            lbm.unregisterReceiver(highlightReceiver);
-        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (getActivity() != null) {
-            Context app = getActivity().getApplicationContext();
-            LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(app);
-            lbm.registerReceiver(refreshReceiver, filterRefresh);
-            lbm.registerReceiver(highlightReceiver, filterHighlight);
+        if (getContext() != null) {
+            Context app = getContext().getApplicationContext();
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(app);
             int hoursStyle = Integer.valueOf(preferences.getString("phoursIndicator", "0"));
             if (pha != null) {
                 pha.setHourStyle(hoursStyle);
+            }
+            else {
+                _styleLateSet = true;
+                _delayedHourStyle = hoursStyle;
             }
         }
     }
@@ -92,24 +94,31 @@ public class PlanetaryHoursFragment extends ListFragment {
         return fragment;
     }
 
+    @Override
+    public boolean hasReceivers() {
+        return backingStore != null;
+    }
+
+    @Override
+    public List<ReceiverFilterPair> getReceivers() {
+        return backingStore;
+    }
+
     private class HighlightReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d("PHFragment", "Received highlight update");
             int selected_row = intent.getIntExtra(Events.EXTRA_HOUR_INDEX, -1);
-            if (pha == null) {
-                MainActivity ma = (MainActivity)getActivity();
-                if (ma != null && ma.getServiceReference() != null) {
-                    ArrayList<PlanetaryHour> phl = ma.getServiceReference().getPlanetaryHours();
-                    pha = new PlanetaryHoursAdapter(ma, phl);
-                    setListAdapter(pha);
-                }
-            }
             if (!_autoScrolledOnce) {
                 getListView().setSelection(selected_row);
                 _autoScrolledOnce = true;
             }
             if (pha != null) {
                 pha.setHourSelection(selected_row);
+                if (_styleLateSet) {
+                    _styleLateSet = false;
+                    pha.setHourStyle(_delayedHourStyle);
+                }
             }
         }
     }
@@ -118,10 +127,20 @@ public class PlanetaryHoursFragment extends ListFragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             _autoScrolledOnce = false;
-            MainActivity ma = (MainActivity)getActivity();
-            ArrayList<PlanetaryHour> phl = ma.getServiceReference().getPlanetaryHours();
-            pha = new PlanetaryHoursAdapter(getActivity(), phl);
-            setListAdapter(pha);
+            Log.d("PHFragment", "Received refresh update");
+
+            Intent peekIntent = new Intent(context, AeonDroidService.class);
+            AeonDroidService.AeonDroidBinder adb = (AeonDroidService.AeonDroidBinder)peekService(context, peekIntent);
+
+            if (adb != null) {
+                ArrayList<PlanetaryHour> phl = adb.getService().getPlanetaryHours();
+                pha = new PlanetaryHoursAdapter(getActivity(), phl);
+                setListAdapter(pha);
+                if (_styleLateSet) {
+                    _styleLateSet = false;
+                    pha.setHourStyle(_delayedHourStyle);
+                }
+            }
         }
     }
 }
