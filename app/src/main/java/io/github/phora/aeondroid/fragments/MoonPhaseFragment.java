@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import io.github.phora.aeondroid.AeonDroidService;
 import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.activities.MainActivity;
@@ -179,9 +180,12 @@ public class MoonPhaseFragment extends ListFragment implements AbsListView.OnIte
     private class RefreshReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            MainActivity ma = (MainActivity)getActivity();
-            if (ma != null && ma.getServiceReference() != null) {
-                mAdapter = new MoonPhaseAdapter(getActivity(), ma.getServiceReference().getMoonPhases());
+
+            Intent peekIntent = new Intent(context, AeonDroidService.class);
+            AeonDroidService.AeonDroidBinder adb = (AeonDroidService.AeonDroidBinder)peekService(context, peekIntent);
+
+            if (adb != null) {
+                mAdapter = new MoonPhaseAdapter(getActivity(), adb.getService().getMoonPhases());
             }
 
             // Set the adapter
