@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +16,12 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import io.github.phora.aeondroid.AeonDroidService;
 import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.R;
-import io.github.phora.aeondroid.activities.MainActivity;
 import io.github.phora.aeondroid.model.MoonPhaseAdapter;
 
 /**
@@ -31,14 +33,14 @@ import io.github.phora.aeondroid.model.MoonPhaseAdapter;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class MoonPhaseFragment extends ListFragment implements AbsListView.OnItemClickListener {
+public class MoonPhaseFragment extends ListFragment implements AbsListView.OnItemClickListener, BroadcastReceivable {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private final IntentFilter filterRefresh;
-    private final RefreshReceiver refreshReceiver;
+
+    private List<ReceiverFilterPair> backingStore;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -72,8 +74,10 @@ public class MoonPhaseFragment extends ListFragment implements AbsListView.OnIte
      * fragment (e.g. upon screen orientation changes).
      */
     public MoonPhaseFragment() {
-        filterRefresh = new IntentFilter(Events.REFRESH_MOON_PHASE);
-        refreshReceiver = new RefreshReceiver();
+        backingStore = new LinkedList<>();
+        IntentFilter filterRefresh = new IntentFilter(Events.REFRESH_MOON_PHASE);
+        RefreshReceiver refreshReceiver = new RefreshReceiver();
+        backingStore.add(new ReceiverFilterPair(refreshReceiver, filterRefresh));
     }
 
     @Override
@@ -106,21 +110,17 @@ public class MoonPhaseFragment extends ListFragment implements AbsListView.OnIte
     @Override
     public void onResume() {
         super.onResume();
-        if (getActivity() != null) {
+        /*if (getActivity() != null) {
             Context app = getActivity().getApplicationContext();
-            LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(app);
-            lbm.registerReceiver(refreshReceiver, filterRefresh);
-        }
+        }*/
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (getActivity() != null) {
+        /* if (getActivity() != null) {
             Context app = getActivity().getApplicationContext();
-            LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(app);
-            lbm.unregisterReceiver(refreshReceiver);
-        }
+        }*/
     }
 
     @Override
@@ -162,6 +162,16 @@ public class MoonPhaseFragment extends ListFragment implements AbsListView.OnIte
         }
     }
 
+    @Override
+    public boolean hasReceivers() {
+        return true;
+    }
+
+    @Override
+    public List<ReceiverFilterPair> getReceivers() {
+        return backingStore;
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -186,6 +196,9 @@ public class MoonPhaseFragment extends ListFragment implements AbsListView.OnIte
 
             if (adb != null) {
                 mAdapter = new MoonPhaseAdapter(getActivity(), adb.getService().getMoonPhases());
+            }
+            else {
+                Log.d("MPFragment", "Can't get phases, binder to service is null");
             }
 
             // Set the adapter

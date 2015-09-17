@@ -144,6 +144,8 @@ public class PlanetaryHoursFragment extends ListFragment implements BroadcastRec
                     _styleLateSet = false;
                     pha.setHourStyle(_delayedHourStyle);
                 }
+            } else {
+                Log.d("PHFragment", "Can't get hours, binder to service is null");
             }
         }
     }

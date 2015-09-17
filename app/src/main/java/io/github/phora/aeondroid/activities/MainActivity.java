@@ -75,11 +75,12 @@ public class MainActivity extends FragmentActivity {
             isBound = true;
             serviceReference.recheckGps();
 
+            // we need to do this in case the refresh event wasn't fired from the service
             Intent intent = new Intent();
-            //intent.setAction(Events.REFRESH_HOURS);
+            intent.setAction(Events.REFRESH_HOURS);
             LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
-            //lbm.sendBroadcast(intent);
-            //intent = new Intent();
+            lbm.sendBroadcast(intent);
+            intent = new Intent();
             intent.setAction(Events.REFRESH_MOON_PHASE);
             lbm.sendBroadcast(intent);
         }
