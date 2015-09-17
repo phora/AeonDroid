@@ -14,6 +14,14 @@
             android:entryValues="@array/pref_phours_style_values"
             android:defaultValue="0"
             />
+
+        <ListPreference
+            android:key="phoursIndicatorDrawer"
+            android:title="@string/pref_title_phours_drawer_style"
+            android:entries="@array/pref_phours_drawer_style_titles"
+            android:entryValues="@array/pref_phours_drawer_style_values"
+            android:defaultValue="0"
+            />
     </PreferenceCategory>
 
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->

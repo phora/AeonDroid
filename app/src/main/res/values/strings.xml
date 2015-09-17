@@ -29,4 +29,10 @@
         <item>Jupiter</item>
         <item>Mars</item>
     </string-array>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="PHoursAdapter_StartsAt">Starts at: %s</string>
+    <string name="PHoursAdapter_EndsAt">Ends at: %s</string>
+    <string name="ADService.PHourIs">Planetary hour is %1$s</string>
 </resources>

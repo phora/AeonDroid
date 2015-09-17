@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import io.github.phora.aeondroid.activities.MainActivity;
+import io.github.phora.aeondroid.drawables.PlanetIndicator;
 import io.github.phora.aeondroid.model.MoonPhase;
 import io.github.phora.aeondroid.model.PlanetaryHour;
 import swisseph.SweDate;
@@ -47,6 +48,7 @@ public class AeonDroidService extends Service {
 
     private PendingIntent contentIntent;
     private boolean _firstRun = true;
+    private PlanetIndicator pi;
 
 
 
@@ -123,6 +125,7 @@ public class AeonDroidService extends Service {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         createNotification();
         localBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+        pi = PlanetIndicator.getInstance(this);
 
         ephemeris = new Ephemeris(getApplicationContext().getFilesDir() + File.separator + "/ephe", 0, 0, 0);
         locUpdater = new LocUpdater();
@@ -304,19 +307,47 @@ public class AeonDroidService extends Service {
                         localBroadcastManager.sendBroadcastSync(intent);
                     } else {
                         intent.setAction(Events.FOUND_HOUR);
-                        PlanetaryHour ph = planetaryHours.get(lastIndex);
-                        String[] planets = getResources().getStringArray(R.array.PlanetNames);
-                        String planetname = planets[ph.getPlanetType()];
-                        String content_text = String.format("Current planetary hour is %1$s", planetname);
 
                         if (hour_different) {
+                            PlanetaryHour ph = planetaryHours.get(lastIndex);
+                            int planet_type = ph.getPlanetType();
+
+                            String[] planets = getResources().getStringArray(R.array.PlanetNames);
+                            String planetname = planets[planet_type];
+                            String content_text = String.format(getString(R.string.ADService_PHourIs), planetname);
+
+                            String starts_fmt = getString(R.string.PHoursAdapter_StartsAt);
+                            String ends_fmt = getString(R.string.PHoursAdapter_EndsAt);
+
+                            Date sd = SweDate.getDate(ph.getHourStamp());
+                            Date ed = SweDate.getDate(ph.getHourStamp() + ph.getHourLength());
+
+                            String starts_at  = String.format(starts_fmt, EphemerisUtils.DATE_FMT.format(sd));
+                            String ends_at = String.format(ends_fmt, EphemerisUtils.DATE_FMT.format(ed));
+
+                            String finresult = String.format("%s\n%s", starts_at, ends_at);
+
                             NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(AeonDroidService.this)
-                                    .setContentTitle(getString(R.string.app_name))
+                                    .setContentTitle(content_text)
                                     .setTicker(content_text)
-                                    .setContentText(content_text)
+                                    .setContentText(finresult)
                                     .setContentIntent(contentIntent)
-                                    .setSmallIcon(R.mipmap.ic_launcher)
                                     .setOngoing(true);
+
+                            //.setSmallIcon(R.mipmap.ic_launcher)
+
+                            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            int hoursStyle = Integer.valueOf(sp.getString("phoursIndicatorDrawer", "0"));
+
+                            if (hoursStyle == 0) {
+                                notifyBuilder.setSmallIcon(R.mipmap.ic_launcher);
+                            }
+                            else if (hoursStyle == 1) {
+                                notifyBuilder.setSmallIcon(pi.getChakraNoti(planet_type));
+                            }
+                            else {
+                                notifyBuilder.setSmallIcon(pi.getPlanetNoti(planet_type));
+                            }
 
                             notificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());
                         }

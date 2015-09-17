@@ -16,10 +16,11 @@ public class EphemerisUtils {
     public final static double LUNAR_MONTH_DAYS = 29.53058868;
     public final static double LAST_NM = 2415021.077777778;
     public final static double SOLAR_YEAR_DAYS = 365.2421934027778;
+
     public final static DateFormat DATE_FMT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public static SweDate dateToSweDate(Date d) {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));;
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         cal.setTime(d);
 
         double hour_double = (double)cal.get(Calendar.HOUR_OF_DAY) +

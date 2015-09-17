@@ -9,7 +9,5 @@
         android:id="@+id/pager_title_strip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:paddingTop="4dip"
-        android:paddingBottom="4dip"/>
+        android:layout_gravity="top"/>
 </android.support.v4.view.ViewPager>
