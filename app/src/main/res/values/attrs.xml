@@ -8,4 +8,7 @@
     <attr name="PlanetaryHours.Mars" format="reference" />
     <attr name="PlanetaryHours.Jupiter" format="reference" />
     <attr name="PlanetaryHours.Saturn" format="reference" />
+    <attr name="RightNow.Uranus" format="reference" />
+    <attr name="RightNow.Neptune" format="reference" />
+    <attr name="RightNow.Pluto" format="reference" />
 </resources>

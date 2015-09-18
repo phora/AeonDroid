@@ -9,6 +9,9 @@
         <item name="PlanetaryHours.Mars">@drawable/mars_light</item>
         <item name="PlanetaryHours.Jupiter">@drawable/jupiter_light</item>
         <item name="PlanetaryHours.Saturn">@drawable/saturn_light</item>
+        <item name="RightNow.Uranus">@drawable/uranus_light</item>
+        <item name="RightNow.Neptune">@drawable/neptune_light</item>
+        <item name="RightNow.Pluto">@drawable/pluto_light</item>
     </style>
 
     <style name="AppThemeDark" parent="android:Theme.Material">
@@ -20,5 +23,8 @@
         <item name="PlanetaryHours.Mars">@drawable/mars_dark</item>
         <item name="PlanetaryHours.Jupiter">@drawable/jupiter_dark</item>
         <item name="PlanetaryHours.Saturn">@drawable/saturn_dark</item>
+        <item name="RightNow.Uranus">@drawable/uranus_dark</item>
+        <item name="RightNow.Neptune">@drawable/neptune_dark</item>
+        <item name="RightNow.Pluto">@drawable/pluto_dark</item>
     </style>
 </resources>
