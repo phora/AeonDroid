@@ -196,7 +196,7 @@ public class MoonPhaseFragment extends ListFragment implements AbsListView.OnIte
             Intent peekIntent = new Intent(context, AeonDroidService.class);
             AeonDroidService.AeonDroidBinder adb = (AeonDroidService.AeonDroidBinder)peekService(context, peekIntent);
 
-            if (adb != null) {
+            if (adb != null && getActivity() != null) {
                 mAdapter = new MoonPhaseAdapter(getActivity(), adb.getService().getMoonPhases());
                 // Set the adapter
                 setListAdapter(mAdapter);

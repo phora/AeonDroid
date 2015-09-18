@@ -30,7 +30,7 @@ import io.github.phora.aeondroid.activities.MainActivity;
  */
 public class PlanetaryHoursFragment extends ListFragment implements BroadcastReceivable {
 
-    private boolean _autoScrolledOnce;
+    private boolean _autoScrolledOnce = false;
     private PlanetaryHoursAdapter pha;
 
     private List<ReceiverFilterPair> backingStore;
@@ -71,6 +71,7 @@ public class PlanetaryHoursFragment extends ListFragment implements BroadcastRec
     public void onResume() {
         super.onResume();
         if (getContext() != null) {
+            _autoScrolledOnce = false;
             Context app = getContext().getApplicationContext();
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(app);
             int hoursStyle = Integer.valueOf(preferences.getString("phoursIndicator", "0"));
@@ -111,8 +112,10 @@ public class PlanetaryHoursFragment extends ListFragment implements BroadcastRec
             int selected_row = intent.getIntExtra(Events.EXTRA_HOUR_INDEX, -1);
             if (!_autoScrolledOnce) {
                 try {
-                    getListView().setSelection(selected_row);
+                    Log.d("PHFragment", "Attempting to scroll to "+selected_row);
+                    getListView().setSelectionFromTop(selected_row, getListView().getHeight() / 2);
                     _autoScrolledOnce = true;
+                    Log.d("PHFragment", "Scrolling success");
                 } catch (IllegalStateException e) {
                     Log.d("PHFragment", "Don't scroll yet, the view's not ready");
                 }
@@ -136,7 +139,7 @@ public class PlanetaryHoursFragment extends ListFragment implements BroadcastRec
             Intent peekIntent = new Intent(context, AeonDroidService.class);
             AeonDroidService.AeonDroidBinder adb = (AeonDroidService.AeonDroidBinder)peekService(context, peekIntent);
 
-            if (adb != null) {
+            if (adb != null && getActivity() != null) {
                 ArrayList<PlanetaryHour> phl = adb.getService().getPlanetaryHours();
                 pha = new PlanetaryHoursAdapter(getActivity(), phl);
                 setListAdapter(pha);
