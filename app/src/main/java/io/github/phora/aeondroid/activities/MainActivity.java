@@ -78,13 +78,7 @@ public class MainActivity extends FragmentActivity {
 
             // we need to do this in case the refresh event wasn't fired from the service
             Log.i("MainActivity", "Forcing refresh retrieval");
-            Intent intent = new Intent();
-            intent.setAction(Events.REFRESH_HOURS);
-            LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
-            lbm.sendBroadcast(intent);
-            intent = new Intent();
-            intent.setAction(Events.REFRESH_MOON_PHASE);
-            lbm.sendBroadcast(intent);
+            forceRefresh();
         }
 
         @Override
@@ -98,6 +92,16 @@ public class MainActivity extends FragmentActivity {
             isBound = false;
         }
     };
+
+    private void forceRefresh() {
+        Intent intent = new Intent();
+        intent.setAction(Events.REFRESH_HOURS);
+        LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
+        lbm.sendBroadcast(intent);
+        intent = new Intent();
+        intent.setAction(Events.REFRESH_MOON_PHASE);
+        lbm.sendBroadcast(intent);
+    }
 
     private boolean getIsDark() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -172,6 +176,9 @@ public class MainActivity extends FragmentActivity {
 
         if (!isBound) {
             doBindService();
+        }
+        else {
+            forceRefresh();
         }
         if (isBound && serviceReference != null) {
             // we call this in case we manually changed our gps settings
