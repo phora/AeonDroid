@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import io.github.phora.aeondroid.EphemerisUtils;
+import io.github.phora.aeondroid.PhaseUtils;
 import io.github.phora.aeondroid.R;
 
 /**
@@ -57,8 +58,8 @@ public class MoonPhaseAdapter extends BaseAdapter {
         ImageView phaseImage = (ImageView)convertView.findViewById(R.id.MoonPhase_Image);
 
         stampView.setText(EphemerisUtils.DATE_FMT.format(mp.getTimeStamp()));
-        phaseView.setText(getPhaseString(mp));
-        phaseImage.setImageResource(getPhaseImage(mp));
+        phaseView.setText(PhaseUtils.getPhaseString(mContext, mp));
+        phaseImage.setImageResource(PhaseUtils.getPhaseImage(mp));
 
         if (phaseSelection == position) {
             TypedValue typedValue = new TypedValue();
@@ -74,79 +75,6 @@ public class MoonPhaseAdapter extends BaseAdapter {
         }
 
         return convertView;
-    }
-
-    private int getPhaseImage(MoonPhase mp) {
-        if (mp.getPhaseType() == MoonPhase.PhaseType.NEW) {
-            return R.drawable.moon_new;
-        }
-        else if (mp.getPhaseType() == MoonPhase.PhaseType.FULL) {
-            return R.drawable.moon_full;
-        }
-        else if (mp.getPhaseType() == MoonPhase.PhaseType.QUARTER) {
-            if (mp.isWaxing()) {
-                return R.drawable.moon_first_quarter;
-            }
-            else {
-                return R.drawable.moon_last_quarter;
-            }
-        }
-        else {
-            if (mp.getPhaseType() == MoonPhase.PhaseType.CRESCENT) {
-                if (mp.isWaxing()) {
-                    return R.drawable.moon_waxing_crescent;
-                }
-                else {
-                    return R.drawable.moon_waning_crescent;
-                }
-            }
-            else {
-                if (mp.isWaxing()) {
-                    return R.drawable.moon_waxing_gibbous;
-                }
-                else {
-                    return R.drawable.moon_waning_gibbous;
-                }
-            }
-        }
-    }
-
-    private String getPhaseString(MoonPhase mp) {
-        Context context = mContext;
-        String fmt = context.getString(R.string.waxwanefmt);
-
-        if (mp.getPhaseType() == MoonPhase.PhaseType.NEW) {
-            return context.getString(R.string.new_moon);
-        }
-        else if (mp.getPhaseType() == MoonPhase.PhaseType.FULL) {
-            return context.getString(R.string.full_moon);
-        }
-        else if (mp.getPhaseType() == MoonPhase.PhaseType.QUARTER) {
-            if (mp.isWaxing()) {
-                return String.format(fmt, context.getString(R.string.first_quarter),
-                        context.getString(R.string.quarter_sfx));
-            }
-            else {
-                return String.format(fmt, context.getString(R.string.last_quarter),
-                        context.getString(R.string.quarter_sfx));
-            }
-        }
-        else {
-            String part;
-            if (mp.getPhaseType() == MoonPhase.PhaseType.CRESCENT) {
-                part = context.getString(R.string.crescent_moon);
-            }
-            else {
-                part = context.getString(R.string.gibbous_moon);
-            }
-
-            if (mp.isWaxing()) {
-                return String.format(fmt, context.getString(R.string.waxing_moon), part);
-            }
-            else {
-                return String.format(fmt, context.getString(R.string.waning_moon), part);
-            }
-        }
     }
 
     public int getPhaseSelection() {
