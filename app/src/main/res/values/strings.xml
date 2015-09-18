@@ -19,20 +19,10 @@
     <string name="moon_phases">Moon Phases</string>
     <string name="pref_ringtone_silent">Silent</string>
 
-    <string-array name="PlanetNames">
-        <item>Sun</item>
-        <item>Venus</item>
-        <item>Mercury</item>
-        <item>Moon</item>
-        <item>Saturn</item>
-        <item>Jupiter</item>
-        <item>Mars</item>
-    </string-array>
-
 <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="PHoursAdapter_StartsAt">Starts at: %s</string>
     <string name="PHoursAdapter_EndsAt">Ends at: %s</string>
     <string name="ADService.PHourIs">Planetary hour is %1$s</string>
     <string name="ContentDescriptionDivider">divider</string>
+    <string name="right_now">Right Now</string>
 </resources>
