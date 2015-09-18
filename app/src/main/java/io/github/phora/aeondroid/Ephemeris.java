@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import io.github.phora.aeondroid.model.MoonPhase;
 import io.github.phora.aeondroid.model.PlanetaryHour;
@@ -48,6 +49,24 @@ public class Ephemeris {
         this.observer = new double[]{longitude, latitude, height};
     }
 
+    public Double getBodyPos(double day, int celestial_body) {
+        StringBuffer sb = new StringBuffer();
+
+        double[] resarray = new double[6];
+
+        int retcode = sw.swe_calc_ut(day, celestial_body,
+                SweConst.SEFLG_SWIEPH,
+                resarray, sb);
+
+        if (retcode == SweConst.ERR) {
+            Log.e("Ephemeris", sb.toString());
+            return null;
+        }
+        else {
+            return resarray[0];
+        }
+    }
+
     public Double getMoonSunDiff(double day) {
         StringBuffer sb = new StringBuffer();
 
@@ -61,10 +80,14 @@ public class Ephemeris {
                 SweConst.SEFLG_SWIEPH,
                 resarray2, sb);
 
-        if (retcode == SweConst.ERR)
+        if (retcode == SweConst.ERR) {
+            Log.e("Ephemeris", sb.toString());
             return null;
-        if (retcode2 == SweConst.ERR)
+        }
+        if (retcode2 == SweConst.ERR) {
+            Log.e("Ephemeris", sb.toString());
             return null;
+        }
 
         return EphemerisUtils.angleSubtract(resarray2[0], resarray[0]);
     }
@@ -91,7 +114,7 @@ public class Ephemeris {
     }
 
     public Double getBodyRise(Date date, int celestial_body) {
-        Calendar cal = new GregorianCalendar();
+        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         cal.setTime(date);
 
         StringBuffer sb = new StringBuffer();
@@ -107,14 +130,16 @@ public class Ephemeris {
                 this.observer, 0, 0, //geographic info. also, detect pressure and temperature?
                 dblobj, sb); //return value and buffer for errors
 
-        if (retcode != SweConst.OK)
+        if (retcode != SweConst.OK) {
+            Log.e("Ephemeris", sb.toString());
             return null;
+        }
         else
             return dblobj.val;
     }
 
     public Double getBodySet(Date date, int celestial_body) {
-        Calendar cal = new GregorianCalendar();
+        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         cal.setTime(date);
 
         StringBuffer sb = new StringBuffer();
@@ -129,31 +154,42 @@ public class Ephemeris {
                 this.observer, 0, 0, //geographic info. also, detect pressure and temperature?
                 dblobj, sb); //return value and buffer for errors
 
-        if (retcode != SweConst.OK)
+        if (retcode != SweConst.OK) {
+            Log.e("Ephemeris", sb.toString());
             return null;
+        }
         else
             return dblobj.val;
     }
 
     public ArrayList<PlanetaryHour> getPlanetaryHours(Date date) {
-        Calendar cal = new GregorianCalendar();
+        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         cal.setTime(date);
-        cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)+1);
+        cal.add(Calendar.DAY_OF_YEAR, -1);
+        //cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-1);
 
         Double sunrise, sunset, next_sunrise;
 
-        sunrise = getBodyRise(date, SweConst.SE_SUN);
-        if (date.before(SweDate.getDate(sunrise))) {
+        sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
+        if (date.compareTo(SweDate.getDate(sunrise)) <= 0) {
             Log.d("Ephmeris", "Getting the hours for the day before, sun didn't rise yet");
-            cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-2);
-            next_sunrise = sunrise.doubleValue();
-            sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
-            sunset = getBodySet(cal.getTime(), SweConst.SE_SUN);
+            Date old_cal_date = cal.getTime();
+            //cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-1);
+            cal.add(Calendar.DAY_OF_YEAR, -1);
+            next_sunrise = sunrise;
+            sunrise = getBodyRise(old_cal_date, SweConst.SE_SUN);
+            sunset = getBodySet(old_cal_date, SweConst.SE_SUN);
         }
         else {
             Log.d("Ephmeris", "Getting the hours for the current day, sun rose");
-            sunset = getBodySet(date, SweConst.SE_SUN);
-            next_sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
+            sunset = getBodySet(cal.getTime(), SweConst.SE_SUN);
+            if (sunset < sunrise) {
+                sunset = getBodySet(date, SweConst.SE_SUN);
+            }
+            next_sunrise = getBodyRise(date, SweConst.SE_SUN);
+            if (next_sunrise < sunset) {
+                next_sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
+            }
         }
 
         double day_length = sunset - sunrise;
@@ -161,6 +197,8 @@ public class Ephemeris {
 
         double day_hour_length = day_length/12.;
         double night_hour_length = night_length/12.;
+
+        Log.d("Ephmeris", String.format("Hours details: %.5f %.5f %.5f", sunrise, sunset, next_sunrise));
 
         ArrayList<PlanetaryHour> hours = new ArrayList<PlanetaryHour>();
         int day_offset = SweDate.getDayOfWeekNr(sunrise);
