@@ -1,16 +1,10 @@
 package io.github.phora.aeondroid.model;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.preference.PreferenceManager;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,9 +14,7 @@ import java.util.Date;
 
 import io.github.phora.aeondroid.EphemerisUtils;
 import io.github.phora.aeondroid.R;
-import io.github.phora.aeondroid.drawables.EquilateralTriangle;
 import io.github.phora.aeondroid.drawables.PlanetIndicator;
-import io.github.phora.aeondroid.drawables.Rhombus;
 import swisseph.SweDate;
 
 /**

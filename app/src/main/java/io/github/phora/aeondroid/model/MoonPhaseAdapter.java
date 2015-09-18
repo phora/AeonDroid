@@ -1,10 +1,10 @@
 package io.github.phora.aeondroid.model;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,6 +21,7 @@ public class MoonPhaseAdapter extends BaseAdapter {
 
     private final Context mContext;
     private final ArrayList<MoonPhase> mPhases;
+    private int phaseSelection = -1;
 
     public MoonPhaseAdapter(Context context, ArrayList<MoonPhase> phases) {
         super();
@@ -58,6 +59,19 @@ public class MoonPhaseAdapter extends BaseAdapter {
         stampView.setText(EphemerisUtils.DATE_FMT.format(mp.getTimeStamp()));
         phaseView.setText(getPhaseString(mp));
         phaseImage.setImageResource(getPhaseImage(mp));
+
+        if (phaseSelection == position) {
+            TypedValue typedValue = new TypedValue();
+            mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Current, typedValue, false);
+            if (typedValue.type == TypedValue.TYPE_REFERENCE) {
+                convertView.setBackgroundResource(typedValue.resourceId);
+            } else {
+                convertView.setBackgroundColor(typedValue.data);
+            }
+        }
+        else {
+            convertView.setBackgroundResource(0);
+        }
 
         return convertView;
     }
@@ -132,6 +146,18 @@ public class MoonPhaseAdapter extends BaseAdapter {
             else {
                 return String.format(fmt, context.getString(R.string.waning_moon), part);
             }
+        }
+    }
+
+    public int getPhaseSelection() {
+        return phaseSelection;
+    }
+
+    public void setPhaseSelection(int hourSelection) {
+        boolean call_invalidate = (this.phaseSelection != hourSelection);
+        this.phaseSelection = hourSelection;
+        if (call_invalidate) {
+            notifyDataSetChanged();
         }
     }
 }

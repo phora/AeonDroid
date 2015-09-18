@@ -57,7 +57,7 @@ public class MoonPhaseFragment extends ListFragment implements AbsListView.OnIte
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
      */
-    private ListAdapter mAdapter;
+    private MoonPhaseAdapter mAdapter;
 
     // TODO: Rename and change types of parameters
     public static MoonPhaseFragment newInstance() {
@@ -76,8 +76,11 @@ public class MoonPhaseFragment extends ListFragment implements AbsListView.OnIte
     public MoonPhaseFragment() {
         backingStore = new LinkedList<>();
         IntentFilter filterRefresh = new IntentFilter(Events.REFRESH_MOON_PHASE);
+        IntentFilter filterHighlight = new IntentFilter(Events.FOUND_PHASE);
         RefreshReceiver refreshReceiver = new RefreshReceiver();
+        HighlightReceiver highlightReceiver = new HighlightReceiver();
         backingStore.add(new ReceiverFilterPair(refreshReceiver, filterRefresh));
+        backingStore.add(new ReceiverFilterPair(highlightReceiver, filterHighlight));
     }
 
     @Override
@@ -190,19 +193,27 @@ public class MoonPhaseFragment extends ListFragment implements AbsListView.OnIte
     private class RefreshReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             Intent peekIntent = new Intent(context, AeonDroidService.class);
             AeonDroidService.AeonDroidBinder adb = (AeonDroidService.AeonDroidBinder)peekService(context, peekIntent);
 
             if (adb != null) {
                 mAdapter = new MoonPhaseAdapter(getActivity(), adb.getService().getMoonPhases());
+                // Set the adapter
+                setListAdapter(mAdapter);
             }
             else {
                 Log.d("MPFragment", "Can't get phases, binder to service is null");
             }
+        }
+    }
 
-            // Set the adapter
-            setListAdapter(mAdapter);
+    private class HighlightReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int index = intent.getIntExtra(Events.EXTRA_LPHASE_INDEX, -1);
+            if (mAdapter != null) {
+                mAdapter.setPhaseSelection(index);
+            }
         }
     }
 }

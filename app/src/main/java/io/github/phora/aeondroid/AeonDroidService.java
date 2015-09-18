@@ -42,6 +42,7 @@ public class AeonDroidService extends Service {
     private final AeonDroidBinder myBinder = new AeonDroidBinder();
     private LocUpdater locUpdater;
     private CheckPlanetaryHoursThread cpht = null;
+    private CheckMoonPhaseThread cmpt = null;
     private NotificationManager notificationManager;
     private LocalBroadcastManager localBroadcastManager;
     private ArrayList<MoonPhase> moonPhases;
@@ -98,11 +99,11 @@ public class AeonDroidService extends Service {
         return moonPhases;
     }
 
-    public void refreshMoonPhases() {
+    public synchronized void refreshMoonPhases() {
         refreshMoonPhases(new Date());
     }
 
-    public void refreshMoonPhases(Date d) {
+    public synchronized void refreshMoonPhases(Date d) {
         moonPhases = ephemeris.getMoonCycle(d);
     }
 
@@ -129,6 +130,9 @@ public class AeonDroidService extends Service {
 
         ephemeris = new Ephemeris(getApplicationContext().getFilesDir() + File.separator + "/ephe", 0, 0, 0);
         locUpdater = new LocUpdater();
+
+        cmpt = new CheckMoonPhaseThread(1000);
+        cmpt.start();
     }
 
     private void createNotification() {
@@ -194,6 +198,10 @@ public class AeonDroidService extends Service {
     public void onDestroy() {
         Thread dummy = cpht;
         cpht = null;
+        dummy.interrupt();
+
+        dummy = cmpt;
+        cmpt = null;
         dummy.interrupt();
         notificationManager.cancel(NOTIFICATION_ID);
     }
@@ -304,14 +312,14 @@ public class AeonDroidService extends Service {
                         lastIndex = -1;
                         intent.setAction(Events.REFRESH_HOURS);
                         refreshPlanetaryHours(d);
-                        localBroadcastManager.sendBroadcastSync(intent);
+                        localBroadcastManager.sendBroadcast(intent);
                     } else {
                         intent.setAction(Events.FOUND_HOUR);
 
-                        if (hour_different) {
-                            PlanetaryHour ph = planetaryHours.get(lastIndex);
-                            int planet_type = ph.getPlanetType();
+                        PlanetaryHour ph = planetaryHours.get(lastIndex);
+                        int planet_type = ph.getPlanetType();
 
+                        if (hour_different) {
                             String[] planets = getResources().getStringArray(R.array.PlanetNames);
                             String planetname = planets[planet_type];
                             String content_text = String.format(getString(R.string.ADService_PHourIs), planetname);
@@ -351,10 +359,95 @@ public class AeonDroidService extends Service {
 
                             notificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());
                         }
-
+                        intent.putExtra(Events.EXTRA_HOUR_TYPE, planet_type);
                         intent.putExtra(Events.EXTRA_HOUR_INDEX, lastIndex);
                         localBroadcastManager.sendBroadcast(intent);
                     }
+                }
+            } catch (InterruptedException e) {
+
+            }
+        }
+    }
+
+    private class CheckMoonPhaseThread extends Thread {
+        private int sleepVal;
+        private int lastIndex = -1;
+
+        public CheckMoonPhaseThread(int milliseconds) {
+            this.sleepVal = milliseconds;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (!isInterrupted()) {
+                    Thread.sleep(sleepVal);
+
+                    Intent intent = new Intent();
+                    Date d = new Date();
+
+                    if (moonPhases == null) {
+                        lastIndex = -1;
+                        intent.setAction(Events.REFRESH_MOON_PHASE);
+                        refreshMoonPhases(d);
+                        localBroadcastManager.sendBroadcast(intent);
+                        continue;
+                    }
+
+                    boolean found_phase = false;
+                    int count = moonPhases.size();
+
+                    if (lastIndex == -1) {
+                        for (int i = 0; i < count-1; i++) {
+                            MoonPhase mp = moonPhases.get(i);
+                            MoonPhase mp2 = moonPhases.get(i+1);
+
+                            Date dmp = mp.getTimeStamp();
+                            Date dmp2 = mp2.getTimeStamp();
+
+                            if (dmp.compareTo(d) <= 0 && dmp2.compareTo(d) >= 0) {
+                                lastIndex = i;
+                                found_phase = true;
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        for (int i = lastIndex; i < count-1; i++) {
+                            MoonPhase mp = moonPhases.get(i);
+                            MoonPhase mp2 = moonPhases.get(i+1);
+
+                            Date dmp = mp.getTimeStamp();
+                            Date dmp2 = mp2.getTimeStamp();
+
+                            if (dmp.compareTo(d) <= 0 && dmp2.compareTo(d) >= 0) {
+                                lastIndex = i;
+                                found_phase = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (found_phase) {
+                        intent.setAction(Events.FOUND_PHASE);
+                        intent.putExtra(Events.EXTRA_LPHASE_INDEX, lastIndex);
+                        localBroadcastManager.sendBroadcast(intent);
+                        //update sign info from here?
+                    }
+                    else {
+                        lastIndex = -1;
+                        refreshMoonPhases(d);
+                        intent.setAction(Events.REFRESH_MOON_PHASE);
+                        localBroadcastManager.sendBroadcast(intent);
+                    }
+
+                    intent = new Intent();
+                    intent.setAction(Events.PHASE_DETAILS);
+                    MoonPhase now = ephemeris.makeMoonPhaseForDate(d, moonPhases.get(4).getTimeStamp());
+                    intent.putExtra(Events.EXTRA_LPHASE_TYPE, now.getPhaseType());
+                    intent.putExtra(Events.EXTRA_LPHASE_WAXING, now.isWaxing());
+                    localBroadcastManager.sendBroadcast(intent);
                 }
             } catch (InterruptedException e) {
 
