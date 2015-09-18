@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,7 +64,8 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
     private TextView mUranusMeasure;
     private TextView mNeptuneMeasure;
     private TextView mPlutoMeasure;
-    
+    private TextView mMoonVOC;
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -96,6 +98,10 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
         IntentFilter measureFilter = new IntentFilter(Events.PLANET_POS);
         MeasureReceiver measureReceiver = new MeasureReceiver();
         backingStore.add(new ReceiverFilterPair(measureReceiver, measureFilter));
+
+        IntentFilter vocFilter = new IntentFilter(Events.VOC_STATUS);
+        VoCReceiver vocReceiver = new VoCReceiver();
+        backingStore.add(new ReceiverFilterPair(vocReceiver, vocFilter));
     }
 
     @Override
@@ -135,6 +141,7 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
         mPlutoMeasure = (TextView)v.findViewById(R.id.RightNow_PlutoMeasure);
         
         mMoonPhase = (TextView)v.findViewById(R.id.RightNow_MoonPhase);
+        mMoonVOC = (TextView)v.findViewById(R.id.RightNow_MoonVOC);
         return v;
     }
 
@@ -239,6 +246,38 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
                         tv.setText(measure_str);
                     }
                 }
+            }
+        }
+    }
+
+    private class VoCReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mMoonVOC == null) {
+                return;
+            }
+            boolean isVoC = intent.getBooleanExtra(Events.EXTRA_VOC_IN, false);
+            if (isVoC) {
+                String fmt = context.getString(R.string.currently_voc);
+
+                Date d = new Date(intent.getLongExtra(Events.EXTRA_VOC_TO_DATE, 0));
+                String strDate = EphemerisUtils.DATE_FMT.format(d);
+
+                //int sign = intent.getIntExtra(Events.EXTRA_VOC_TO, 0);
+                //String strSign = context.getResources().getStringArray(R.array.SignNames)[sign];
+
+                mMoonVOC.setText(String.format(fmt, strDate));
+            }
+            else {
+                String fmt = context.getString(R.string.pending_voc);
+
+                Date d = new Date(intent.getLongExtra(Events.EXTRA_VOC_FROM_DATE, 0));
+                String strDate = EphemerisUtils.DATE_FMT.format(d);
+
+                //int sign = intent.getIntExtra(Events.EXTRA_VOC_FROM, 0);
+                //String strSign = context.getResources().getStringArray(R.array.SignNames)[sign];
+
+                mMoonVOC.setText(String.format(fmt, strDate));
             }
         }
     }

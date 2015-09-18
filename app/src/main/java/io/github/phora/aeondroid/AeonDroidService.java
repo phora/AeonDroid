@@ -33,7 +33,8 @@ import swisseph.SweDate;
 public class AeonDroidService extends Service {
 
     private Ephemeris ephemeris = null;
-    private ArrayList<PlanetaryHour> planetaryHours = null;
+    private volatile ArrayList<PlanetaryHour> planetaryHours = null;
+    private volatile ArrayList<MoonPhase> moonPhases;
     private int lastIndex = -1;
     private boolean usingGPS;
     private boolean gpsAvailable;
@@ -45,9 +46,9 @@ public class AeonDroidService extends Service {
     private CheckPlanetaryHoursThread cpht = null;
     private CheckMoonPhaseThread cmpt = null;
     private CheckPlanetsPosThread cppt = null;
+    private CheckVoidOfCourseThread cvct = null;
     private NotificationManager notificationManager;
     private LocalBroadcastManager localBroadcastManager;
-    private ArrayList<MoonPhase> moonPhases;
 
     private PendingIntent contentIntent;
     private boolean _firstRun = true;
@@ -92,7 +93,7 @@ public class AeonDroidService extends Service {
         planetaryHours = ephemeris.getPlanetaryHours(new Date());
     }
 
-    public ArrayList<MoonPhase> getMoonPhases() {
+    public synchronized ArrayList<MoonPhase> getMoonPhases() {
         if (moonPhases == null) {
             refreshMoonPhases();
         }
@@ -136,6 +137,9 @@ public class AeonDroidService extends Service {
 
         cppt = new CheckPlanetsPosThread(1500);
         cppt.start();
+
+        cvct = new CheckVoidOfCourseThread(1000);
+        cvct.start();
     }
 
     private void createNotification() {
@@ -209,6 +213,10 @@ public class AeonDroidService extends Service {
 
         dummy = cppt;
         cppt = null;
+        dummy.interrupt();
+
+        dummy = cvct;
+        cvct = null;
         dummy.interrupt();
 
         notificationManager.cancel(NOTIFICATION_ID);
@@ -496,6 +504,65 @@ public class AeonDroidService extends Service {
                     intent.putExtra(Events.EXTRA_LPHASE_TYPE, PhaseUtils.phaseToInt(now.getPhaseType()));
                     intent.putExtra(Events.EXTRA_LPHASE_WAXING, now.isWaxing());
                     localBroadcastManager.sendBroadcast(intent);
+                }
+            } catch (InterruptedException e) {
+
+            }
+        }
+    }
+
+    private class CheckVoidOfCourseThread extends Thread {
+        private int sleepVal;
+        private VoidOfCourseInfo voci;
+
+        public CheckVoidOfCourseThread(int sleepVal) {
+            this.sleepVal = sleepVal;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Date d;
+                d = new Date();
+
+
+                voci = ephemeris.predictVoidOfCourse(d);
+
+                while (!isInterrupted()) {
+                    Thread.sleep(sleepVal);
+                    d = new Date();
+                    if (voci == null) {
+                        Log.d("VoCThread", "Nope, couldn't find anything");
+                    }
+                    else {
+                        Intent intent = new Intent();
+                        Date ed = voci.getEndDate();
+                        Date sd = voci.getStartDate();
+                        if (d.compareTo(sd) >= 0 && d.compareTo(ed) <= 0) {
+                            Log.d("VoCThread", "Currently VoC");
+                            intent.setAction(Events.VOC_STATUS);
+                            intent.putExtra(Events.EXTRA_VOC_IN, true);
+                            //intent.putExtra(Events.EXTRA_VOC_FROM, voci.getSignFrom());
+                            //intent.putExtra(Events.EXTRA_VOC_FROM_DATE, voci.getStartDate().getTime());
+                            //intent.putExtra(Events.EXTRA_VOC_TO, voci.getSignTo());
+                            intent.putExtra(Events.EXTRA_VOC_TO_DATE, voci.getEndDate().getTime());
+                            localBroadcastManager.sendBroadcast(intent);
+                        }
+                        else if (d.compareTo(sd) <= 0) {
+                            Log.d("VoCThread", "Pending VoC");
+                            intent.setAction(Events.VOC_STATUS);
+                            intent.putExtra(Events.EXTRA_VOC_IN, false);
+                            //intent.putExtra(Events.EXTRA_VOC_FROM, voci.getSignFrom());
+                            intent.putExtra(Events.EXTRA_VOC_FROM_DATE, voci.getStartDate().getTime());
+                            //intent.putExtra(Events.EXTRA_VOC_TO, voci.getSignTo());
+                            //intent.putExtra(Events.EXTRA_VOC_TO_DATE, voci.getEndDate().getTime());
+                            localBroadcastManager.sendBroadcast(intent);
+                        }
+                        else {
+                            Log.d("VoCThread", "Need to recalculate VoC");
+                            voci = ephemeris.predictVoidOfCourse(d);
+                        }
+                    }
                 }
             } catch (InterruptedException e) {
 
