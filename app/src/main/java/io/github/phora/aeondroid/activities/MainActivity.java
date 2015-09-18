@@ -29,6 +29,7 @@ import io.github.phora.aeondroid.fragments.MoonPhaseFragment;
 import io.github.phora.aeondroid.fragments.PlanetaryHoursFragment;
 import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.fragments.ReceiverFilterPair;
+import io.github.phora.aeondroid.fragments.RightNowFragment;
 
 public class MainActivity extends FragmentActivity {
 
@@ -76,6 +77,7 @@ public class MainActivity extends FragmentActivity {
             serviceReference.recheckGps();
 
             // we need to do this in case the refresh event wasn't fired from the service
+            Log.i("MainActivity", "Forcing refresh retrieval");
             Intent intent = new Intent();
             intent.setAction(Events.REFRESH_HOURS);
             LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
@@ -244,6 +246,7 @@ public class MainActivity extends FragmentActivity {
             pages = new ArrayList<Fragment>();
             pages.add(null);
             pages.add(null);
+            pages.add(null);
         }
 
         @Override
@@ -261,11 +264,17 @@ public class MainActivity extends FragmentActivity {
                     }
                 case 1:
                     if (fraggy == null) {
-
-                    }
-                    if (fraggy == null) {
                         fraggy = MoonPhaseFragment.newInstance();
                         pages.set(1, fraggy);
+                        return fraggy;
+                    }
+                    else {
+                        return fraggy;
+                    }
+                case 2:
+                    if (fraggy == null) {
+                        fraggy = RightNowFragment.newInstance(null, null);
+                        pages.set(2, fraggy);
                         return fraggy;
                     }
                     else {
@@ -277,7 +286,7 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
@@ -287,6 +296,8 @@ public class MainActivity extends FragmentActivity {
                     return getString(R.string.planetary_hours);
                 case 1:
                     return getString(R.string.moon_phases);
+                case 2:
+                    return getString(R.string.right_now);
                 default:
                     return null;
             }

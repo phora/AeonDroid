@@ -1,5 +1,7 @@
 package io.github.phora.aeondroid;
 
+import android.content.Context;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,6 +20,20 @@ public class EphemerisUtils {
     public final static double SOLAR_YEAR_DAYS = 365.2421934027778;
 
     public final static DateFormat DATE_FMT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    public static String degreesToSignString(Context context, double degrees) {
+        String fmt = "%1$s %2$d*%3$d\"%4$d";
+
+        int sign         = (int)(degrees / 30);
+        int subdegrees   = (int)(degrees % 30);
+        double minutes   = (degrees-(int)degrees)*60;
+        int minutes_as_i = (int)minutes;
+        int seconds      = (int)((minutes - (int)minutes)*60);
+
+        String[] signs = context.getResources().getStringArray(R.array.SignNames);
+
+        return String.format(fmt, signs[sign], subdegrees, minutes_as_i, seconds);
+    }
 
     public static SweDate dateToSweDate(Date d) {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));

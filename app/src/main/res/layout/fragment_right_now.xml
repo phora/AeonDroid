@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <LinearLayout android:orientation="horizontal"
+                  android:layout_height="wrap_content"
+                  android:layout_width="fill_parent"
+                  android:id="@+id/RightNow.SunRow">
+        <ImageView  android:layout_height="48dip"
+                    android:layout_width="48dip"
+                    android:scaleType="fitCenter"
+                    android:src="?PlanetaryHours.Sun"/>
+        <TextView android:text="SunSomething"
+                  android:id="@+id/RightNow.SunMeasure"
+                  android:layout_height="wrap_content"
+                  android:layout_width="wrap_content"
+                  android:layout_gravity="center_vertical"/>
+    </LinearLayout>
+
+    <LinearLayout android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:id="@+id/RightNow.MoonRow">
+        <ImageView  android:layout_height="48dip"
+                    android:layout_width="48dip"
+                    android:scaleType="fitCenter"
+                    android:src="?PlanetaryHours.Moon"/>
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical">
+            <TextView android:text="MoonSomething"
+                      android:id="@+id/RightNow.MoonMeasure"
+                      android:layout_height="wrap_content"
+                      android:layout_width="wrap_content"
+                      android:layout_gravity="center_vertical"/>
+            <TextView android:text="MoonWaningWaxingStatus"
+                      android:id="@+id/RightNow.MoonPhase"
+                      android:layout_height="wrap_content"
+                      android:layout_width="wrap_content"
+                      android:layout_gravity="center_vertical"/>
+            <TextView android:text="MoonVoCFiller"
+                      android:id="@+id/RightNow.MoonVOC"
+                      android:layout_height="wrap_content"
+                      android:layout_width="wrap_content"
+                      android:layout_gravity="center_vertical"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:id="@+id/RightNow.scrollView">
+
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TableRow android:id="@+id/RightNow.MercuryRow">
+                <ImageView  android:layout_height="48dip"
+                            android:layout_width="48dip"
+                            android:scaleType="fitCenter"
+                            android:src="?PlanetaryHours.Mercury"/>
+                <TextView android:text="MercurySomething"
+                          android:id="@+id/RightNow.MercuryMeasure"
+                          android:layout_gravity="center_vertical"/>
+            </TableRow>
+
+            <TableRow android:id="@+id/RightNow.VenusRow">
+                <ImageView  android:layout_height="48dip"
+                            android:layout_width="48dip"
+                            android:scaleType="fitCenter"
+                            android:src="?PlanetaryHours.Venus"/>
+                <TextView android:text="VenusSomething"
+                          android:id="@+id/RightNow.VenusMeasure"
+                          android:layout_gravity="center_vertical"/>
+            </TableRow>
+
+            <TableRow android:id="@+id/RightNow.MarsRow">
+                <ImageView  android:layout_height="48dip"
+                            android:layout_width="48dip"
+                            android:scaleType="fitCenter"
+                            android:src="?PlanetaryHours.Mars"/>
+                <TextView android:text="MarsSomething"
+                          android:id="@+id/RightNow.MarsMeasure"
+                          android:layout_gravity="center_vertical"/>
+            </TableRow>
+
+            <TableRow android:id="@+id/RightNow.JupiterRow">
+                <ImageView  android:layout_height="48dip"
+                            android:layout_width="48dip"
+                            android:scaleType="fitCenter"
+                            android:src="?PlanetaryHours.Jupiter"/>
+                <TextView android:text="JupiterSomething"
+                          android:id="@+id/RightNow.JupiterMeasure"
+                          android:layout_gravity="center_vertical"/>
+            </TableRow>
+
+            <TableRow android:id="@+id/RightNow.SaturnRow">
+                <ImageView  android:layout_height="48dip"
+                            android:layout_width="48dip"
+                            android:scaleType="fitCenter"
+                            android:src="?PlanetaryHours.Saturn"/>
+                <TextView android:text="SaturnSomething"
+                          android:id="@+id/RightNow.SaturnMeasure"
+                          android:layout_gravity="center_vertical"/>
+            </TableRow>
+
+            <TableRow android:id="@+id/RightNow.UranusRow">
+                <ImageView  android:layout_height="48dip"
+                            android:layout_width="48dip"
+                            android:scaleType="fitCenter"
+                            android:src="?RightNow.Uranus"/>
+                <TextView android:text="UranusSomething"
+                          android:id="@+id/RightNow.UranusMeasure"
+                          android:layout_gravity="center_vertical"/>
+            </TableRow>
+
+            <TableRow android:id="@+id/RightNow.NeptuneRow">
+                <ImageView  android:layout_height="48dip"
+                            android:layout_width="48dip"
+                            android:scaleType="fitCenter"
+                            android:src="?RightNow.Neptune"/>
+                <TextView android:text="NeptuneSomething"
+                          android:id="@+id/RightNow.NeptuneMeasure"
+                          android:layout_gravity="center_vertical"/>
+            </TableRow>
+
+            <TableRow android:id="@+id/RightNow.PlutoRow">
+                <ImageView  android:layout_height="48dip"
+                            android:layout_width="48dip"
+                            android:scaleType="fitCenter"
+                            android:src="?RightNow.Pluto"/>
+                <TextView android:text="PlutoSomething"
+                          android:id="@+id/RightNow.PlutoMeasure"
+                          android:layout_gravity="center_vertical"/>
+            </TableRow>
+
+        </TableLayout>
+
+    </ScrollView>
+</LinearLayout>

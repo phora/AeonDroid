@@ -27,6 +27,7 @@ import io.github.phora.aeondroid.activities.MainActivity;
 import io.github.phora.aeondroid.drawables.PlanetIndicator;
 import io.github.phora.aeondroid.model.MoonPhase;
 import io.github.phora.aeondroid.model.PlanetaryHour;
+import swisseph.SweConst;
 import swisseph.SweDate;
 
 public class AeonDroidService extends Service {
@@ -43,6 +44,7 @@ public class AeonDroidService extends Service {
     private LocUpdater locUpdater;
     private CheckPlanetaryHoursThread cpht = null;
     private CheckMoonPhaseThread cmpt = null;
+    private CheckPlanetsPosThread cppt = null;
     private NotificationManager notificationManager;
     private LocalBroadcastManager localBroadcastManager;
     private ArrayList<MoonPhase> moonPhases;
@@ -50,8 +52,6 @@ public class AeonDroidService extends Service {
     private PendingIntent contentIntent;
     private boolean _firstRun = true;
     private PlanetIndicator pi;
-
-
 
     public Ephemeris getEphemeris() {
         return ephemeris;
@@ -128,11 +128,14 @@ public class AeonDroidService extends Service {
         localBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
         pi = PlanetIndicator.getInstance(this);
 
-        ephemeris = new Ephemeris(getApplicationContext().getFilesDir() + File.separator + "/ephe", 0, 0, 0);
+        ephemeris = new Ephemeris(getApplicationContext().getFilesDir() + File.separator + "ephe", 0, 0, 0);
         locUpdater = new LocUpdater();
 
         cmpt = new CheckMoonPhaseThread(1000);
         cmpt.start();
+
+        cppt = new CheckPlanetsPosThread(1500);
+        cppt.start();
     }
 
     private void createNotification() {
@@ -203,6 +206,11 @@ public class AeonDroidService extends Service {
         dummy = cmpt;
         cmpt = null;
         dummy.interrupt();
+
+        dummy = cppt;
+        cppt = null;
+        dummy.interrupt();
+
         notificationManager.cancel(NOTIFICATION_ID);
     }
 
@@ -249,6 +257,46 @@ public class AeonDroidService extends Service {
         public void onProviderDisabled(String s) {
             if (s.equals(LocationManager.GPS_PROVIDER)) {
                 gpsAvailable = false;
+            }
+        }
+    }
+
+    private class CheckPlanetsPosThread extends Thread {
+        private int sleepVal;
+
+        private final int[] planets_list = new int[] {
+            SweConst.SE_SUN, SweConst.SE_MERCURY, SweConst.SE_VENUS,
+            SweConst.SE_MOON, SweConst.SE_MARS, SweConst.SE_JUPITER,
+            SweConst.SE_SATURN, SweConst.SE_URANUS, SweConst.SE_NEPTUNE,
+            SweConst.SE_PLUTO
+        };
+
+        public CheckPlanetsPosThread(int milliseconds) {
+            this.sleepVal = milliseconds;
+        }
+
+        public void run() {
+            try {
+                while (!isInterrupted()) {
+                    Thread.sleep(this.sleepVal);
+
+                    Intent intent = new Intent();
+                    intent.setAction(Events.PLANET_POS);
+
+                    int count = planets_list.length;
+                    double[] results = new double[count];
+                    Date d = new Date();
+                    double julified = EphemerisUtils.dateToSweDate(d).getJulDay();
+
+                    for (int i = 0; i < count; i++) {
+                        results[i] = ephemeris.getBodyPos(julified, planets_list[i]);
+                    }
+
+                    intent.putExtra(Events.EXTRA_PLANET_POS, results);
+                    localBroadcastManager.sendBroadcast(intent);
+                }
+            } catch (InterruptedException e) {
+
             }
         }
     }
@@ -445,7 +493,7 @@ public class AeonDroidService extends Service {
                     intent = new Intent();
                     intent.setAction(Events.PHASE_DETAILS);
                     MoonPhase now = ephemeris.makeMoonPhaseForDate(d, moonPhases.get(4).getTimeStamp());
-                    intent.putExtra(Events.EXTRA_LPHASE_TYPE, now.getPhaseType());
+                    intent.putExtra(Events.EXTRA_LPHASE_TYPE, PhaseUtils.phaseToInt(now.getPhaseType()));
                     intent.putExtra(Events.EXTRA_LPHASE_WAXING, now.isWaxing());
                     localBroadcastManager.sendBroadcast(intent);
                 }

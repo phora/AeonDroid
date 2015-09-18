@@ -17,4 +17,7 @@ public class Events {
 
     public final static String REFRESH_HOURS = "io.github.phora.aeondroid.REFRESH_HOURS";
     public final static String REFRESH_MOON_PHASE = "io.github.phora.aeondroid.REFRESH_MOON_PHASE";
+
+    public final static String PLANET_POS = "io.github.phora.aeondroid.PLANET_POS";
+    public static final String EXTRA_PLANET_POS = "EXTRA_PLANET_POS";
 }
