@@ -3,6 +3,7 @@ package io.github.phora.aeondroid;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -49,7 +50,7 @@ public class Ephemeris {
         this.observer = new double[]{longitude, latitude, height};
     }
 
-    public Double getBodyPos(double day, int celestial_body) {
+    public synchronized Double getBodyPos(double day, int celestial_body) {
         StringBuffer sb = new StringBuffer();
 
         double[] resarray = new double[6];
@@ -67,7 +68,7 @@ public class Ephemeris {
         }
     }
 
-    public Double getMoonSunDiff(double day) {
+    public synchronized Double getMoonSunDiff(double day) {
         StringBuffer sb = new StringBuffer();
 
         double[] resarray = new double[6];
@@ -92,7 +93,7 @@ public class Ephemeris {
         return EphemerisUtils.angleSubtract(resarray2[0], resarray[0]);
     }
 
-    public Date predictMoonPhase(double cycles, int offset, double target_angle) {
+    public synchronized Date predictMoonPhase(double cycles, int offset, double target_angle) {
         if (target_angle < -180 || target_angle > 180) {
             return null;
         }
@@ -107,24 +108,24 @@ public class Ephemeris {
         return SweDate.getDate(EphemerisUtils.moonCyclesToJulian(cycles));
     }
 
-    public Date predictMoonPhase(Date date, int offset, double target_angle) {
+    public synchronized Date predictMoonPhase(Date date, int offset, double target_angle) {
         double cycles_with_excess = EphemerisUtils.dateToMoonCycles(date);
 
         return predictMoonPhase(cycles_with_excess, offset, target_angle);
     }
 
-    public Double getBodyRise(Date date, int celestial_body) {
-        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-        cal.setTime(date);
+    private synchronized Double getBodyRise(Double date, int celestial_body) {
+        //Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        //cal.setTime(date);
 
         StringBuffer sb = new StringBuffer();
         DblObj dblobj = new DblObj();
 
-        SweDate sd = new SweDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), 12, SweDate.SE_GREG_CAL);
+        //SweDate sd = new SweDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), 12, SweDate.SE_GREG_CAL);
         //detect temperature?
         //detect pressure?
 
-        int retcode = sw.swe_rise_trans(sd.getJulDay(), celestial_body, null,
+        int retcode = sw.swe_rise_trans(date, celestial_body, null,
                 SweConst.SEFLG_SWIEPH, //ephmeris to use
                 SweConst.SE_CALC_RISE, //we want rise
                 this.observer, 0, 0, //geographic info. also, detect pressure and temperature?
@@ -138,17 +139,17 @@ public class Ephemeris {
             return dblobj.val;
     }
 
-    public Double getBodySet(Date date, int celestial_body) {
-        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-        cal.setTime(date);
+    private synchronized Double getBodySet(Double date, int celestial_body) {
+        //Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+        //cal.setTime(date);
 
         StringBuffer sb = new StringBuffer();
         DblObj dblobj = new DblObj();
 
-        SweDate sd = new SweDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), 12, SweDate.SE_GREG_CAL);
+        //SweDate sd = new SweDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH), 12, SweDate.SE_GREG_CAL);
         //detect temperature?
         //detect pressure?
-        int retcode = sw.swe_rise_trans(sd.getJulDay(), celestial_body, null,
+        int retcode = sw.swe_rise_trans(date, celestial_body, null,
                 SweConst.SEFLG_SWIEPH, //ephmeris to use
                 SweConst.SE_CALC_SET, //we want rise
                 this.observer, 0, 0, //geographic info. also, detect pressure and temperature?
@@ -162,35 +163,75 @@ public class Ephemeris {
             return dblobj.val;
     }
 
-    public ArrayList<PlanetaryHour> getPlanetaryHours(Date date) {
-        Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
+    public synchronized SunsetSunriseInfo getSunriseandSunset(Date date) {
+        SweDate sd = EphemerisUtils.dateToSweDate(date, 12);
+
+        return getSunriseandSunset(sd);
+    }
+
+    public synchronized SunsetSunriseInfo getSunriseandSunset(SweDate sd) {
+        Double sunrise      = getBodyRise(sd.getJulDay() - 1, SweConst.SE_SUN);
+        Double sunset       = getBodySet(sd.getJulDay(), SweConst.SE_SUN);
+        Double next_sunrise = getBodyRise(sd.getJulDay(), SweConst.SE_SUN);
+
+        if (sunset > next_sunrise) {
+            sunset = getBodySet(sd.getJulDay()-1, SweConst.SE_SUN);
+        }
+
+        double[] sortme = new double[]{sunrise, sunset, next_sunrise};
+
+        Log.d("Sortme before", sortme[0]+" "+sortme[1]+" "+sortme[2]);
+
+        Arrays.sort(sortme);
+
+        Log.d("Sortme after", sortme[0]+" "+sortme[1]+" "+sortme[2]);
+
+        return new SunsetSunriseInfo(sortme[0], sortme[1], sortme[2], sd);
+    }
+
+    public synchronized ArrayList<PlanetaryHour> getPlanetaryHours(Date date) {
+        /* Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         cal.setTime(date);
-        cal.add(Calendar.DAY_OF_YEAR, -1);
+        cal.add(Calendar.DAY_OF_YEAR, 1); */
         //cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-1);
 
         Double sunrise, sunset, next_sunrise;
+        SunsetSunriseInfo ssi = getSunriseandSunset(date);
 
-        sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
-        if (date.compareTo(SweDate.getDate(sunrise)) <= 0) {
+        double julified = EphemerisUtils.dateToSweDate(date).getJulDay();
+        double calc_time = ssi.getCalcTime().getJulDay();
+
+        Log.d("Ephemeris", ssi.getSunrise()+" < "+julified+" < "+ssi.getNextSunrise());
+
+        if (julified <= ssi.getSunrise()) {
+            Log.d("Ephemeris", "Date before sunrise, getting yesterday");
+            SweDate sd = new SweDate(calc_time-1, SweDate.SE_GREG_CAL);
+            ssi = getSunriseandSunset(sd);
+        }
+        else if (julified >= ssi.getNextSunrise()) {
+            Log.d("Ephemeris", "Date after next sunrise, getting tomorrow");
+            SweDate sd = new SweDate(calc_time+1, SweDate.SE_GREG_CAL);
+            ssi = getSunriseandSunset(sd);
+        }
+
+        sunrise = ssi.getSunrise();
+        sunset = ssi.getSunset();
+        next_sunrise = ssi.getNextSunrise();
+
+        //sunrise = getBodyRise(date, SweConst.SE_SUN);
+        /* if (date.compareTo(SweDate.getDate(sunrise)) <= 0) {
             Log.d("Ephmeris", "Getting the hours for the day before, sun didn't rise yet");
-            Date old_cal_date = cal.getTime();
             //cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-1);
-            cal.add(Calendar.DAY_OF_YEAR, -1);
+            cal.add(Calendar.DAY_OF_YEAR, -2);
             next_sunrise = sunrise;
-            sunrise = getBodyRise(old_cal_date, SweConst.SE_SUN);
-            sunset = getBodySet(old_cal_date, SweConst.SE_SUN);
+            sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
+            sunset = getBodySet(cal.getTime(), SweConst.SE_SUN);
         }
         else {
             Log.d("Ephmeris", "Getting the hours for the current day, sun rose");
-            sunset = getBodySet(cal.getTime(), SweConst.SE_SUN);
-            if (sunset < sunrise) {
-                sunset = getBodySet(date, SweConst.SE_SUN);
-            }
-            next_sunrise = getBodyRise(date, SweConst.SE_SUN);
-            if (next_sunrise < sunset) {
-                next_sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
-            }
-        }
+            sunset = getBodySet(date, SweConst.SE_SUN);
+            next_sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
+        } */
 
         double day_length = sunset - sunrise;
         double night_length = next_sunrise - sunset;
@@ -203,8 +244,8 @@ public class Ephemeris {
         ArrayList<PlanetaryHour> hours = new ArrayList<PlanetaryHour>();
         int day_offset = SweDate.getDayOfWeekNr(sunrise);
         Log.d("Ephmeris", "Day offset: " + day_offset);
-        Log.d("Ephmeris", EphemerisUtils.DATE_FMT.format(date));
-        Log.d("Ephmeris", EphemerisUtils.DATE_FMT.format(cal.getTime()));
+        //Log.d("Ephmeris", EphemerisUtils.DATE_FMT.format(date));
+        //Log.d("Ephmeris", EphemerisUtils.DATE_FMT.format(cal.getTime()));
 
         for (int i=0;i<12;i++) {
             double timestamp = ((double)i)*day_hour_length+sunrise;
@@ -232,11 +273,11 @@ public class Ephemeris {
         return hours;
     }
 
-    public MoonPhase makeMoonPhaseForDate(Date date) {
+    public synchronized MoonPhase makeMoonPhaseForDate(Date date) {
         return makeMoonPhaseForDate(date, predictMoonPhase(date, 0, 180));
     }
 
-    public MoonPhase makeMoonPhaseForDate(Date date, Date full_moon) {
+    public synchronized MoonPhase makeMoonPhaseForDate(Date date, Date full_moon) {
         StringBuffer sb = new StringBuffer();
         double[] resarray = new double[20];
         double julday = EphemerisUtils.dateToSweDate(date).getJulDay();
@@ -275,7 +316,68 @@ public class Ephemeris {
         }
     }
 
-    public ArrayList<MoonPhase> getMoonCycle(Date date) {
+    public synchronized VoidOfCourseInfo predictVoidOfCourse(Date date) {
+        double cycles = EphemerisUtils.dateToMoonCycles(date);
+        double moon_pos = getBodyPos(EphemerisUtils.dateToSweDate(date).getJulDay(), SweConst.SE_MOON);
+
+        double closest_sign = ((int)(moon_pos/30) + 1)*30;
+        double lower_sign = ((int)(moon_pos/30))*30;
+
+        double lower_cycles = cycles+(EphemerisUtils.angleSubtract(lower_sign, moon_pos))/360;
+        cycles += ((closest_sign - moon_pos) / 360);
+
+        double diff = Double.POSITIVE_INFINITY;
+
+        while (Math.abs(diff) >= 1E-8) {
+            double closest_sign_estimate = getBodyPos(EphemerisUtils.moonCyclesToJulian(cycles), SweConst.SE_MOON);
+            diff = EphemerisUtils.angleSubtract(closest_sign, closest_sign_estimate);
+            cycles += (diff / 360);
+        }
+
+        diff = Double.POSITIVE_INFINITY;
+        while (Math.abs(diff) >= 1E-8) {
+            double closest_sign_estimate = getBodyPos(EphemerisUtils.moonCyclesToJulian(lower_cycles), SweConst.SE_MOON);
+            diff = EphemerisUtils.angleSubtract(lower_sign, closest_sign_estimate);
+            lower_cycles += (diff / 360);
+        }
+
+        double voc_cycles = cycles;
+        boolean has_aspects = false;
+        int[] other_planets = new int[]{
+                SweConst.SE_SUN, SweConst.SE_MERCURY, SweConst.SE_VENUS,
+                SweConst.SE_MARS, SweConst.SE_JUPITER, SweConst.SE_SATURN,
+                SweConst.SE_URANUS, SweConst.SE_NEPTUNE, SweConst.SE_PLUTO
+        };
+        double[] aspects_to_check = new double[]{0, 60, 90, 120, 180};
+
+        while (!has_aspects && (voc_cycles > lower_cycles)) {
+            voc_cycles -= (1. / 36000);
+            double julified = EphemerisUtils.moonCyclesToJulian(voc_cycles);
+            moon_pos = getBodyPos(julified, SweConst.SE_MOON);
+
+            for (int planet: other_planets) {
+                double other_angle = getBodyPos(julified, planet);
+                for (double angle: aspects_to_check) {
+                    double angle_gap = Math.abs(EphemerisUtils.angleSubtract(moon_pos, other_angle));
+                    if (Math.abs(EphemerisUtils.angleSubtract(angle, angle_gap)) <= 5E-3) {
+                        has_aspects = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (has_aspects) {
+            Date start_date = SweDate.getDate(EphemerisUtils.moonCyclesToJulian(voc_cycles));
+            Date end_date = SweDate.getDate(EphemerisUtils.moonCyclesToJulian(cycles));
+            return new VoidOfCourseInfo(start_date, (int) (lower_sign / 30), end_date, (int) (closest_sign / 30));
+        }
+        else {
+            return null;
+        }
+    }
+
+    public synchronized ArrayList<MoonPhase> getMoonCycle(Date date) {
         double moon_cycles = EphemerisUtils.dateToMoonCycles(date);
 
         Date new_moon_start = predictMoonPhase(moon_cycles, 0, 0);

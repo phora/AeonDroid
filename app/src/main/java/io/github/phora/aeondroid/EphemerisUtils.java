@@ -78,4 +78,20 @@ public class EphemerisUtils {
         }
         return diff;
     }
+
+    public static SweDate dateToSweDate(Date date, int replaceHour) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, replaceHour);
+        cal.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        double hour_double = (double)cal.get(Calendar.HOUR_OF_DAY) +
+                ((double)cal.get(Calendar.MINUTE)/60.) +
+                ((double)cal.get(Calendar.SECOND)/3600.) +
+                ((double)cal.get(Calendar.MILLISECOND)/3600000.);
+
+        SweDate sd = new SweDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1,
+                cal.get(Calendar.DAY_OF_MONTH), hour_double, SweDate.SE_GREG_CAL);
+        return sd;
+    }
 }
