@@ -152,6 +152,7 @@ public class AeonDroidService extends Service {
                 .setWhen(System.currentTimeMillis())
                 .setOngoing(true);
         Intent startIntent = new Intent(this, MainActivity.class);
+        startIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         contentIntent = PendingIntent.getActivity(this,
                 NOTI_REQUEST_CODE, startIntent, 0);
         builder.setContentIntent(contentIntent);
