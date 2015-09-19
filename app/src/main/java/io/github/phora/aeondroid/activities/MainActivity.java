@@ -1,10 +1,12 @@
 package io.github.phora.aeondroid.activities;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -16,8 +18,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -238,6 +243,25 @@ public class MainActivity extends FragmentActivity {
         if (id == R.id.action_settings) {
             Intent i = new Intent(this, SettingsActivity.class);
             startActivity(i);
+            return true;
+        } else if (id == R.id.action_about) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            View view = LayoutInflater.from(this).inflate(R.layout.about_dialog, null);
+            String verName;
+            try {
+                verName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+            }
+            catch (PackageManager.NameNotFoundException e) {
+                verName = null;
+            }
+            TextView textView = (TextView)view.findViewById(R.id.AboutDialog_Version);
+            textView.setText(getString(R.string.about_ver, verName));
+
+            builder.setTitle(getString(R.string.about_app, getString(R.string.app_name)));
+            builder.setView(view);
+            builder.setNegativeButton(R.string.OK, null);
+            builder.create().show();
             return true;
         }
 
