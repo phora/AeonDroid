@@ -1,6 +1,7 @@
 package io.github.phora.aeondroid.model;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;

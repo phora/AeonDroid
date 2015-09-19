@@ -2,6 +2,7 @@ package io.github.phora.aeondroid;
 
 import android.util.Log;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -21,24 +22,52 @@ import swisseph.SwissEph;
  */
 public class Ephemeris {
     private SwissEph sw;
+    private ZoneTab zt;
+    private ZoneTab.ZoneInfo zi;
     private double[] observer;
 
-    public Ephemeris(String search_path) {
+    public Ephemeris(String search_path, String zonetab) {
         sw = new SwissEph(search_path);
+        try {
+            zt = new ZoneTab(zonetab);
+        } catch (FileNotFoundException e) {
+            zt = null;
+        }
     }
 
-    public Ephemeris(String search_path, double longitude, double latitude, double height) {
+    public String getTimezone() {
+        return zi.getTz();
+    }
+
+    public Ephemeris(String search_path, String zonetab, double longitude, double latitude, double height) {
         sw = new SwissEph(search_path);
+        try {
+            zt = new ZoneTab(zonetab);
+        } catch (FileNotFoundException e) {
+            zt = null;
+        }
         this.observer = new double[]{longitude, latitude, height};
+        if (zt != null) {
+            zi = zt.nearest_tz(this.observer[1], this.observer[2]);
+        }
     }
 
-    public Ephemeris(String search_path, double[] observer) {
+    public Ephemeris(String search_path, String zonetab, double[] observer) {
         sw = new SwissEph(search_path);
+        try {
+            zt = new ZoneTab(zonetab);
+        } catch (FileNotFoundException e) {
+            zt = null;
+        }
+
         if (observer != null && observer.length == 3) {
             this.observer = observer;
         }
         else {
             this.observer = new double[]{0, 0, 0};
+        }
+        if (zt != null) {
+            zi = zt.nearest_tz(this.observer[1], this.observer[2]);
         }
     }
 
@@ -48,6 +77,7 @@ public class Ephemeris {
 
     public void setObserver(double longitude, double latitude, double height) {
         this.observer = new double[]{longitude, latitude, height};
+        zi = zt.nearest_tz(latitude, longitude);
     }
 
     public synchronized Double getBodyPos(double day, int celestial_body) {
@@ -114,7 +144,7 @@ public class Ephemeris {
         return predictMoonPhase(cycles_with_excess, offset, target_angle);
     }
 
-    private synchronized Double getBodyRise(Double date, int celestial_body) {
+    public synchronized Double getBodyRise(Double date, int celestial_body) {
         //Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         //cal.setTime(date);
 
@@ -139,7 +169,7 @@ public class Ephemeris {
             return dblobj.val;
     }
 
-    private synchronized Double getBodySet(Double date, int celestial_body) {
+    public synchronized Double getBodySet(Double date, int celestial_body) {
         //Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         //cal.setTime(date);
 
@@ -164,29 +194,29 @@ public class Ephemeris {
     }
 
     public synchronized SunsetSunriseInfo getSunriseandSunset(Date date) {
-        SweDate sd = EphemerisUtils.dateToSweDate(date, 12);
+        SweDate sd = EphemerisUtils.dateToSweDate(date, zi.getTz(), 12);
 
         return getSunriseandSunset(sd);
     }
 
     public synchronized SunsetSunriseInfo getSunriseandSunset(SweDate sd) {
-        Double sunrise      = getBodyRise(sd.getJulDay() - 1, SweConst.SE_SUN);
+        Double sunrise = getBodyRise(sd.getJulDay() - 1, SweConst.SE_SUN);
         Double sunset       = getBodySet(sd.getJulDay(), SweConst.SE_SUN);
         Double next_sunrise = getBodyRise(sd.getJulDay(), SweConst.SE_SUN);
 
-        if (sunset > next_sunrise) {
+        /*if (sunset > next_sunrise) {
             sunset = getBodySet(sd.getJulDay()-1, SweConst.SE_SUN);
-        }
+        }*/
 
-        double[] sortme = new double[]{sunrise, sunset, next_sunrise};
+        //double[] sortme = new double[]{sunrise, sunset, next_sunrise};
 
-        Log.d("Sortme before", sortme[0]+" "+sortme[1]+" "+sortme[2]);
+        //Log.d("Sortme before", sortme[0] + " " + sortme[1] + " " + sortme[2]);
 
-        Arrays.sort(sortme);
+        //Arrays.sort(sortme);
 
-        Log.d("Sortme after", sortme[0]+" "+sortme[1]+" "+sortme[2]);
+        //Log.d("Sortme after", sortme[0]+" "+sortme[1]+" "+sortme[2]);
 
-        return new SunsetSunriseInfo(sortme[0], sortme[1], sortme[2], sd);
+        return new SunsetSunriseInfo(sunrise, sunset, next_sunrise, sd);
     }
 
     public synchronized ArrayList<PlanetaryHour> getPlanetaryHours(Date date) {
@@ -218,7 +248,7 @@ public class Ephemeris {
         sunset = ssi.getSunset();
         next_sunrise = ssi.getNextSunrise();
 
-        //sunrise = getBodyRise(date, SweConst.SE_SUN);
+        //sunrise = getBodyRise(observerdate, SweConst.SE_SUN);
         /* if (date.compareTo(SweDate.getDate(sunrise)) <= 0) {
             Log.d("Ephmeris", "Getting the hours for the day before, sun didn't rise yet");
             //cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-1);

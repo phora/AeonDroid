@@ -18,11 +18,13 @@ import java.io.OutputStream;
  */
 public class CopyAssetFiles {
     String pattern;
+    String dest;
     Context ct;
 
-    public CopyAssetFiles(String pattern, Context ct) {
+    public CopyAssetFiles(String pattern, String dest, Context ct) {
         this.pattern = pattern;
         this.ct = ct;
+        this.dest = dest;
     }
     void copy() {
         AssetManager assetManager = ct.getAssets();
@@ -33,7 +35,7 @@ public class CopyAssetFiles {
             Log.e("tag", "Failed to get asset file list.", e);
         }
 
-        String outdir = ct.getFilesDir() + File.separator + "/ephe";
+        String outdir = ct.getFilesDir() + File.separator + dest;
         new File(outdir).mkdirs();
         outdir += File.separator;
 

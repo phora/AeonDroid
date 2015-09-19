@@ -121,7 +121,8 @@ public class AeonDroidService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        new CopyAssetFiles(".*\\.se1", getApplicationContext()).copy();
+        new CopyAssetFiles(".*\\.se1", "ephe", getApplicationContext()).copy();
+        new CopyAssetFiles("zone\\.tab", "", getApplicationContext()).copy();
 
         notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -129,7 +130,9 @@ public class AeonDroidService extends Service {
         localBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
         pi = PlanetIndicator.getInstance(this);
 
-        ephemeris = new Ephemeris(getApplicationContext().getFilesDir() + File.separator + "ephe", 0, 0, 0);
+        ephemeris = new Ephemeris(getApplicationContext().getFilesDir() + File.separator + "ephe",
+                getApplicationContext().getFilesDir() + File.separator + "zone.tab",
+                0, 0, 0);
         locUpdater = new LocUpdater();
 
         cmpt = new CheckMoonPhaseThread(1000);

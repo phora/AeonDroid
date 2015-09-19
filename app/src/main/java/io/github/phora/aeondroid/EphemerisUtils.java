@@ -2,6 +2,7 @@ package io.github.phora.aeondroid;
 
 import android.content.Context;
 
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -36,8 +37,9 @@ public class EphemerisUtils {
     }
 
     public static SweDate dateToSweDate(Date d) {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-        cal.setTime(d);
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        cal.setTimeInMillis(d.getTime());
+        //cal.setTimeZone();
 
         double hour_double = (double)cal.get(Calendar.HOUR_OF_DAY) +
                 ((double)cal.get(Calendar.MINUTE)/60.) +
@@ -79,16 +81,18 @@ public class EphemerisUtils {
         return diff;
     }
 
-    public static SweDate dateToSweDate(Date date, int replaceHour) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
+    public static SweDate dateToSweDate(Date date, String origTimezone, int replaceHour) {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(origTimezone));
+        cal.setTimeInMillis(date.getTime());
         cal.set(Calendar.HOUR_OF_DAY, replaceHour);
-        cal.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-        double hour_double = (double)cal.get(Calendar.HOUR_OF_DAY) +
-                ((double)cal.get(Calendar.MINUTE)/60.) +
-                ((double)cal.get(Calendar.SECOND)/3600.) +
-                ((double)cal.get(Calendar.MILLISECOND)/3600000.);
+        Calendar greenwich = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        greenwich.setTimeInMillis(cal.getTimeInMillis());
+
+        double hour_double = (double)greenwich.get(Calendar.HOUR_OF_DAY) +
+                ((double)greenwich.get(Calendar.MINUTE)/60.) +
+                ((double)greenwich.get(Calendar.SECOND)/3600.) +
+                ((double)greenwich.get(Calendar.MILLISECOND)/3600000.);
 
         SweDate sd = new SweDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1,
                 cal.get(Calendar.DAY_OF_MONTH), hour_double, SweDate.SE_GREG_CAL);
