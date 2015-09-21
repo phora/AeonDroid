@@ -1,5 +1,6 @@
 package io.github.phora.aeondroid.calculations;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
@@ -24,10 +25,10 @@ public class Ephemeris {
     private ZoneTab.ZoneInfo zi;
     private double[] observer;
 
-    public Ephemeris(String search_path, String zonetab) {
+    public Ephemeris(String search_path, Context context) {
         sw = new SwissEph(search_path);
         try {
-            zt = new ZoneTab(zonetab);
+            zt = ZoneTab.getInstance(context);
         } catch (FileNotFoundException e) {
             zt = null;
         }
@@ -37,10 +38,10 @@ public class Ephemeris {
         return zi.getTz();
     }
 
-    public Ephemeris(String searchPath, String zonetab, double longitude, double latitude, double height) {
+    public Ephemeris(String searchPath, Context context, double longitude, double latitude, double height) {
         sw = new SwissEph(searchPath);
         try {
-            zt = new ZoneTab(zonetab);
+            zt = ZoneTab.getInstance(context);
         } catch (FileNotFoundException e) {
             zt = null;
         }
@@ -50,10 +51,10 @@ public class Ephemeris {
         }
     }
 
-    public Ephemeris(String searchPath, String zonetab, double[] observer) {
+    public Ephemeris(String searchPath, Context context, double[] observer) {
         sw = new SwissEph(searchPath);
         try {
-            zt = new ZoneTab(zonetab);
+            zt = ZoneTab.getInstance(context);
         } catch (FileNotFoundException e) {
             zt = null;
         }

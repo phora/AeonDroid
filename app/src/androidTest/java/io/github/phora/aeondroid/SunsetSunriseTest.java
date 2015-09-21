@@ -38,8 +38,10 @@ public class SunsetSunriseTest extends ApplicationTestCase<Application> {
 
         Context appContext = getContext().getApplicationContext();
         new CopyAssetFiles(".*\\.se1", "ephe", appContext).copy();
+        new CopyAssetFiles("zone\\.tab", "", appContext).copy();
+
         ephemeris = new Ephemeris(appContext.getFilesDir() + File.separator + "ephe",
-                appContext.getFilesDir() + File.separator + "zone.tab",
+                appContext,
                 greenwich);
 
         day0 = Calendar.getInstance(TimeZone.getTimeZone("GMT"));

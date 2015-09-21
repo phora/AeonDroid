@@ -1,5 +1,8 @@
 package io.github.phora.aeondroid.calculations;
 
+import android.content.Context;
+
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -45,8 +48,17 @@ public class ZoneTab {
     ArrayList<ZoneInfo> zones;
 
     private static Pattern latlongPattern = Pattern.compile("([^\\d])(\\d+)([^\\d])(\\d+)");
+    private static ZoneTab sInstance = null;
 
-    public ZoneTab(String filepath) throws FileNotFoundException {
+    public static synchronized ZoneTab getInstance(Context context) throws FileNotFoundException {
+        if (sInstance == null) {
+            String fpath = context.getApplicationContext().getFilesDir() + File.separator + "zone.tab";
+            sInstance = new ZoneTab(fpath);
+        }
+        return sInstance;
+    }
+
+    private ZoneTab(String filepath) throws FileNotFoundException {
         Scanner in = new Scanner(new FileReader(filepath));
         zones = new ArrayList<>();
 

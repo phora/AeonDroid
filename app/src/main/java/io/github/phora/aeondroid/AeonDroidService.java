@@ -134,7 +134,7 @@ public class AeonDroidService extends Service {
         pi = PlanetIndicator.getInstance(this);
 
         ephemeris = new Ephemeris(getApplicationContext().getFilesDir() + File.separator + "ephe",
-                getApplicationContext().getFilesDir() + File.separator + "zone.tab",
+                this,
                 0, 0, 0);
         locUpdater = new LocUpdater();
 
@@ -531,7 +531,6 @@ public class AeonDroidService extends Service {
             try {
                 Date d;
                 d = new Date();
-
 
                 voci = ephemeris.predictVoidOfCourse(d);
 
