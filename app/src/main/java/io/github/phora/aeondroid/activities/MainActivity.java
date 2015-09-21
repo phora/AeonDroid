@@ -256,9 +256,9 @@ public class MainActivity extends FragmentActivity {
                 verName = null;
             }
             TextView textView = (TextView)view.findViewById(R.id.AboutDialog_Version);
-            textView.setText(getString(R.string.about_ver, verName));
+            textView.setText(getString(R.string.About_Version, verName));
 
-            builder.setTitle(getString(R.string.about_app, getString(R.string.app_name)));
+            builder.setTitle(getString(R.string.About_App, getString(R.string.AppName)));
             builder.setView(view);
             builder.setNegativeButton(R.string.OK, null);
             builder.create().show();
@@ -324,11 +324,11 @@ public class MainActivity extends FragmentActivity {
         public CharSequence getPageTitle(int position) {
             switch(position) {
                 case 0:
-                    return getString(R.string.planetary_hours);
+                    return getString(R.string.PanelTitle_PlanetaryHours);
                 case 1:
-                    return getString(R.string.moon_phases);
+                    return getString(R.string.PanelTitle_MoonPhases);
                 case 2:
-                    return getString(R.string.right_now);
+                    return getString(R.string.PanelTitle_RightNow);
                 default:
                     return null;
             }

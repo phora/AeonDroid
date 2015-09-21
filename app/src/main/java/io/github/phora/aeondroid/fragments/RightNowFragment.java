@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.phora.aeondroid.EphemerisUtils;
+import io.github.phora.aeondroid.calculations.EphemerisUtils;
 import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.PhaseUtils;
 import io.github.phora.aeondroid.R;
@@ -159,12 +159,12 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
     private class HighlightReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int planet_type = intent.getIntExtra(Events.EXTRA_HOUR_TYPE, -1);
+            int planetType = intent.getIntExtra(Events.EXTRA_HOUR_TYPE, -1);
             if (lastView != null) {
                 lastView.setBackgroundResource(0);
             }
-            View planet_row = getPlanetRow(planet_type);
-            lastView = planet_row;
+            View planetRow = getPlanetRow(planetType);
+            lastView = planetRow;
             if (getContext() != null && lastView != null) {
                 TypedValue tv = new TypedValue();
                 getContext().getTheme().resolveAttribute(R.attr.PlanetaryHours_Current, tv, true);
@@ -173,8 +173,8 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
         }
     }
 
-    private View getPlanetRow(int planet_type) {
-        switch (planet_type) {
+    private View getPlanetRow(int planetType) {
+        switch (planetType) {
             case 0:
                 return mSunRow;
             case 1:
@@ -194,8 +194,8 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
         }
     }
 
-    private TextView getPlanetMeasure(int planet_type) {
-        switch (planet_type) {
+    private TextView getPlanetMeasure(int planetType) {
+        switch (planetType) {
             case 0:
                 return mSunMeasure;
             case 1:
@@ -240,10 +240,10 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
             if (data != null) {
                 int count = data.length;
                 for (int i = 0; i<count; i++) {
-                    String measure_str = EphemerisUtils.degreesToSignString(context, data[i]);
+                    String measureStr = EphemerisUtils.degreesToSignString(context, data[i]);
                     TextView tv = getPlanetMeasure(i);
                     if (tv != null) {
-                        tv.setText(measure_str);
+                        tv.setText(measureStr);
                     }
                 }
             }
@@ -258,7 +258,7 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
             }
             boolean isVoC = intent.getBooleanExtra(Events.EXTRA_VOC_IN, false);
             if (isVoC) {
-                String fmt = context.getString(R.string.currently_voc);
+                String fmt = context.getString(R.string.Moon_CurrentlyVOC);
 
                 Date d = new Date(intent.getLongExtra(Events.EXTRA_VOC_TO_DATE, 0));
                 String strDate = EphemerisUtils.DATE_FMT.format(d);
@@ -269,7 +269,7 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
                 mMoonVOC.setText(String.format(fmt, strDate));
             }
             else {
-                String fmt = context.getString(R.string.pending_voc);
+                String fmt = context.getString(R.string.Moon_PendingVOC);
 
                 Date d = new Date(intent.getLongExtra(Events.EXTRA_VOC_FROM_DATE, 0));
                 String strDate = EphemerisUtils.DATE_FMT.format(d);

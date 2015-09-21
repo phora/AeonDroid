@@ -3,12 +3,12 @@
       tools:context=".MainActivity">
     <item
         android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+        android:title="@string/Action.Settings"
         android:orderInCategory="100"
         android:showAsAction="never"/>
     <item
         android:id="@+id/action_about"
-        android:title="@string/action_about"
+        android:title="@string/Action.About"
         android:orderInCategory="100"
         android:showAsAction="never"/>
 </menu>

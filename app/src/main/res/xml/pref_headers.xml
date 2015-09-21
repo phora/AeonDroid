@@ -4,6 +4,6 @@
 
     <header
         android:fragment="io.github.phora.aeondroid.activities.SettingsActivity$GeneralPreferenceFragment"
-        android:title="@string/pref_header_general"/>
+        android:title="@string/PrefHeader.General"/>
 
 </preference-headers>

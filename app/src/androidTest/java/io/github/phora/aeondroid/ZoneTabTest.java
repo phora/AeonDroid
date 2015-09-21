@@ -5,12 +5,8 @@ import android.content.Context;
 import android.test.ApplicationTestCase;
 
 import java.io.File;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TimeZone;
 
-import swisseph.SweDate;
+import io.github.phora.aeondroid.calculations.ZoneTab;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -50,10 +46,10 @@ public class ZoneTabTest extends ApplicationTestCase<Application> {
         String expected_name = "America/Indiana/Vincennes";
         String expected_name2 = "America/Chicago";
 
-        ZoneTab.ZoneInfo zi = zoneTab.nearest_tz(39.2975, -94.7139);
+        ZoneTab.ZoneInfo zi = zoneTab.nearestTZ(39.2975, -94.7139);
         assertEquals(expected_name, zi.getTz());
 
-        zi = zoneTab.nearest_tz(39.2975, -94.7139, "Indiana");
+        zi = zoneTab.nearestTZ(39.2975, -94.7139, "Indiana");
         assertEquals(expected_name2, zi.getTz());
     }
 }

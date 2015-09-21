@@ -1,10 +1,9 @@
-package io.github.phora.aeondroid;
+package io.github.phora.aeondroid.calculations;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,15 +66,15 @@ public class ZoneTab {
         }
     }
 
-    public ZoneInfo nearest_tz(double lat, double lon, String... ignore) {
+    public ZoneInfo nearestTZ(double lat, double lon, String... ignore) {
         ZoneInfo best = null;
         double m = Double.POSITIVE_INFINITY;
 
         for (ZoneInfo zi: zones) {
             String name = zi.getTz();
             boolean skip = false;
-            for (String bl_entry: ignore) {
-                if (name.contains(bl_entry)) {
+            for (String blEntry: ignore) {
+                if (name.contains(blEntry)) {
                     skip = true;
                     break;
                 }
@@ -93,7 +92,7 @@ public class ZoneTab {
         return best;
     }
 
-    public ZoneInfo nearest_tz(double lat, double lon) {
+    public ZoneInfo nearestTZ(double lat, double lon) {
         ZoneInfo best = null;
         double m = Double.POSITIVE_INFINITY;
 
@@ -135,27 +134,27 @@ public class ZoneTab {
     }
 
     public double coordStrToVal(String sign, String digits) {
-        int digit_len = digits.length();
+        int digitLen = digits.length();
 
         int dir;
         double d, m, s;
 
-        if (digit_len == 4) {
+        if (digitLen == 4) {
             d = Double.valueOf(digits.substring(0, 2));
             m = Double.valueOf(digits.substring(2, 4));
             s = 0;
         }
-        else if (digit_len == 5) {
+        else if (digitLen == 5) {
             d = Double.valueOf(digits.substring(0, 3));
             m = Double.valueOf(digits.substring(3, 5));
             s = 0;
         }
-        else if (digit_len == 6) {
+        else if (digitLen == 6) {
             d = Double.valueOf(digits.substring(0, 2));
             m = Double.valueOf(digits.substring(2, 4));
             s = Double.valueOf(digits.substring(4, 6));
         }
-        else if (digit_len == 7) {
+        else if (digitLen == 7) {
             d = Double.valueOf(digits.substring(0, 3));
             m = Double.valueOf(digits.substring(3, 5));
             s = Double.valueOf(digits.substring(5, 7));

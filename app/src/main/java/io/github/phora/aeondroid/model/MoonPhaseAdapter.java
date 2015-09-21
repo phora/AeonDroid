@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import io.github.phora.aeondroid.EphemerisUtils;
+import io.github.phora.aeondroid.calculations.EphemerisUtils;
 import io.github.phora.aeondroid.PhaseUtils;
 import io.github.phora.aeondroid.R;
 
@@ -82,9 +82,9 @@ public class MoonPhaseAdapter extends BaseAdapter {
     }
 
     public void setPhaseSelection(int hourSelection) {
-        boolean call_invalidate = (this.phaseSelection != hourSelection);
+        boolean callInvalidate = (this.phaseSelection != hourSelection);
         this.phaseSelection = hourSelection;
-        if (call_invalidate) {
+        if (callInvalidate) {
             notifyDataSetChanged();
         }
     }

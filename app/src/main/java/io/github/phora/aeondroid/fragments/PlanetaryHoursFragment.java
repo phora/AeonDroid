@@ -109,11 +109,11 @@ public class PlanetaryHoursFragment extends ListFragment implements BroadcastRec
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d("PHFragment", "Received highlight update");
-            int selected_row = intent.getIntExtra(Events.EXTRA_HOUR_INDEX, -1);
+            int selectedRow = intent.getIntExtra(Events.EXTRA_HOUR_INDEX, -1);
             if (!_autoScrolledOnce) {
                 try {
-                    Log.d("PHFragment", "Attempting to scroll to "+selected_row);
-                    getListView().setSelectionFromTop(selected_row, getListView().getHeight() / 2);
+                    Log.d("PHFragment", "Attempting to scroll to "+selectedRow);
+                    getListView().setSelectionFromTop(selectedRow, getListView().getHeight() / 2);
                     _autoScrolledOnce = true;
                     Log.d("PHFragment", "Scrolling success");
                 } catch (IllegalStateException e) {
@@ -121,7 +121,7 @@ public class PlanetaryHoursFragment extends ListFragment implements BroadcastRec
                 }
             }
             if (pha != null) {
-                pha.setHourSelection(selected_row);
+                pha.setHourSelection(selectedRow);
                 if (_styleLateSet) {
                     _styleLateSet = false;
                     pha.setHourStyle(_delayedHourStyle);

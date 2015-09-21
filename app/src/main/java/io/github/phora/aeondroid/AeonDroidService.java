@@ -24,9 +24,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import io.github.phora.aeondroid.activities.MainActivity;
+import io.github.phora.aeondroid.calculations.Ephemeris;
+import io.github.phora.aeondroid.calculations.EphemerisUtils;
 import io.github.phora.aeondroid.drawables.PlanetIndicator;
 import io.github.phora.aeondroid.model.MoonPhase;
 import io.github.phora.aeondroid.model.PlanetaryHour;
+import io.github.phora.aeondroid.model.VoidOfCourseInfo;
 import swisseph.SweConst;
 import swisseph.SweDate;
 
@@ -148,7 +151,7 @@ public class AeonDroidService extends Service {
     private void createNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(getString(R.string.app_name))
+                .setContentTitle(getString(R.string.AppName))
                 .setWhen(System.currentTimeMillis())
                 .setOngoing(true);
         Intent startIntent = new Intent(this, MainActivity.class);
@@ -187,14 +190,14 @@ public class AeonDroidService extends Service {
                 dummy.interrupt();
             }
 
-            boolean observer_different;
-            double[] cur_obv = ephemeris.getObserver();
-            observer_different = (cur_obv[0] != longitude) || (cur_obv[1] != latitude) || (cur_obv[2] != altitude);
+            boolean observerDifferent;
+            double[] curObv = ephemeris.getObserver();
+            observerDifferent = (curObv[0] != longitude) || (curObv[1] != latitude) || (curObv[2] != altitude);
 
             ephemeris.setObserver(longitude, latitude, altitude);
             refreshPlanetaryHours();
 
-            if ((usingGPS != prevUsingGPS) || observer_different || _firstRun) {
+            if ((usingGPS != prevUsingGPS) || observerDifferent || _firstRun) {
                 _firstRun = false;
                 Intent intent = new Intent();
                 intent.setAction(Events.REFRESH_HOURS);
@@ -276,7 +279,7 @@ public class AeonDroidService extends Service {
     private class CheckPlanetsPosThread extends Thread {
         private int sleepVal;
 
-        private final int[] planets_list = new int[] {
+        private final int[] planetsList = new int[] {
             SweConst.SE_SUN, SweConst.SE_MERCURY, SweConst.SE_VENUS,
             SweConst.SE_MOON, SweConst.SE_MARS, SweConst.SE_JUPITER,
             SweConst.SE_SATURN, SweConst.SE_URANUS, SweConst.SE_NEPTUNE,
@@ -295,13 +298,13 @@ public class AeonDroidService extends Service {
                     Intent intent = new Intent();
                     intent.setAction(Events.PLANET_POS);
 
-                    int count = planets_list.length;
+                    int count = planetsList.length;
                     double[] results = new double[count];
                     Date d = new Date();
                     double julified = EphemerisUtils.dateToSweDate(d).getJulDay();
 
                     for (int i = 0; i < count; i++) {
-                        results[i] = ephemeris.getBodyPos(julified, planets_list[i]);
+                        results[i] = ephemeris.getBodyPos(julified, planetsList[i]);
                     }
 
                     intent.putExtra(Events.EXTRA_PLANET_POS, results);
@@ -328,8 +331,8 @@ public class AeonDroidService extends Service {
                     Thread.sleep(this.sleepVal);
 
                     final Date d = new Date();
-                    boolean found_hour = false;
-                    boolean hour_different = false;
+                    boolean foundHour = false;
+                    boolean hourDifferent = false;
                     Intent intent = new Intent();
 
                     if (planetaryHours == null) {
@@ -339,36 +342,36 @@ public class AeonDroidService extends Service {
                         localBroadcastManager.sendBroadcastSync(intent);
                         continue;
                     }
-                    int item_count = planetaryHours.size();
+                    int itemCount = planetaryHours.size();
 
                     if (lastIndex == -1) {
-                        for (int i=0; i<item_count;i++) {
+                        for (int i=0; i<itemCount;i++) {
                             PlanetaryHour ph = planetaryHours.get(i);
-                            Date hour_d = SweDate.getDate(ph.getHourStamp());
-                            Date hour_end_d = SweDate.getDate(ph.getHourStamp()+ph.getHourLength());
-                            if (hour_d.compareTo(d) <= 0 && hour_end_d.compareTo(d) >= 0) {
-                                hour_different = (lastIndex != i);
+                            Date hourD = SweDate.getDate(ph.getHourStamp());
+                            Date hourEndD = SweDate.getDate(ph.getHourStamp()+ph.getHourLength());
+                            if (hourD.compareTo(d) <= 0 && hourEndD.compareTo(d) >= 0) {
+                                hourDifferent = (lastIndex != i);
                                 lastIndex = i;
-                                found_hour = true;
+                                foundHour = true;
                                 break;
                             }
                         }
                     }
                     else {
-                        for (int i=lastIndex; i<item_count;i++) {
+                        for (int i=lastIndex; i<itemCount;i++) {
                             PlanetaryHour ph = planetaryHours.get(i);
-                            Date hour_d = SweDate.getDate(ph.getHourStamp());
-                            Date hour_end_d = SweDate.getDate(ph.getHourStamp()+ph.getHourLength());
-                            if (hour_d.compareTo(d) <= 0 && hour_end_d.compareTo(d) >= 0) {
-                                hour_different = (lastIndex != i);
+                            Date hourD = SweDate.getDate(ph.getHourStamp());
+                            Date hourEndD = SweDate.getDate(ph.getHourStamp()+ph.getHourLength());
+                            if (hourD.compareTo(d) <= 0 && hourEndD.compareTo(d) >= 0) {
+                                hourDifferent = (lastIndex != i);
                                 lastIndex = i;
-                                found_hour = true;
+                                foundHour = true;
                                 break;
                             }
                         }
                     }
 
-                    if (!found_hour) {
+                    if (!foundHour) {
                         lastIndex = -1;
                         intent.setAction(Events.REFRESH_HOURS);
                         refreshPlanetaryHours(d);
@@ -377,27 +380,27 @@ public class AeonDroidService extends Service {
                         intent.setAction(Events.FOUND_HOUR);
 
                         PlanetaryHour ph = planetaryHours.get(lastIndex);
-                        int planet_type = ph.getPlanetType();
+                        int planetType = ph.getPlanetType();
 
-                        if (hour_different) {
+                        if (hourDifferent) {
                             String[] planets = getResources().getStringArray(R.array.PlanetNames);
-                            String planetname = planets[planet_type];
-                            String content_text = String.format(getString(R.string.ADService_PHourIs), planetname);
+                            String planetname = planets[planetType];
+                            String contentText = String.format(getString(R.string.ADService_PHourIs), planetname);
 
-                            String starts_fmt = getString(R.string.PHoursAdapter_StartsAt);
-                            String ends_fmt = getString(R.string.PHoursAdapter_EndsAt);
+                            String startsFmt = getString(R.string.PHoursAdapter_StartsAt);
+                            String endsFmt = getString(R.string.PHoursAdapter_EndsAt);
 
                             Date sd = SweDate.getDate(ph.getHourStamp());
                             Date ed = SweDate.getDate(ph.getHourStamp() + ph.getHourLength());
 
-                            String starts_at  = String.format(starts_fmt, EphemerisUtils.DATE_FMT.format(sd));
-                            String ends_at = String.format(ends_fmt, EphemerisUtils.DATE_FMT.format(ed));
+                            String startsAt  = String.format(startsFmt, EphemerisUtils.DATE_FMT.format(sd));
+                            String endsAt = String.format(endsFmt, EphemerisUtils.DATE_FMT.format(ed));
 
-                            String finresult = String.format("%s\n%s", starts_at, ends_at);
+                            String finresult = String.format("%s\n%s", startsAt, endsAt);
 
                             NotificationCompat.Builder notifyBuilder = new NotificationCompat.Builder(AeonDroidService.this)
-                                    .setContentTitle(content_text)
-                                    .setTicker(content_text)
+                                    .setContentTitle(contentText)
+                                    .setTicker(contentText)
                                     .setContentText(finresult)
                                     .setContentIntent(contentIntent)
                                     .setOngoing(true);
@@ -411,15 +414,15 @@ public class AeonDroidService extends Service {
                                 notifyBuilder.setSmallIcon(R.mipmap.ic_launcher);
                             }
                             else if (hoursStyle == 1) {
-                                notifyBuilder.setSmallIcon(pi.getChakraNoti(planet_type));
+                                notifyBuilder.setSmallIcon(pi.getChakraNoti(planetType));
                             }
                             else {
-                                notifyBuilder.setSmallIcon(pi.getPlanetNoti(planet_type));
+                                notifyBuilder.setSmallIcon(pi.getPlanetNoti(planetType));
                             }
 
                             notificationManager.notify(NOTIFICATION_ID, notifyBuilder.build());
                         }
-                        intent.putExtra(Events.EXTRA_HOUR_TYPE, planet_type);
+                        intent.putExtra(Events.EXTRA_HOUR_TYPE, planetType);
                         intent.putExtra(Events.EXTRA_HOUR_INDEX, lastIndex);
                         localBroadcastManager.sendBroadcast(intent);
                     }
@@ -455,7 +458,7 @@ public class AeonDroidService extends Service {
                         continue;
                     }
 
-                    boolean found_phase = false;
+                    boolean foundPhase = false;
                     int count = moonPhases.size();
 
                     if (lastIndex == -1) {
@@ -468,7 +471,7 @@ public class AeonDroidService extends Service {
 
                             if (dmp.compareTo(d) <= 0 && dmp2.compareTo(d) >= 0) {
                                 lastIndex = i;
-                                found_phase = true;
+                                foundPhase = true;
                                 break;
                             }
                         }
@@ -483,13 +486,13 @@ public class AeonDroidService extends Service {
 
                             if (dmp.compareTo(d) <= 0 && dmp2.compareTo(d) >= 0) {
                                 lastIndex = i;
-                                found_phase = true;
+                                foundPhase = true;
                                 break;
                             }
                         }
                     }
 
-                    if (found_phase) {
+                    if (foundPhase) {
                         intent.setAction(Events.FOUND_PHASE);
                         intent.putExtra(Events.EXTRA_LPHASE_INDEX, lastIndex);
                         localBroadcastManager.sendBroadcast(intent);

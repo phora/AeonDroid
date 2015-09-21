@@ -8,11 +8,11 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/AppName"
         android:theme="@style/AppTheme" >
         <activity
             android:name=".activities.MainActivity"
-            android:label="@string/app_name"
+            android:label="@string/AppName"
             android:launchMode="singleTop"
             android:configChanges="orientation|screenSize">
             <intent-filter>
@@ -23,7 +23,7 @@
         </activity>
         <activity
             android:name=".activities.SettingsActivity"
-            android:label="@string/title_activity_settings"
+            android:label="@string/Title.Activity.Settings"
             android:theme="@style/AppTheme">
         </activity>
 

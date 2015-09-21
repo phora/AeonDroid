@@ -2,7 +2,6 @@ package io.github.phora.aeondroid;
 
 import android.content.Context;
 
-import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.model.MoonPhase;
 import io.github.phora.aeondroid.model.MoonPhase.PhaseType;
 
@@ -81,75 +80,75 @@ public class PhaseUtils {
 
 
     public static String getPhaseString(Context context, PhaseType pt, boolean waxing) {
-        String fmt = context.getString(R.string.waxwanefmt);
+        String fmt = context.getString(R.string.Moon_WaxWaneFmt);
 
         if (pt == PhaseType.NEW) {
-            return context.getString(R.string.new_moon);
+            return context.getString(R.string.Moon_NewMoon);
         }
         else if (pt == PhaseType.FULL) {
-            return context.getString(R.string.full_moon);
+            return context.getString(R.string.Moon_FullMoon);
         }
         else if (pt == PhaseType.QUARTER) {
             if (waxing) {
-                return String.format(fmt, context.getString(R.string.first_quarter),
-                        context.getString(R.string.quarter_sfx));
+                return String.format(fmt, context.getString(R.string.Moon_FirstQuarter),
+                        context.getString(R.string.Moon_QuarterSuffix));
             }
             else {
-                return String.format(fmt, context.getString(R.string.last_quarter),
-                        context.getString(R.string.quarter_sfx));
+                return String.format(fmt, context.getString(R.string.Moon_LastQuarter),
+                        context.getString(R.string.Moon_QuarterSuffix));
             }
         }
         else {
             String part;
             if (pt == PhaseType.CRESCENT) {
-                part = context.getString(R.string.crescent_moon);
+                part = context.getString(R.string.Moon_Crescent);
             }
             else {
-                part = context.getString(R.string.gibbous_moon);
+                part = context.getString(R.string.Moon_Gibbous);
             }
 
             if (waxing) {
-                return String.format(fmt, context.getString(R.string.waxing_moon), part);
+                return String.format(fmt, context.getString(R.string.Moon_Waxing), part);
             }
             else {
-                return String.format(fmt, context.getString(R.string.waning_moon), part);
+                return String.format(fmt, context.getString(R.string.Moon_Waning), part);
             }
         }
     }
 
     public static String getPhaseString(Context context, MoonPhase mp) {
-        String fmt = context.getString(R.string.waxwanefmt);
+        String fmt = context.getString(R.string.Moon_WaxWaneFmt);
 
         if (mp.getPhaseType() == PhaseType.NEW) {
-            return context.getString(R.string.new_moon);
+            return context.getString(R.string.Moon_NewMoon);
         }
         else if (mp.getPhaseType() == PhaseType.FULL) {
-            return context.getString(R.string.full_moon);
+            return context.getString(R.string.Moon_FullMoon);
         }
         else if (mp.getPhaseType() == PhaseType.QUARTER) {
             if (mp.isWaxing()) {
-                return String.format(fmt, context.getString(R.string.first_quarter),
-                        context.getString(R.string.quarter_sfx));
+                return String.format(fmt, context.getString(R.string.Moon_FirstQuarter),
+                        context.getString(R.string.Moon_QuarterSuffix));
             }
             else {
-                return String.format(fmt, context.getString(R.string.last_quarter),
-                        context.getString(R.string.quarter_sfx));
+                return String.format(fmt, context.getString(R.string.Moon_LastQuarter),
+                        context.getString(R.string.Moon_QuarterSuffix));
             }
         }
         else {
             String part;
             if (mp.getPhaseType() == PhaseType.CRESCENT) {
-                part = context.getString(R.string.crescent_moon);
+                part = context.getString(R.string.Moon_Crescent);
             }
             else {
-                part = context.getString(R.string.gibbous_moon);
+                part = context.getString(R.string.Moon_Gibbous);
             }
 
             if (mp.isWaxing()) {
-                return String.format(fmt, context.getString(R.string.waxing_moon), part);
+                return String.format(fmt, context.getString(R.string.Moon_Waxing), part);
             }
             else {
-                return String.format(fmt, context.getString(R.string.waning_moon), part);
+                return String.format(fmt, context.getString(R.string.Moon_Waning), part);
             }
         }
     }

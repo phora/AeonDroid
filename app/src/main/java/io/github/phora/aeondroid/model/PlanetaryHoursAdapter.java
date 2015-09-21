@@ -1,7 +1,6 @@
 package io.github.phora.aeondroid.model;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Date;
 
-import io.github.phora.aeondroid.EphemerisUtils;
+import io.github.phora.aeondroid.calculations.EphemerisUtils;
 import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.drawables.PlanetIndicator;
 import swisseph.SweDate;
@@ -68,7 +67,7 @@ public class PlanetaryHoursAdapter extends BaseAdapter {
 
         String[] planets = mContext.getResources().getStringArray(R.array.PlanetNames);
         Date d = SweDate.getDate(ph.getHourStamp());
-        Date ed = SweDate.getDate(ph.getHourStamp()+ph.getHourLength());
+        Date ed = SweDate.getDate(ph.getHourStamp() + ph.getHourLength());
 
         if (hourSelection == position) {
             TypedValue typedValue = new TypedValue();
@@ -83,11 +82,11 @@ public class PlanetaryHoursAdapter extends BaseAdapter {
             convertView.setBackgroundResource(0);
         }
 
-        String starts_fmt = mContext.getString(R.string.PHoursAdapter_StartsAt);
-        String ends_fmt = mContext.getString(R.string.PHoursAdapter_EndsAt);
+        String startsFmt = mContext.getString(R.string.PHoursAdapter_StartsAt);
+        String endsFmt = mContext.getString(R.string.PHoursAdapter_EndsAt);
 
-        pHoursTime.setText(String.format(starts_fmt, EphemerisUtils.DATE_FMT.format(d)));
-        pHoursTimeEnd.setText(String.format(ends_fmt, EphemerisUtils.DATE_FMT.format(ed)));
+        pHoursTime.setText(String.format(startsFmt, EphemerisUtils.DATE_FMT.format(d)));
+        pHoursTimeEnd.setText(String.format(endsFmt, EphemerisUtils.DATE_FMT.format(ed)));
         pHoursName.setText(planets[ph.getPlanetType()]);
         //Log.d("PlanetaryHoursAdapter", "Is night?: " + ph.isNight());
         if (!ph.isNight()) {
@@ -109,9 +108,9 @@ public class PlanetaryHoursAdapter extends BaseAdapter {
     }
 
     public void setHourSelection(int hourSelection) {
-        boolean call_invalidate = (this.hourSelection != hourSelection);
+        boolean callInvalidate = (this.hourSelection != hourSelection);
         this.hourSelection = hourSelection;
-        if (call_invalidate) {
+        if (callInvalidate) {
             notifyDataSetChanged();
         }
     }
@@ -125,9 +124,9 @@ public class PlanetaryHoursAdapter extends BaseAdapter {
     }
 
     public void setHourStyle(int hourStyle) {
-        boolean call_invalidate = (this.hourStyle != hourStyle);
+        boolean callInvalidate = (this.hourStyle != hourStyle);
         this.hourStyle = hourStyle;
-        if (call_invalidate) {
+        if (callInvalidate) {
             notifyDataSetChanged();
         }
     }

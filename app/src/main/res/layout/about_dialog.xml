@@ -38,7 +38,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/site_url"
+                android:text="@string/About.Site"
                 android:autoLink="web"
                 android:paddingTop="4sp"
                 android:paddingBottom="4sp"
@@ -48,7 +48,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/email"
+                android:text="@string/About.Email"
                 android:paddingTop="4sp"
                 android:paddingBottom="4sp"
                 android:autoLink="email"
@@ -63,6 +63,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/AboutDialog.Desc"
-        android:text="@string/about_desc"/>
+        android:text="@string/About.Desc"/>
 
 </LinearLayout>

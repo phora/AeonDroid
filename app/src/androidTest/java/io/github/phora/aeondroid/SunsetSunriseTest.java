@@ -8,6 +8,9 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import io.github.phora.aeondroid.calculations.Ephemeris;
+import io.github.phora.aeondroid.calculations.EphemerisUtils;
+import io.github.phora.aeondroid.model.SunsetSunriseInfo;
 import swisseph.SweDate;
 
 /**

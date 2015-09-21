@@ -1,37 +1,40 @@
 <resources>
-    <string name="app_name">AeonDroid</string>
-    <string name="about_app">About %1$s</string>
-    <string name="about_ver">Version %1$s</string>
+    <string name="AppName">AeonDroid</string>
+    <string name="Action.Settings">Settings</string>
+    <string name="Action.About">About</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="pref_title_location_auto">Retrieve location from GPS?</string>
-    <string name="pref_description_location_auto">The below values will be used if this is turned off and/or if service is unavailable</string>
-    <string name="FragmentMain.LockingOntoGPS">Locking onto GPS...</string>
-    <string name="waxwanefmt">%1$s %2$s Moon</string>
-    <string name="new_moon">New Moon</string>
-    <string name="full_moon">Full Moon</string>
-    <string name="first_quarter">First</string>
-    <string name="last_quarter">Last</string>
-    <string name="quarter_sfx">Quarter</string>
-    <string name="crescent_moon">Crescent</string>
-    <string name="gibbous_moon">Gibbous</string>
-    <string name="waxing_moon">Waxing</string>
-    <string name="waning_moon">Waning</string>
-    <string name="planetary_hours">Planetary Hours</string>
-    <string name="moon_phases">Moon Phases</string>
+    <string name="PlanetaryHoursFragment.LockingOntoGPS">Locking onto GPS...</string>
+
+    <string name="Moon.WaxWaneFmt">%1$s %2$s Moon</string>
+    <string name="Moon.NewMoon">New Moon</string>
+    <string name="Moon.FullMoon">Full Moon</string>
+    <string name="Moon.FirstQuarter">First</string>
+    <string name="Moon.LastQuarter">Last</string>
+    <string name="Moon.QuarterSuffix">Quarter</string>
+    <string name="Moon.Crescent">Crescent</string>
+    <string name="Moon.Gibbous">Gibbous</string>
+    <string name="Moon.Waxing">Waxing</string>
+    <string name="Moon.Waning">Waning</string>
+
+    <string name="PanelTitle.PlanetaryHours">Planetary Hours</string>
+    <string name="PanelTitle.MoonPhases">Moon Phases</string>
+    <string name="PanelTitle.RightNow">Right Now</string>
+
     <string name="pref_ringtone_silent">Silent</string>
 
-    <string name="PHoursAdapter_StartsAt">Starts at: %s</string>
-    <string name="PHoursAdapter_EndsAt">Ends at: %s</string>
+    <string name="PHoursAdapter.StartsAt">Starts at: %s</string>
+    <string name="PHoursAdapter.EndsAt">Ends at: %s</string>
     <string name="ADService.PHourIs">Planetary hour is %1$s</string>
+
     <string name="ContentDescriptionDivider">divider</string>
-    <string name="right_now">Right Now</string>
-    <string name="currently_voc">Currently void, exiting at %1$s</string>
-    <string name="pending_voc">Pending void, entering at %1$s</string>
-    <string name="site_url">https://github.com/phora/AeonDroid</string>
-    <string name="action_about">About</string>
     <string name="OK">OK</string>
-    <string name="email">phora.public@outlook.com</string>
-    <string name="about_desc">Released under the GNU GPLv3 license.</string>
+
+    <string name="Moon.CurrentlyVOC">Currently void, exiting at %1$s</string>
+    <string name="Moon.PendingVOC">Pending void, entering at %1$s</string>
+
+    <string name="About.App">About %1$s</string>
+    <string name="About.Version">Version %1$s</string>
+    <string name="About.Site">https://github.com/phora/AeonDroid</string>
+    <string name="About.Email">phora.public@outlook.com</string>
+    <string name="About.Desc">Released under the GNU GPLv3 license.</string>
 </resources>
