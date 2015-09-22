@@ -172,7 +172,7 @@ public class ZoneTab {
             s = Double.valueOf(digits.substring(5, 7));
         }
         else {
-            throw new IndexOutOfBoundsException("Not implemented");
+            throw new IllegalArgumentException("Not implemented");
         }
 
         if (sign.equals("+")) {
