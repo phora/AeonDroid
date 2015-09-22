@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:aeon="http://schemas.android.com/apk/res/io.github.phora.aeondroid">
+    <PreferenceCategory android:title="@string/PrefGroup.BirthInfo">
+        <io.github.phora.aeondroid.DatetimePreference
+            android:key="BirthTime"
+            android:title="@string/Pref.Title.BirthTime"
+            aeon:latitudeReference="BirthLoc.Latitude"
+            aeon:longitudeReference="BirthLoc.Longitude"
+            aeon:showToastsReference="showUsageToasts"
+            android:hint="@string/Pref.Desc.BirthTime"
+            android:defaultValue="0" />
+
+        <EditTextPreference
+            android:key="BirthLoc.Longitude"
+            android:title="@string/Pref.Title.Longitude"
+            android:hint="@string/Pref.Summary.Longitude"
+            android:defaultValue="0.0"
+            android:selectAllOnFocus="true"
+            android:inputType="numberDecimal|numberSigned"
+            android:singleLine="true"
+            android:maxLines="1" />
+
+        <EditTextPreference
+            android:key="BirthLoc.Latitude"
+            android:title="@string/Pref.Title.Latitude"
+            android:hint="@string/Pref.Summary.Latitude"
+            android:defaultValue="0.0"
+            android:selectAllOnFocus="true"
+            android:inputType="numberDecimal|numberSigned"
+            android:singleLine="true"
+            android:maxLines="1" />
+
+        <EditTextPreference
+            android:key="BirthLoc.Altitude"
+            android:title="@string/Pref.Title.Altitude"
+            android:summary="@string/Pref.Summary.Altitude"
+            android:defaultValue="0.0"
+            android:selectAllOnFocus="true"
+            android:inputType="numberDecimal|numberSigned"
+            android:singleLine="true"
+            android:maxLines="1" />
+    </PreferenceCategory>
+</PreferenceScreen>

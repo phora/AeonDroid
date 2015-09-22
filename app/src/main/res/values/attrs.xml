@@ -11,4 +11,10 @@
     <attr name="RightNow.Uranus" format="reference" />
     <attr name="RightNow.Neptune" format="reference" />
     <attr name="RightNow.Pluto" format="reference" />
+
+    <declare-styleable name="DateTimePreference">
+        <attr name="latitudeReference" format="string" />
+        <attr name="longitudeReference" format="string" />
+        <attr name="showToastsReference" format="string" />
+    </declare-styleable>
 </resources>

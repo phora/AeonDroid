@@ -1,5 +1,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <CheckBoxPreference
+        android:key="showUsageToasts"
+        android:title="@string/Pref.Title.ShowUsageToasts"
+        android:summary="@string/Pref.Desc.ShowUsageToasts"
+        android:defaultValue="true" />
+
     <PreferenceCategory android:title="@string/PrefGroup.Appearance">
         <CheckBoxPreference
             android:key="isDark"
@@ -63,10 +69,6 @@
             android:inputType="numberDecimal|numberSigned"
             android:singleLine="true"
             android:maxLines="1" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/PrefGroup.BirthInfo">
 
     </PreferenceCategory>
 

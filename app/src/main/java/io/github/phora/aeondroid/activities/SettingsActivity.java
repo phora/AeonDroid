@@ -89,6 +89,11 @@ public class SettingsActivity extends PreferenceActivity {
         bindPreferenceSummaryToValue(findPreference("CurrentLoc.Longitude"));
         bindPreferenceSummaryToValue(findPreference("CurrentLoc.Latitude"));
         bindPreferenceSummaryToValue(findPreference("CurrentLoc.Altitude"));
+
+        addPreferencesFromResource(R.xml.pref_realtime_charts);
+        bindPreferenceSummaryToValue(findPreference("BirthLoc.Longitude"));
+        bindPreferenceSummaryToValue(findPreference("BirthLoc.Latitude"));
+        bindPreferenceSummaryToValue(findPreference("BirthLoc.Altitude"));
         //bindPreferenceSummaryToValue(findPreference("sync_frequency"));
     }
 
@@ -225,6 +230,27 @@ public class SettingsActivity extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("CurrentLoc.Latitude"));
             bindPreferenceSummaryToValue(findPreference("CurrentLoc.Altitude"));
             bindPreferenceSummaryToValue(findPreference("phoursIndicator"));
+        }
+    }
+
+    /**
+     * This fragment shows general preferences only. It is used when the
+     * activity is showing a two-pane settings UI.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class RealtimeChartsPreferenceFragment extends PreferenceFragment {
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.pref_realtime_charts);
+
+            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+            // to their values. When their values change, their summaries are
+            // updated to reflect the new value, per the Android Design
+            // guidelines.
+            bindPreferenceSummaryToValue(findPreference("BirthLoc.Longitude"));
+            bindPreferenceSummaryToValue(findPreference("BirthLoc.Latitude"));
+            bindPreferenceSummaryToValue(findPreference("BirthLoc.Altitude"));
         }
     }
 }

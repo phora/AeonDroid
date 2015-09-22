@@ -39,6 +39,7 @@
     <string name="About.Email">phora.public@outlook.com</string>
     <string name="About.Desc">Released under the GNU GPLv3 license.</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="colon">:</string>
+    <string name="DetectedTimezone">Detected timezone: %1$s</string>
+    <string name="DTPref.Paging">Swipe to change between date and time fields.</string>
 </resources>

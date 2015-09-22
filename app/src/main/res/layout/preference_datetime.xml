@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/DTPref.TimeZone"
+        android:gravity="center"
+        android:textAppearance="@android:style/TextAppearance.Large"/>
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/DTPref.Date"
+        android:layout_gravity="center_horizontal"
+        android:calendarViewShown="false"
+        android:datePickerMode="spinner"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/DTPref.Hours"
+            android:choiceMode="singleChoice"
+            android:clickable="true"/>
+        <TextView android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/colon"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="4dp"/>
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/DTPref.Minutes"
+            android:choiceMode="singleChoice"
+            android:clickable="true"/>
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="match_parent"
+                  android:text="@string/colon"
+                  android:layout_gravity="center"
+                  android:gravity="center"
+                  android:padding="4dp"/>
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/DTPref.Seconds"
+            android:choiceMode="singleChoice"
+            android:clickable="true"/>
+    </LinearLayout>
+</LinearLayout>

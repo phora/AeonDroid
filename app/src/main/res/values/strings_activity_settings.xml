@@ -5,21 +5,15 @@
 
     <!-- Example General settings -->
     <string name="PrefHeader.General">General</string>
-
-    <string name="Pref.Title.IsDark">Dark Theme?</string>
-    <string name="Pref.Desc.IsDark">You will need to restart the app to apply this.</string>
-
-    <string name="PrefGroup.GeneralLocation">General Location</string>
-    <string name="Pref.Title.LocationAuto">Retrieve location from GPS?</string>
-    <string name="Pref.Desc.LocationAuto">The below values will be used if this is turned off and/or if service is unavailable</string>
-    <string name="Pref.Title.Longitude">Longitude</string>
-    <string name="Pref.Summary.Longitude">Negative means west, positive means East</string>
-    <string name="Pref.Title.Latitude">Latitude</string>
-    <string name="Pref.Summary.Latitude">Positive means north, negative means south</string>
-    <string name="Pref.Title.Altitude">Altitude</string>
-    <string name="Pref.Summary.Altitude">(Optional) meters above mean sea level</string>
+    <string name="Pref.Title.ShowUsageToasts">Show usage toasts?</string>
+    <string name="Pref.Desc.ShowUsageToasts">Some custom widgets maybe inaccessible without
+        knowing how to access all the fields. Leave this ticked on if you want to see the usage
+        toasts. You can still access the toasts even with this turned off if you press on
+        the empty spaces in the widgets when not all fields are displayed.</string>
 
     <string name="PrefGroup.Appearance">Appearance</string>
+    <string name="Pref.Title.IsDark">Dark Theme?</string>
+    <string name="Pref.Desc.IsDark">You will need to restart the app to apply this.</string>
     <string name="Pref.Title.PHoursStyle">Planetary hours indicator style</string>
     <string name="Pref.Title.PHoursDrawerStyle">Planetary hours notification icon</string>
     <string-array name="Pref_Titles_PHoursStyle">
@@ -41,5 +35,19 @@
         <item>2</item>
     </string-array>
 
+    <string name="PrefGroup.GeneralLocation">General Location</string>
+    <string name="Pref.Title.LocationAuto">Retrieve location from GPS?</string>
+    <string name="Pref.Desc.LocationAuto">The below values will be used if this is turned off and/or if service is unavailable</string>
+    <string name="Pref.Title.Longitude">Longitude</string>
+    <string name="Pref.Summary.Longitude">- means west, + means east</string>
+    <string name="Pref.Title.Latitude">Latitude</string>
+    <string name="Pref.Summary.Latitude">+ means north, - means south</string>
+    <string name="Pref.Title.Altitude">Altitude</string>
+    <string name="Pref.Summary.Altitude">(Optional) meters above mean sea level</string>
+
+    <string name="PrefHeader.RealtimeCharts">Realtime Charts</string>
     <string name="PrefGroup.BirthInfo">Birth Location</string>
+    <string name="Pref.Title.BirthTime">Birth time</string>
+    <string name="Pref.Desc.BirthTime">This is in local time. Your timezone\'s specified by your location.</string>
+
 </resources>

@@ -6,4 +6,8 @@
         android:fragment="io.github.phora.aeondroid.activities.SettingsActivity$GeneralPreferenceFragment"
         android:title="@string/PrefHeader.General"/>
 
+    <header
+        android:fragment="io.github.phora.aeondroid.activities.SettingsActivity$RealtimeChartsPreferenceFragment"
+        android:title="@string/PrefHeader.RealtimeCharts"/>
+
 </preference-headers>
