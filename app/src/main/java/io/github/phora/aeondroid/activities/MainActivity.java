@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 import io.github.phora.aeondroid.AeonDroidService;
 import io.github.phora.aeondroid.Events;
+import io.github.phora.aeondroid.fragments.AspectsFragment;
 import io.github.phora.aeondroid.fragments.BroadcastReceivable;
 import io.github.phora.aeondroid.fragments.MoonPhaseFragment;
 import io.github.phora.aeondroid.fragments.PlanetaryHoursFragment;
@@ -278,6 +279,7 @@ public class MainActivity extends FragmentActivity {
             pages.add(null);
             pages.add(null);
             pages.add(null);
+            pages.add(null);
         }
 
         @Override
@@ -311,13 +313,22 @@ public class MainActivity extends FragmentActivity {
                     else {
                         return fraggy;
                     }
+                case 3:
+                    if (fraggy == null) {
+                        fraggy = AspectsFragment.newInstance(null, null);
+                        pages.set(3, fraggy);
+                        return fraggy;
+                    }
+                    else {
+                        return fraggy;
+                    }
             }
             return null;
         }
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override
@@ -329,6 +340,8 @@ public class MainActivity extends FragmentActivity {
                     return getString(R.string.PanelTitle_MoonPhases);
                 case 2:
                     return getString(R.string.PanelTitle_RightNow);
+                case 3:
+                    return getString(R.string.PanelTitle_Aspects);
                 default:
                     return null;
             }

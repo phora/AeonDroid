@@ -10,14 +10,13 @@ import android.preference.PreferenceManager;
 public class AeonDroidApplication extends Application {
     @Override
     public void onCreate() {
+        super.onCreate();
         if (getIsDark()) {
             setTheme(R.style.AppThemeDark);
         }
         else {
             setTheme(R.style.AppTheme);
         }
-
-        super.onCreate();
     }
 
     private boolean getIsDark() {

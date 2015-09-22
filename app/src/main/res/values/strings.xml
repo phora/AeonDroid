@@ -19,6 +19,7 @@
     <string name="PanelTitle.PlanetaryHours">Planetary Hours</string>
     <string name="PanelTitle.MoonPhases">Moon Phases</string>
     <string name="PanelTitle.RightNow">Right Now</string>
+    <string name="PanelTitle.Aspects">Aspects</string>
 
     <string name="pref_ringtone_silent">Silent</string>
 
@@ -37,4 +38,7 @@
     <string name="About.Site">https://github.com/phora/AeonDroid</string>
     <string name="About.Email">phora.public@outlook.com</string>
     <string name="About.Desc">Released under the GNU GPLv3 license.</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

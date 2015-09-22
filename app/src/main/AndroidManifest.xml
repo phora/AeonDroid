@@ -9,13 +9,11 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/AppName"
-        android:theme="@style/AppTheme"
         android:name=".AeonDroidApplication">
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/AppName"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme"
             android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

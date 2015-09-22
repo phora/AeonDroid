@@ -109,6 +109,44 @@ public class PlanetIndicator {
         }
     }
 
+    public int getPlanetChartSymbol(int i) {
+        TypedValue tv = new TypedValue();
+        switch (i) {
+            case 0:
+                mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Sun, tv, false);
+                return tv.data;
+            case 1:
+                mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Moon, tv, false);
+                return tv.data;
+            case 2:
+                mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Mercury, tv, false);
+                return tv.data;
+            case 3:
+                mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Venus, tv, false);
+                return tv.data;
+            case 4:
+                mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Mars, tv, false);
+                return tv.data;
+            case 5:
+                mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Jupiter, tv, false);
+                return tv.data;
+            case 6:
+                mContext.getTheme().resolveAttribute(R.attr.PlanetaryHours_Saturn, tv, false);
+                return tv.data;
+            case 7:
+                mContext.getTheme().resolveAttribute(R.attr.RightNow_Uranus, tv, false);
+                return tv.data;
+            case 8:
+                mContext.getTheme().resolveAttribute(R.attr.RightNow_Neptune, tv, false);
+                return tv.data;
+            case 9:
+                mContext.getTheme().resolveAttribute(R.attr.RightNow_Pluto, tv, false);
+                return tv.data;
+            default:
+                return 0;
+        }
+    }
+
     public Drawable getChakraDrawable(int i) {
         Drawable d = null;
         switch(i) {
