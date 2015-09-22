@@ -28,7 +28,7 @@ public class ZoneTabTest extends ApplicationTestCase<Application> {
 
         Context appContext = getContext().getApplicationContext();
         new CopyAssetFiles("zone\\.tab", "", appContext).copy();
-        zoneTab = new ZoneTab(appContext.getFilesDir() + File.separator + "zone.tab");
+        zoneTab = ZoneTab.getInstance(appContext);
     }
 
     public void testLatLong() {
