@@ -201,7 +201,7 @@ public class AeonDroidService extends Service {
                 _firstRun = false;
                 Intent intent = new Intent();
                 intent.setAction(Events.REFRESH_HOURS);
-                localBroadcastManager.sendBroadcastSync(intent);
+                localBroadcastManager.sendBroadcast(intent);
             }
 
             cpht.start();
@@ -235,7 +235,6 @@ public class AeonDroidService extends Service {
     }
 
     private class LocUpdater implements LocationListener {
-
         @Override
         public void onLocationChanged(Location location) {
             Log.d("LocUpdater", "New location, refreshing displayed data");

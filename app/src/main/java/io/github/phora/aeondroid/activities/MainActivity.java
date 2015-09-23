@@ -1,6 +1,7 @@
 package io.github.phora.aeondroid.activities;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -40,6 +42,7 @@ import io.github.phora.aeondroid.fragments.RightNowFragment;
 public class MainActivity extends FragmentActivity {
 
     private ViewPager viewPager;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,8 @@ public class MainActivity extends FragmentActivity {
 
         Intent intent = new Intent(getApplicationContext(), AeonDroidService.class);
         startService(intent);
+
+        context = this;
     }
 
     public AeonDroidService getServiceReference() {
@@ -68,6 +73,41 @@ public class MainActivity extends FragmentActivity {
     private AeonDroidService serviceReference;
     private boolean isBound;
     private MainTabsAdapter mainTabsAdapter;
+
+    private class RecheckGPSTask extends AsyncTask<Void, Void, Void> {
+        ProgressDialog pd;
+        boolean doRefresh;
+
+        public RecheckGPSTask(boolean doRefresh) {
+            this.doRefresh = doRefresh;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            serviceReference.recheckGps();
+            Log.d("Something", "I FINISHED THE SERVUCE");
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            pd = new ProgressDialog(context);
+            pd.setIndeterminate(true);
+            pd.setMessage(getString(R.string.MainActivity_CheckingCalcs));
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            pd.dismiss();
+            // we need to do this in case the refresh event wasn't fired from the service
+            if (doRefresh) {
+                Log.i("MainActivity", "Forcing refresh retrieval");
+                forceRefresh();
+            }
+        }
+    }
 
     private ServiceConnection myConnection =  new ServiceConnection() {
         @Override
@@ -80,11 +120,7 @@ public class MainActivity extends FragmentActivity {
             Log.i("MainActivity", "Bound service connected");
             serviceReference = ((AeonDroidService.AeonDroidBinder) service).getService();
             isBound = true;
-            serviceReference.recheckGps();
-
-            // we need to do this in case the refresh event wasn't fired from the service
-            Log.i("MainActivity", "Forcing refresh retrieval");
-            forceRefresh();
+            new RecheckGPSTask(true).execute();
         }
 
         @Override
@@ -188,7 +224,7 @@ public class MainActivity extends FragmentActivity {
         }
         if (isBound && serviceReference != null) {
             // we call this in case we manually changed our gps settings
-            serviceReference.recheckGps();
+            new RecheckGPSTask(false).execute();
         }
     }
 
