@@ -42,4 +42,16 @@
     <string name="colon">:</string>
     <string name="DetectedTimezone">Detected timezone: %1$s</string>
     <string name="DTPref.Paging">Swipe to change between date and time fields.</string>
+
+    <string name="Aspects.Conjunction">conjunction</string>
+    <string name="Aspects.SemiSextile">semisextile</string>
+    <string name="Aspects.SemiSquare">semisquare</string>
+    <string name="Aspects.Sextile">sextile</string>
+    <string name="Aspects.Quintile">quintile</string>
+    <string name="Aspects.Square">square</string>
+    <string name="Aspects.Trine">trine</string>
+    <string name="Aspects.Sesquisquare">sesquisquare</string>
+    <string name="Aspects.Biquintile">biquintile</string>
+    <string name="Aspects.Quincunx">quincunx</string>
+    <string name="Aspects.Opposition">opposition</string>
 </resources>
