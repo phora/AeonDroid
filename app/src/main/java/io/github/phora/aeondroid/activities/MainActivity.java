@@ -86,6 +86,7 @@ public class MainActivity extends FragmentActivity {
         protected Void doInBackground(Void... voids) {
             serviceReference.recheckGps();
             Log.d("Something", "I FINISHED THE SERVUCE");
+            serviceReference.recheckBirthplace();
             return null;
         }
 

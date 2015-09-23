@@ -39,8 +39,7 @@ public class AeonDroidService extends Service {
     Ephemeris ephemeris = null;
     volatile ArrayList<PlanetaryHour> planetaryHours = null;
     volatile ArrayList<MoonPhase> moonPhases;
-
-    private volatile double[] natalChart;
+    volatile double[] natalChart;
 
     private int lastIndex = -1;
     private boolean usingGPS;
@@ -48,9 +47,9 @@ public class AeonDroidService extends Service {
 
     private final static int NOTI_REQUEST_CODE = 116;
     final static int NOTIFICATION_ID = 117;
-    public  final static int[] planetsList = new int[] {
-            SweConst.SE_SUN, SweConst.SE_MERCURY, SweConst.SE_VENUS,
-            SweConst.SE_MOON, SweConst.SE_MARS, SweConst.SE_JUPITER,
+    public final static int[] planetsList = new int[] {
+            SweConst.SE_SUN, SweConst.SE_MOON, SweConst.SE_MERCURY,
+            SweConst.SE_VENUS, SweConst.SE_MARS, SweConst.SE_JUPITER,
             SweConst.SE_SATURN, SweConst.SE_URANUS, SweConst.SE_NEPTUNE,
             SweConst.SE_PLUTO
     };
@@ -61,7 +60,6 @@ public class AeonDroidService extends Service {
     private CheckMoonPhaseThread      cmpt = null;
     private CheckPlanetsPosThread     cppt = null;
     private CheckVoidOfCourseThread cvct = null;
-    private GenerateAspectTableThread gatt = null;
 
     NotificationManager   notificationManager;
     LocalBroadcastManager localBroadcastManager;
@@ -164,6 +162,10 @@ public class AeonDroidService extends Service {
         cmpt = new CheckMoonPhaseThread(this, 1000);
         cmpt.start();
 
+        //cppt = new CheckPlanetsPosThread(this, 118122);
+        //^ should we?
+        // we only fire this off every 2 or so minutes because by that time, the moon has moved
+        // 1 degree minute, which is significant enough to warrant recalculating the aspect table
         cppt = new CheckPlanetsPosThread(this, 1500);
         cppt.start();
 
@@ -240,6 +242,11 @@ public class AeonDroidService extends Service {
         double birthday_days = EphemerisUtils.dateToSweDate(new Date(birthday_ms)).getJulDay();
 
         //stop thread here
+        Thread dummy = cppt;
+        cppt = null;
+        if (dummy != null) {
+            dummy.interrupt();
+        }
 
         int count = planetsList.length;
         natalChart = new double[count];
@@ -248,6 +255,11 @@ public class AeonDroidService extends Service {
             natalChart[i] = ephemeris.getBodyPos(birthday_days, planetsList[i]);
         }
 
+        cppt = new CheckPlanetsPosThread(this, 1000);
+        cppt.start();
+
+        /*gatt = new GenerateAspectTableThread(this);
+        gatt.start();*/
         //start thread here
     }
 

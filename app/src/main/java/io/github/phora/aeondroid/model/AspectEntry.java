@@ -35,4 +35,16 @@ public class AspectEntry {
     public int getToPlanetType() {
         return toPlanetType;
     }
+
+    public double getFromPlanetPos() {
+        return fromPlanetPos;
+    }
+
+    public double getToPlanetPos() {
+        return toPlanetPos;
+    }
+
+    public double getAspectDist() {
+        return Math.abs(fromPlanetPos-toPlanetPos);
+    }
 }

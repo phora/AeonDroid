@@ -56,4 +56,5 @@
     <string name="Aspects.Biquintile">biquintile</string>
     <string name="Aspects.Quincunx">quincunx</string>
     <string name="Aspects.Opposition">opposition</string>
+    <string name="Aspects.Details">Natal planet: %1$s\nNatal chart pos: %2$s\nRealtime planet: %3$s\nRealtime chart pos: %4$s</string>
 </resources>

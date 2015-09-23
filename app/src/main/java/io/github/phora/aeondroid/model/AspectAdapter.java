@@ -2,6 +2,7 @@ package io.github.phora.aeondroid.model;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +20,13 @@ import io.github.phora.aeondroid.drawables.PlanetIndicator;
 public class AspectAdapter extends BaseAdapter {
 
     private Context mContext;
+    private SparseArray<AspectConfig> mOrbConfig;
     private List<AspectEntry> mAspects;
 
-    public AspectAdapter(Context context, List<AspectEntry> aspects) {
+    public AspectAdapter(Context context, SparseArray<AspectConfig> orbConfig, List<AspectEntry> aspects) {
         super();
         mContext = context;
+        mOrbConfig = orbConfig;
         mAspects = aspects;
     }
 
@@ -70,7 +73,16 @@ public class AspectAdapter extends BaseAdapter {
                 img.setImageResource(res);
             }
             else {
-                img.setImageResource(R.drawable.base_chakra);
+                double aspectDist = ae.getAspectDist();
+                int aspectPos = AspectConfig.getClosestAspect(aspectDist, mOrbConfig, true);
+                double closestAspect = mOrbConfig.keyAt(aspectPos);
+                AspectConfig aspectConfig = mOrbConfig.valueAt(aspectPos);
+                boolean met_reqs = aspectConfig.isShown() && (Math.abs(closestAspect-aspectDist) <= aspectConfig.getOrb());
+                int res = 0;
+                if (met_reqs) {
+                    res = PlanetIndicator.getInstance(mContext).getAspectSymbol(aspectPos);
+                }
+                img.setImageResource(res);
             }
         }
         return convertView;

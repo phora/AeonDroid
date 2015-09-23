@@ -147,6 +147,47 @@ public class PlanetIndicator {
         }
     }
 
+    public int getAspectSymbol(int i) {
+        TypedValue tv = new TypedValue();
+        switch (i) {
+            case 0:
+                mContext.getTheme().resolveAttribute(R.attr.Aspects_Conjunction, tv, false);
+                return tv.data;
+            case 1:
+                mContext.getTheme().resolveAttribute(R.attr.Aspects_SemiSextile, tv, false);
+                return tv.data;
+            case 2:
+                mContext.getTheme().resolveAttribute(R.attr.Aspects_SemiSquare, tv, false);
+                return tv.data;
+            case 3:
+                mContext.getTheme().resolveAttribute(R.attr.Aspects_Sextile, tv, false);
+                return tv.data;
+            case 4:
+                mContext.getTheme().resolveAttribute(R.attr.Aspects_Quintile, tv, false);
+                return tv.data;
+            case 5:
+                mContext.getTheme().resolveAttribute(R.attr.Aspects_Square, tv, false);
+                return tv.data;
+            case 6:
+                mContext.getTheme().resolveAttribute(R.attr.Aspects_Trine, tv, false);
+                return tv.data;
+            case 7:
+                mContext.getTheme().resolveAttribute(R.attr.Aspects_Sesquisquare, tv, false);
+                return tv.data;
+            case 8:
+                mContext.getTheme().resolveAttribute(R.attr.Aspects_Biquintile, tv, false);
+                return tv.data;
+            case 9:
+                mContext.getTheme().resolveAttribute(R.attr.Aspects_Quincunx, tv, false);
+                return tv.data;
+            case 10:
+                mContext.getTheme().resolveAttribute(R.attr.Aspects_Opposition, tv, false);
+                return tv.data;
+            default:
+                return 0;
+        }
+    }
+
     public Drawable getChakraDrawable(int i) {
         Drawable d = null;
         switch(i) {

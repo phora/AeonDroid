@@ -1,22 +1,36 @@
 package io.github.phora.aeondroid.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import io.github.phora.aeondroid.DBHelper;
+import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.R;
+import io.github.phora.aeondroid.calculations.EphemerisUtils;
 import io.github.phora.aeondroid.model.AspectAdapter;
+import io.github.phora.aeondroid.model.AspectConfig;
 import io.github.phora.aeondroid.model.AspectEntry;
+import io.github.phora.aeondroid.workers.AeonDroidService;
 
 
 /**
@@ -27,7 +41,7 @@ import io.github.phora.aeondroid.model.AspectEntry;
  * Use the {@link AspectsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AspectsFragment extends Fragment {
+public class AspectsFragment extends Fragment implements BroadcastReceivable {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -39,6 +53,8 @@ public class AspectsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private GridView mAspects;
+
+    private List<ReceiverFilterPair> backingStore;
 
     /**
      * Use this factory method to create a new instance of
@@ -60,6 +76,11 @@ public class AspectsFragment extends Fragment {
 
     public AspectsFragment() {
         // Required empty public constructor
+        backingStore = new LinkedList<>();
+        IntentFilter intentFilter = new IntentFilter(Events.PLANET_POS);
+        AspectReceiver aspectReceiver = new AspectReceiver();
+
+        backingStore.add(new ReceiverFilterPair(aspectReceiver, intentFilter));
     }
 
     @Override
@@ -77,6 +98,25 @@ public class AspectsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_aspects, container, false);
         mAspects = (GridView)view.findViewById(R.id.AspectsGrid_Table);
+        mAspects.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                AspectEntry ae = (AspectEntry)mAspects.getItemAtPosition(i);
+                if (ae.isHeader()) {
+                    return;
+                }
+                Context context = getContext();
+                String[] planetNames = getResources().getStringArray(R.array.PlanetChartNames);
+                String fromPlanet = planetNames[ae.getFromPlanetType()];
+                String toPlanet = planetNames[ae.getToPlanetType()];
+                String fromString = EphemerisUtils.degreesToSignString(context, ae.getFromPlanetPos());
+                String toString = EphemerisUtils.degreesToSignString(context, ae.getToPlanetPos());
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage(getString(R.string.Aspects_Details, fromPlanet, fromString, toPlanet, toString));
+                builder.setNegativeButton(R.string.OK, null);
+                builder.create().show();
+            }
+        });
         return view;
     }
 
@@ -88,7 +128,7 @@ public class AspectsFragment extends Fragment {
                 "8", "9", "A", "B", "C", "D", "E", "F"};
         String[] testItems = new String[11*11];*/
 
-        List<AspectEntry> aspects = new ArrayList<>(121);
+        /*List<AspectEntry> aspects = new ArrayList<>(121);
 
         int count = 121;
         for (int i = 0; i < count; i++) {
@@ -102,7 +142,7 @@ public class AspectsFragment extends Fragment {
             AspectEntry ae = new AspectEntry(i / 11 -1, i % 11 -1, 0, -1, pos1, pos2);
             aspects.add(ae);
         }
-        mAspects.setAdapter(new AspectAdapter(getActivity(), aspects));
+        mAspects.setAdapter(new AspectAdapter(getActivity(), aspects));*/
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -130,6 +170,16 @@ public class AspectsFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public boolean hasReceivers() {
+        return true;
+    }
+
+    @Override
+    public List<ReceiverFilterPair> getReceivers() {
+        return backingStore;
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -145,4 +195,71 @@ public class AspectsFragment extends Fragment {
         public void onFragmentInteraction(Uri uri);
     }
 
+    private class AspectReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Intent peekIntent = new Intent(context, AeonDroidService.class);
+            AeonDroidService.AeonDroidBinder adb = (AeonDroidService.AeonDroidBinder)peekService(context, peekIntent);
+
+            if (adb == null || getActivity() == null) {
+                return;
+            }
+
+            double[] rawChart = intent.getDoubleArrayExtra(Events.EXTRA_PLANET_POS);
+            if (rawChart != null) {
+                new TransformRawtoAspects(adb.getService().getNatalChart()).execute(rawChart);
+            }
+        }
+    }
+
+    private class TransformRawtoAspects extends AsyncTask<double[], Void, ArrayList<AspectEntry>> {
+        private double[] chartAgainst;
+
+        public TransformRawtoAspects(double[] chartAgainst) {
+            this.chartAgainst = chartAgainst;
+        }
+
+        @Override
+        protected ArrayList<AspectEntry> doInBackground(double[]... doubles) {
+            if (doubles.length == 0) {
+                return null;
+            }
+            ArrayList<AspectEntry> aspects = new ArrayList<>(121);
+
+            // blank filler spot
+            aspects.add(new AspectEntry(-1, -1, 0, -1, -1, -1));
+
+            int chartAgainstCount = chartAgainst.length;
+            int chartToCount = doubles[0].length;
+
+            double[] chartTo = doubles[0];
+            boolean gen_headers = true;
+            for (int i = 0; i < chartAgainstCount; i++) {
+                if (gen_headers) {
+                    gen_headers = false;
+                    for (int j = 0; j < chartToCount; j++) {
+                        AspectEntry header_ae = new AspectEntry(i, j, 0, -1, -1, -1);
+                        aspects.add(header_ae);
+                    }
+                }
+                AspectEntry start_ae = new AspectEntry(i, -1, 0, -1, -1, -1);
+                aspects.add(start_ae);
+                for (int j = 0; j < chartToCount; j++) {
+                    double pos1 = chartAgainst[i];
+                    double pos2 = chartTo[j];
+
+                    AspectEntry ae = new AspectEntry(i, j, 0, -1, pos1, pos2);
+                    aspects.add(ae);
+                }
+            }
+
+            return aspects;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<AspectEntry> aspectEntries) {
+            SparseArray<AspectConfig> orbConfig = DBHelper.getInstance(getContext()).getOrbsForBackgroundUsage();
+            mAspects.setAdapter(new AspectAdapter(getActivity(), orbConfig, aspectEntries));
+        }
+    }
 }

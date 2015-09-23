@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <attr name="PlanetaryHours.Current" format="reference|color" />
-    <attr name="PlanetaryHours.Sun" format="reference" />
+    <attr name="PlanetaryHours.Sun"     format="reference" />
     <attr name="PlanetaryHours.Mercury" format="reference" />
-    <attr name="PlanetaryHours.Venus" format="reference" />
-    <attr name="PlanetaryHours.Moon" format="reference" />
-    <attr name="PlanetaryHours.Mars" format="reference" />
+    <attr name="PlanetaryHours.Venus"   format="reference" />
+    <attr name="PlanetaryHours.Moon"    format="reference" />
+    <attr name="PlanetaryHours.Mars"    format="reference" />
     <attr name="PlanetaryHours.Jupiter" format="reference" />
-    <attr name="PlanetaryHours.Saturn" format="reference" />
-    <attr name="RightNow.Uranus" format="reference" />
-    <attr name="RightNow.Neptune" format="reference" />
-    <attr name="RightNow.Pluto" format="reference" />
+    <attr name="PlanetaryHours.Saturn"  format="reference" />
+    <attr name="RightNow.Uranus"        format="reference" />
+    <attr name="RightNow.Neptune"       format="reference" />
+    <attr name="RightNow.Pluto"         format="reference" />
+
+    <attr name="Aspects.Conjunction"  format="reference" />
+    <attr name="Aspects.SemiSextile"  format="reference" />
+    <attr name="Aspects.SemiSquare"   format="reference" />
+    <attr name="Aspects.Sextile"      format="reference" />
+    <attr name="Aspects.Quintile"     format="reference" />
+    <attr name="Aspects.Square"       format="reference" />
+    <attr name="Aspects.Trine"        format="reference" />
+    <attr name="Aspects.Sesquisquare" format="reference" />
+    <attr name="Aspects.Biquintile"   format="reference" />
+    <attr name="Aspects.Quincunx"     format="reference" />
+    <attr name="Aspects.Opposition"   format="reference" />
 
     <declare-styleable name="DateTimePreference">
-        <attr name="latitudeReference" format="string" />
-        <attr name="longitudeReference" format="string" />
+        <attr name="latitudeReference"   format="string" />
+        <attr name="longitudeReference"  format="string" />
         <attr name="showToastsReference" format="string" />
     </declare-styleable>
 </resources>

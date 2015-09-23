@@ -178,11 +178,11 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
             case 0:
                 return mSunRow;
             case 1:
-                return mVenusRow;
+                return mMoonRow;
             case 2:
                 return mMercuryRow;
             case 3:
-                return mMoonRow;
+                return mVenusRow;
             case 4:
                 return mSaturnRow;
             case 5:
@@ -199,11 +199,11 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
             case 0:
                 return mSunMeasure;
             case 1:
-                return mMercuryMeasure;
-            case 2:
-                return mVenusMeasure;
-            case 3:
                 return mMoonMeasure;
+            case 2:
+                return mMercuryMeasure;
+            case 3:
+                return mVenusMeasure;
             case 4:
                 return mMarsMeasure;
             case 5:

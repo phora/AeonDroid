@@ -1,6 +1,7 @@
 package io.github.phora.aeondroid.workers;
 
 import android.content.Intent;
+import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 
 import java.util.Date;
@@ -38,6 +39,12 @@ class CheckPlanetsPosThread extends Thread {
                 for (int i = 0; i < count; i++) {
                     results[i] = ephemeris.getBodyPos(julified, aeonDroidService.planetsList[i]);
                 }
+
+                /*if (aeonDroidService.gatt != null) {
+                    Message message = new Message();
+                    message.obj = results;
+                    aeonDroidService.gatt.aspectHandler.sendMessage(message);
+                }*/
 
                 intent.putExtra(Events.EXTRA_PLANET_POS, results);
                 aeonDroidService.localBroadcastManager.sendBroadcast(intent);
