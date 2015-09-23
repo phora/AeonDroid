@@ -5,6 +5,7 @@ import android.content.Context;
 import android.test.ApplicationTestCase;
 
 import java.io.File;
+import java.util.TimeZone;
 
 import io.github.phora.aeondroid.calculations.ZoneTab;
 
@@ -48,8 +49,10 @@ public class ZoneTabTest extends ApplicationTestCase<Application> {
 
         ZoneTab.ZoneInfo zi = zoneTab.nearestTZ(39.2975, -94.7139);
         assertEquals(expected_name, zi.getTz());
+        assertEquals(expected_name, TimeZone.getTimeZone(expected_name).getID());
 
         zi = zoneTab.nearestTZ(39.2975, -94.7139, "Indiana");
         assertEquals(expected_name2, zi.getTz());
+        assertEquals(expected_name2, TimeZone.getTimeZone(expected_name2).getID());
     }
 }
