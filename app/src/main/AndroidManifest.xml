@@ -27,7 +27,7 @@
             android:theme="@style/AppTheme">
         </activity>
 
-        <service android:name=".AeonDroidService"
+        <service android:name=".workers.AeonDroidService"
             android:enabled="true" />
     </application>
 

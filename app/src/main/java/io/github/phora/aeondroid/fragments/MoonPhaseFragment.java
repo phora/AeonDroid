@@ -13,13 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.phora.aeondroid.AeonDroidService;
+import io.github.phora.aeondroid.workers.AeonDroidService;
 import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.model.MoonPhaseAdapter;

@@ -26,7 +26,7 @@ public class CopyAssetFiles {
         this.ct = ct;
         this.dest = dest;
     }
-    void copy() {
+    public void copy() {
         AssetManager assetManager = ct.getAssets();
         String[] files = null;
         try {

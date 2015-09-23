@@ -29,7 +29,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import io.github.phora.aeondroid.AeonDroidService;
+import io.github.phora.aeondroid.workers.AeonDroidService;
 import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.fragments.AspectsFragment;
 import io.github.phora.aeondroid.fragments.BroadcastReceivable;
