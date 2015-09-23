@@ -20,7 +20,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_ORBS  = "orbs";
     public  static final String ORB_DEGREE  = "degree";
-    public  static final String ORB_NAME    = "name";
     public  static final String ORB_VALUE   = "value";
     public  static final String ORB_VISIBLE = "visible";
 
@@ -30,7 +29,6 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String ORBS_CREATE = "CREATE TABLE " + TABLE_ORBS +
             " ( " + COLUMN_ID   + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                   + ORB_DEGREE  + " INTEGER NOT NULL UNIQUE, "
-                  + ORB_NAME    + " INTEGER NOT NULL, "
                   + ORB_VALUE   + " REAL NOT NULL, "
                   + ORB_VISIBLE + " INT)";
 
@@ -58,7 +56,6 @@ public class DBHelper extends SQLiteOpenHelper {
         for (int i=0; i<11; i++) {
             ContentValues cv = new ContentValues();
             cv.put(ORB_DEGREE,  AspectConfig.ASPECT_VALUES[i]);
-            cv.put(ORB_NAME,    AspectConfig.ASPECT_NAMES[i]);
             cv.put(ORB_VALUE,   AspectConfig.DEFAULT_ORBS[i]);
             cv.put(ORB_VISIBLE, AspectConfig.DEFAULT_VISIBILITY[i]);
 
@@ -104,7 +101,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
 
     }
 }
