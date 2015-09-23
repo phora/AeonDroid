@@ -2,12 +2,10 @@ package io.github.phora.aeondroid.calculations;
 
 import android.content.Context;
 
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import io.github.phora.aeondroid.R;
