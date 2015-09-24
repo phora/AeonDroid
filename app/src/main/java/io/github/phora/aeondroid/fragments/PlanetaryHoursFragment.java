@@ -21,7 +21,7 @@ import java.util.List;
 import io.github.phora.aeondroid.workers.AeonDroidService;
 import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.model.PlanetaryHour;
-import io.github.phora.aeondroid.model.PlanetaryHoursAdapter;
+import io.github.phora.aeondroid.model.adapters.PlanetaryHoursAdapter;
 import io.github.phora.aeondroid.R;
 
 /**

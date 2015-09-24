@@ -1,4 +1,4 @@
-package io.github.phora.aeondroid.model;
+package io.github.phora.aeondroid.model.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -13,6 +13,8 @@ import java.util.List;
 
 import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.drawables.PlanetIndicator;
+import io.github.phora.aeondroid.model.AspectConfig;
+import io.github.phora.aeondroid.model.AspectEntry;
 
 /**
  * Created by phora on 9/21/15.

@@ -25,7 +25,7 @@ public class AspectOrbTest extends ApplicationTestCase<Application> {
 
         Context appContext = getContext().getApplicationContext();
         dbHelper = DBHelper.getInstance(appContext);
-        orbsConfig = dbHelper.getOrbsForBackgroundUsage();
+        orbsConfig = dbHelper.getOrbs();
         // this test assumes a stock configuration
     }
 

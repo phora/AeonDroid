@@ -1,4 +1,4 @@
-package io.github.phora.aeondroid.model;
+package io.github.phora.aeondroid.model.adapters;
 
 import android.content.Context;
 import android.util.TypedValue;
@@ -15,6 +15,7 @@ import java.util.Date;
 import io.github.phora.aeondroid.calculations.EphemerisUtils;
 import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.drawables.PlanetIndicator;
+import io.github.phora.aeondroid.model.PlanetaryHour;
 import swisseph.SweDate;
 
 /**

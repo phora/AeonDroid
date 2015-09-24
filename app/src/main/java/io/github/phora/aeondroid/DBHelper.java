@@ -63,6 +63,33 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void batchUpdateOrbs(SparseArray<AspectConfig> orbConfig) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        sqLiteDatabase.beginTransaction();
+        try {
+            for (int i = 0; i < orbConfig.size(); i++) {
+                ContentValues cv = new ContentValues();
+                int degree = orbConfig.keyAt(i);
+                double orbValue = orbConfig.valueAt(i).getOrb();
+                boolean visible = orbConfig.valueAt(i).isShown();
+                cv.put(ORB_VALUE, orbValue);
+                cv.put(ORB_VISIBLE, visible);
+                sqLiteDatabase.update(TABLE_ORBS, cv, ORB_DEGREE+" = ?", new String[]{String.valueOf(degree)});
+            }
+            sqLiteDatabase.setTransactionSuccessful();
+        } finally {
+            sqLiteDatabase.endTransaction();
+        }
+    }
+
+    public void updateOrb(int degree, double orbValue, boolean visible) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(ORB_VALUE, orbValue);
+        cv.put(ORB_VISIBLE, visible);
+        getWritableDatabase().update(TABLE_ORBS, cv, ORB_DEGREE+" = ?", new String[]{String.valueOf(degree)});
+    }
+
     public Cursor getOrbsForEditing() {
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
 
@@ -71,7 +98,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 null, null, null, null);
     }
 
-    public SparseArray<AspectConfig> getOrbsForBackgroundUsage() {
+    public SparseArray<AspectConfig> getOrbs() {
         SQLiteDatabase sqLiteDatabase = getReadableDatabase();
         String[] fields = {ORB_DEGREE, ORB_VALUE, ORB_VISIBLE};
 

@@ -46,8 +46,10 @@
     <string name="Pref.Summary.Altitude">(Optional) meters above mean sea level</string>
 
     <string name="PrefHeader.RealtimeCharts">Realtime Charts</string>
+    <string name="PrefGroup.Aspects">Aspects</string>
+    <string name="Pref.Title.Orbs">Configure aspect orbs</string>
+    <string name="Pref.Desc.Orbs">Set the permitted value differences for generating the aspect chart.</string>
     <string name="PrefGroup.BirthInfo">Birth Location</string>
     <string name="Pref.Title.BirthTime">Birth time</string>
     <string name="Pref.Desc.BirthTime">This is in local time. Your timezone\'s specified by your location.</string>
-
 </resources>

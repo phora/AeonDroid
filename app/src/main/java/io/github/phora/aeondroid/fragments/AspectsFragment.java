@@ -15,9 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -27,7 +25,7 @@ import io.github.phora.aeondroid.DBHelper;
 import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.calculations.EphemerisUtils;
-import io.github.phora.aeondroid.model.AspectAdapter;
+import io.github.phora.aeondroid.model.adapters.AspectAdapter;
 import io.github.phora.aeondroid.model.AspectConfig;
 import io.github.phora.aeondroid.model.AspectEntry;
 import io.github.phora.aeondroid.workers.AeonDroidService;
@@ -258,7 +256,7 @@ public class AspectsFragment extends Fragment implements BroadcastReceivable {
 
         @Override
         protected void onPostExecute(ArrayList<AspectEntry> aspectEntries) {
-            SparseArray<AspectConfig> orbConfig = DBHelper.getInstance(getContext()).getOrbsForBackgroundUsage();
+            SparseArray<AspectConfig> orbConfig = DBHelper.getInstance(getContext()).getOrbs();
             mAspects.setAdapter(new AspectAdapter(getActivity(), orbConfig, aspectEntries));
         }
     }

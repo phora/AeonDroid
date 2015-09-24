@@ -278,7 +278,7 @@ public class MainActivity extends FragmentActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_reset) {
             Intent i = new Intent(this, SettingsActivity.class);
             startActivity(i);
             return true;

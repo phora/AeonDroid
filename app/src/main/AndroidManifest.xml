@@ -6,15 +6,15 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
+        android:name=".AeonDroidApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/AppName"
-        android:name=".AeonDroidApplication">
+        android:label="@string/AppName" >
         <activity
             android:name=".activities.MainActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/AppName"
-            android:launchMode="singleTop"
-            android:configChanges="orientation|screenSize">
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,11 +24,21 @@
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/Title.Activity.Settings"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" >
         </activity>
 
-        <service android:name=".workers.AeonDroidService"
+        <service
+            android:name=".workers.AeonDroidService"
             android:enabled="true" />
+
+        <activity
+            android:name=".activities.OrbsActivity"
+            android:label="@string/Title.Activity.Orbs"
+            android:parentActivityName=".activities.SettingsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.phora.aeondroid.activities.SettingsActivity" />
+        </activity>
     </application>
 
 </manifest>

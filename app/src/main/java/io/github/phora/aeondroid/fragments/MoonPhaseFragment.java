@@ -21,7 +21,7 @@ import java.util.List;
 import io.github.phora.aeondroid.workers.AeonDroidService;
 import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.R;
-import io.github.phora.aeondroid.model.MoonPhaseAdapter;
+import io.github.phora.aeondroid.model.adapters.MoonPhaseAdapter;
 
 /**
  * A fragment representing a list of Items.

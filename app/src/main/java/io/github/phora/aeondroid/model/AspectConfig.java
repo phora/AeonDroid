@@ -26,19 +26,6 @@ public class AspectConfig {
 
     private boolean shown;
     private double orb;
-    private int displayName = 0;
-
-    public AspectConfig(boolean shown, double orb, int displayName) {
-        this.shown = shown;
-        if (orb < 0) {
-            throw new IllegalArgumentException("Orbs can't be negative!");
-        }
-        else if (orb > 29) {
-            throw new IllegalArgumentException("Orbs can't be greater than a sixth of a circle!");
-        }
-        this.orb = orb;
-        this.displayName = displayName;
-    }
 
     public AspectConfig(boolean shown, double orb) {
         this.shown = shown;
@@ -128,9 +115,5 @@ public class AspectConfig {
             throw new IllegalArgumentException("Orbs can't be greater than a sixth of a circle!");
         }
         this.orb = orb;
-    }
-
-    public int getDisplayName() {
-        return displayName;
     }
 }
