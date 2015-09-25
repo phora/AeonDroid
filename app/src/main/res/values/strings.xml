@@ -67,4 +67,9 @@
     <string name="OrbDialog.DefaultDisplayFmt">Default value: %1$s</string>
     <string name="OrbsActivity.LoadingOrbs">Loading orbs…</string>
     <string name="OrbsActivity.ResettingOrbs">Resetting orbs…</string>
+
+    <string name="Title.Activity.Triggers">Alarm triggers</string>
+    <string name="TriggersActivity.AddTrigger">Trigger</string>
+    <string name="TriggersActivity.AddPrecalculated">Precalculated trigger</string>
+    <string name="TriggersActivity.AddTriggerGroup">Trigger group</string>
 </resources>

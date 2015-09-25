@@ -2,6 +2,11 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".MainActivity">
     <item
+        android:id="@+id/action_triggers"
+        android:title="@string/Title.Activity.Triggers"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+    <item
         android:id="@+id/action_settings"
         android:title="@string/Action.Settings"
         android:orderInCategory="100"

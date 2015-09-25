@@ -39,6 +39,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.github.phora.aeondroid.activities.SettingsActivity" />
         </activity>
+        <activity
+            android:name=".activities.TriggersActivity"
+            android:label="@string/Title.Activity.Triggers"
+            android:parentActivityName=".activities.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.phora.aeondroid.activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

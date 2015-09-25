@@ -287,6 +287,10 @@ public class MainActivity extends FragmentActivity {
             Intent i = new Intent(this, SettingsActivity.class);
             startActivity(i);
             return true;
+        } else if (id == R.id.action_triggers) {
+            Intent i = new Intent(this, TriggersActivity.class);
+            startActivity(i);
+            return true;
         } else if (id == R.id.action_about) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
