@@ -85,7 +85,6 @@ public class MainActivity extends FragmentActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             serviceReference.recheckGps();
-            Log.d("Something", "I FINISHED THE SERVUCE");
             serviceReference.recheckBirthplace();
             return null;
         }
@@ -243,8 +242,8 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-       /* we customise the back button so that the activity pauses
-        instead of finishing*/
+        /* we customise the back button so that the activity pauses
+        instead of finishing */
         moveTaskToBack(true);
     }
 
@@ -278,7 +277,7 @@ public class MainActivity extends FragmentActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_reset) {
+        if (id == R.id.action_settings) {
             Intent i = new Intent(this, SettingsActivity.class);
             startActivity(i);
             return true;
