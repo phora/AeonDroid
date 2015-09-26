@@ -119,7 +119,7 @@ public class MainActivity extends FragmentActivity {
             // cast its IBinder to a concrete class and directly access it.
             Log.i("MainActivity", "Bound service connected");
             serviceReference = ((AeonDroidService.AeonDroidBinder) service).getService();
-            isBound = true;
+            //isBound = true;
             new RecheckGPSTask(true).execute();
         }
 
@@ -131,9 +131,11 @@ public class MainActivity extends FragmentActivity {
             // see this happen.
             Log.i("MainActivity", "Problem: bound service disconnected");
             serviceReference = null;
-            isBound = false;
+            //isBound = false;
         }
     };
+
+
 
     private void forceRefresh() {
         Intent intent = new Intent();
@@ -203,6 +205,7 @@ public class MainActivity extends FragmentActivity {
 
         LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
 
+        Log.d("MainActivity", "Registering broadcast receivers");
         for (int i = 0; i < mainTabsAdapter.getCount(); i++) {
             try {
                 BroadcastReceivable br = (BroadcastReceivable) mainTabsAdapter.getItem(i);
@@ -220,10 +223,13 @@ public class MainActivity extends FragmentActivity {
             doBindService();
         }
         else {
+            //service reference null here
+            Log.d("MainActivity", "Forcing GUI components to re-retrieve service data");
             forceRefresh();
         }
         if (isBound && serviceReference != null) {
             // we call this in case we manually changed our gps settings
+            Log.d("MainActivity", "Check if we need to redo our calculations because locations changed");
             new RecheckGPSTask(false).execute();
         }
     }

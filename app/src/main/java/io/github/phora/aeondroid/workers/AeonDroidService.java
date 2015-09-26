@@ -264,22 +264,40 @@ public class AeonDroidService extends Service {
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent == null || intent.getAction() != null) {
+            //the service was killed by the system
+            Log.d("ADService", "Service was killed by the system earlier");
+            recheckGps();
+            recheckBirthplace();
+        }
+        else {
+            Log.d("ADService", "Service was started by program");
+        }
+        return Service.START_STICKY;
+    }
+
+    @Override
     public void onDestroy() {
         Thread dummy = cpht;
         cpht = null;
-        dummy.interrupt();
+        if (dummy != null)
+            dummy.interrupt();
 
         dummy = cmpt;
         cmpt = null;
-        dummy.interrupt();
+        if (dummy != null)
+            dummy.interrupt();
 
         dummy = cppt;
         cppt = null;
-        dummy.interrupt();
+        if (dummy != null)
+            dummy.interrupt();
 
         dummy = cvct;
         cvct = null;
-        dummy.interrupt();
+        if (dummy != null)
+            dummy.interrupt();
 
         notificationManager.cancel(NOTIFICATION_ID);
     }

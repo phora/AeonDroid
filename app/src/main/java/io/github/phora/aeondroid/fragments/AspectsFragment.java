@@ -24,6 +24,7 @@ import java.util.List;
 import io.github.phora.aeondroid.DBHelper;
 import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.R;
+import io.github.phora.aeondroid.activities.MainActivity;
 import io.github.phora.aeondroid.calculations.EphemerisUtils;
 import io.github.phora.aeondroid.model.adapters.AspectAdapter;
 import io.github.phora.aeondroid.model.AspectConfig;
@@ -196,16 +197,16 @@ public class AspectsFragment extends Fragment implements BroadcastReceivable {
     private class AspectReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Intent peekIntent = new Intent(context, AeonDroidService.class);
-            AeonDroidService.AeonDroidBinder adb = (AeonDroidService.AeonDroidBinder)peekService(context, peekIntent);
+            //Intent peekIntent = new Intent(context, AeonDroidService.class);
+            //AeonDroidService.AeonDroidBinder adb = (AeonDroidService.AeonDroidBinder)peekService(context, peekIntent);
 
-            if (adb == null || getActivity() == null) {
+            if (getActivity() == null) {
                 return;
             }
 
             double[] rawChart = intent.getDoubleArrayExtra(Events.EXTRA_PLANET_POS);
             if (rawChart != null) {
-                new TransformRawtoAspects(adb.getService().getNatalChart()).execute(rawChart);
+                new TransformRawtoAspects( ((MainActivity)getActivity()).getServiceReference().getNatalChart()).execute(rawChart);
             }
         }
     }

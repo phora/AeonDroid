@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.phora.aeondroid.activities.MainActivity;
 import io.github.phora.aeondroid.workers.AeonDroidService;
 import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.model.PlanetaryHour;
@@ -135,11 +136,11 @@ public class PlanetaryHoursFragment extends ListFragment implements BroadcastRec
             _autoScrolledOnce = false;
             Log.d("PHFragment", "Received refresh update");
 
-            Intent peekIntent = new Intent(context, AeonDroidService.class);
-            AeonDroidService.AeonDroidBinder adb = (AeonDroidService.AeonDroidBinder)peekService(context, peekIntent);
+            //Intent peekIntent = new Intent(context, AeonDroidService.class);
+            //AeonDroidService.AeonDroidBinder adb = (AeonDroidService.AeonDroidBinder)peekService(context, peekIntent);
 
-            if (adb != null && getActivity() != null) {
-                ArrayList<PlanetaryHour> phl = adb.getService().getPlanetaryHours();
+            if (getActivity() != null) {
+                ArrayList<PlanetaryHour> phl = ((MainActivity)getActivity()).getServiceReference().getPlanetaryHours();
                 pha = new PlanetaryHoursAdapter(getActivity(), phl);
                 setListAdapter(pha);
                 if (_styleLateSet) {
