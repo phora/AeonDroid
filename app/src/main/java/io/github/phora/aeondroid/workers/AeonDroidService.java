@@ -198,13 +198,13 @@ public class AeonDroidService extends Service {
         gpsAvailable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
         if (usingGPS && gpsAvailable) {
-            Log.d("ADService", "Using GPS location");
+            Log.d("AeonDroidService", "Using GPS location");
             locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER, 5000, 10, locUpdater);
         }
         else {
             locationManager.removeUpdates(locUpdater);
-            Log.d("ADService", "Using manually entered location");
+            Log.d("AeonDroidService", "Using manually entered location");
             double longitude = Double.valueOf(preferences.getString("CurrentLoc.Longitude", "0"));
             double latitude = Double.valueOf(preferences.getString("CurrentLoc.Latitude", "0"));
             double altitude = Double.valueOf(preferences.getString("CurrentLoc.Altitude", "0"));
@@ -267,12 +267,12 @@ public class AeonDroidService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null || intent.getAction() != null) {
             //the service was killed by the system
-            Log.d("ADService", "Service was killed by the system earlier");
+            Log.d("AeonDroidService", "Service was killed by the system earlier");
             recheckGps();
             recheckBirthplace();
         }
         else {
-            Log.d("ADService", "Service was started by program");
+            Log.d("AeonDroidService", "Service was started by program");
         }
         return Service.START_STICKY;
     }
