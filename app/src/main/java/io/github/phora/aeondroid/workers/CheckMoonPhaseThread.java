@@ -21,6 +21,7 @@ class CheckMoonPhaseThread extends Thread {
     public CheckMoonPhaseThread(AeonDroidService aeonDroidService, int milliseconds) {
         this.aeonDroidService = aeonDroidService;
         this.sleepVal = milliseconds;
+        setUncaughtExceptionHandler(Thread.getDefaultUncaughtExceptionHandler());
     }
 
     @Override

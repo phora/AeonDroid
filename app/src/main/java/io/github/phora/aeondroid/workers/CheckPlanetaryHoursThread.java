@@ -28,6 +28,7 @@ class CheckPlanetaryHoursThread extends Thread {
         this.aeonDroidService = aeonDroidService;
         this.sleepVal = milliseconds;
         this.pi = PlanetIndicator.getInstance(aeonDroidService);
+        setUncaughtExceptionHandler(Thread.getDefaultUncaughtExceptionHandler());
     }
 
     @Override

@@ -12,11 +12,8 @@ import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -27,17 +24,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
+import io.github.phora.aeondroid.widgets.MainTabsAdapter;
 import io.github.phora.aeondroid.workers.AeonDroidService;
 import io.github.phora.aeondroid.Events;
-import io.github.phora.aeondroid.fragments.AspectsFragment;
-import io.github.phora.aeondroid.fragments.BroadcastReceivable;
-import io.github.phora.aeondroid.fragments.MoonPhaseFragment;
-import io.github.phora.aeondroid.fragments.PlanetaryHoursFragment;
+import io.github.phora.aeondroid.widgets.BroadcastReceivable;
 import io.github.phora.aeondroid.R;
-import io.github.phora.aeondroid.fragments.ReceiverFilterPair;
-import io.github.phora.aeondroid.fragments.RightNowFragment;
+import io.github.phora.aeondroid.widgets.ReceiverFilterPair;
 
 public class MainActivity extends FragmentActivity {
 
@@ -57,13 +49,10 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         viewPager = (ViewPager)findViewById(R.id.pager);
-        mainTabsAdapter = new MainTabsAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(mainTabsAdapter);
-
-        Intent intent = new Intent(getApplicationContext(), AeonDroidService.class);
-        startService(intent);
 
         context = this;
+        mainTabsAdapter = new MainTabsAdapter(MainActivity.this, null);
+        viewPager.setAdapter(mainTabsAdapter);
     }
 
     public AeonDroidService getServiceReference() {
@@ -119,6 +108,7 @@ public class MainActivity extends FragmentActivity {
             // cast its IBinder to a concrete class and directly access it.
             Log.i("MainActivity", "Bound service connected");
             serviceReference = ((AeonDroidService.AeonDroidBinder) service).getService();
+            mainTabsAdapter.setServiceReference(serviceReference);
             //isBound = true;
             new RecheckGPSTask(true).execute();
         }
@@ -131,6 +121,7 @@ public class MainActivity extends FragmentActivity {
             // see this happen.
             Log.i("MainActivity", "Problem: bound service disconnected");
             serviceReference = null;
+            mainTabsAdapter.setServiceReference(null);
             //isBound = false;
         }
     };
@@ -165,7 +156,7 @@ public class MainActivity extends FragmentActivity {
         if (!isBound) {
             Intent bindIntent = new Intent(this, AeonDroidService.class);
             isBound = bindService(bindIntent, myConnection,
-                    Context.BIND_AUTO_CREATE);
+                    Context.BIND_AUTO_CREATE|Context.BIND_ABOVE_CLIENT);
         }
     }
 
@@ -203,6 +194,9 @@ public class MainActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
 
+        Intent intent = new Intent(getApplicationContext(), AeonDroidService.class);
+        startService(intent);
+
         LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
 
         Log.d("MainActivity", "Registering broadcast receivers");
@@ -219,15 +213,12 @@ public class MainActivity extends FragmentActivity {
             }
         }
 
+        boolean prevIsBound = isBound;
         if (!isBound) {
             doBindService();
         }
-        else {
-            //service reference null here
-            Log.d("MainActivity", "Forcing GUI components to re-retrieve service data");
-            forceRefresh();
-        }
-        if (isBound && serviceReference != null) {
+
+        if (isBound && serviceReference != null && prevIsBound == isBound) {
             // we call this in case we manually changed our gps settings
             Log.d("MainActivity", "Check if we need to redo our calculations because locations changed");
             new RecheckGPSTask(false).execute();
@@ -315,82 +306,4 @@ public class MainActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class MainTabsAdapter extends FragmentPagerAdapter {
-
-        private ArrayList<Fragment> pages;
-
-        public MainTabsAdapter(FragmentManager fm) {
-            super(fm);
-            pages = new ArrayList<Fragment>();
-            pages.add(null);
-            pages.add(null);
-            pages.add(null);
-            pages.add(null);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Fragment fraggy = pages.get(position);
-            switch (position) {
-                case 0:
-                    if (fraggy == null) {
-                        fraggy = PlanetaryHoursFragment.newInstance();
-                        pages.set(0, fraggy);
-                        return fraggy;
-                    }
-                    else {
-                        return fraggy;
-                    }
-                case 1:
-                    if (fraggy == null) {
-                        fraggy = MoonPhaseFragment.newInstance();
-                        pages.set(1, fraggy);
-                        return fraggy;
-                    }
-                    else {
-                        return fraggy;
-                    }
-                case 2:
-                    if (fraggy == null) {
-                        fraggy = RightNowFragment.newInstance(null, null);
-                        pages.set(2, fraggy);
-                        return fraggy;
-                    }
-                    else {
-                        return fraggy;
-                    }
-                case 3:
-                    if (fraggy == null) {
-                        fraggy = AspectsFragment.newInstance(null, null);
-                        pages.set(3, fraggy);
-                        return fraggy;
-                    }
-                    else {
-                        return fraggy;
-                    }
-            }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return 4;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch(position) {
-                case 0:
-                    return getString(R.string.PanelTitle_PlanetaryHours);
-                case 1:
-                    return getString(R.string.PanelTitle_MoonPhases);
-                case 2:
-                    return getString(R.string.PanelTitle_RightNow);
-                case 3:
-                    return getString(R.string.PanelTitle_Aspects);
-                default:
-                    return null;
-            }
-        }
-    }
 }

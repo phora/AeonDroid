@@ -21,6 +21,7 @@ class CheckVoidOfCourseThread extends Thread {
     public CheckVoidOfCourseThread(AeonDroidService aeonDroidService, int sleepVal) {
         this.aeonDroidService = aeonDroidService;
         this.sleepVal = sleepVal;
+        setUncaughtExceptionHandler(Thread.getDefaultUncaughtExceptionHandler());
     }
 
     @Override
@@ -43,7 +44,7 @@ class CheckVoidOfCourseThread extends Thread {
                     Date ed = voci.getEndDate();
                     Date sd = voci.getStartDate();
                     if (d.compareTo(sd) >= 0 && d.compareTo(ed) <= 0) {
-                        Log.d("VoCThread", "Currently VoC");
+                        //Log.d("VoCThread", "Currently VoC");
                         intent.setAction(Events.VOC_STATUS);
                         intent.putExtra(Events.EXTRA_VOC_IN, true);
                         //intent.putExtra(Events.EXTRA_VOC_FROM, voci.getSignFrom());
@@ -52,7 +53,7 @@ class CheckVoidOfCourseThread extends Thread {
                         intent.putExtra(Events.EXTRA_VOC_TO_DATE, voci.getEndDate().getTime());
                         aeonDroidService.localBroadcastManager.sendBroadcast(intent);
                     } else if (d.compareTo(sd) <= 0) {
-                        Log.d("VoCThread", "Pending VoC");
+                        //Log.d("VoCThread", "Pending VoC");
                         intent.setAction(Events.VOC_STATUS);
                         intent.putExtra(Events.EXTRA_VOC_IN, false);
                         //intent.putExtra(Events.EXTRA_VOC_FROM, voci.getSignFrom());
@@ -61,7 +62,7 @@ class CheckVoidOfCourseThread extends Thread {
                         //intent.putExtra(Events.EXTRA_VOC_TO_DATE, voci.getEndDate().getTime());
                         aeonDroidService.localBroadcastManager.sendBroadcast(intent);
                     } else {
-                        Log.d("VoCThread", "Need to recalculate VoC");
+                        //Log.d("VoCThread", "Need to recalculate VoC");
                         voci = ephemeris.predictVoidOfCourse(d);
                     }
                 }

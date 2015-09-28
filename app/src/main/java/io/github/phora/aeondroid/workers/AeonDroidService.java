@@ -29,7 +29,6 @@ import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.activities.MainActivity;
 import io.github.phora.aeondroid.calculations.Ephemeris;
 import io.github.phora.aeondroid.calculations.EphemerisUtils;
-import io.github.phora.aeondroid.drawables.PlanetIndicator;
 import io.github.phora.aeondroid.model.MoonPhase;
 import io.github.phora.aeondroid.model.PlanetaryHour;
 import swisseph.SweConst;
@@ -151,7 +150,6 @@ public class AeonDroidService extends Service {
 
         notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        createNotification();
         localBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
 
         ephemeris = new Ephemeris(getApplicationContext().getFilesDir() + File.separator + "ephe",
@@ -265,6 +263,7 @@ public class AeonDroidService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        createNotification();
         if (intent == null || intent.getAction() != null) {
             //the service was killed by the system
             Log.d("AeonDroidService", "Service was killed by the system earlier");

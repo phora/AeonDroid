@@ -1,4 +1,4 @@
-package io.github.phora.aeondroid.fragments;
+package io.github.phora.aeondroid.widgets;
 
 import java.util.List;
 

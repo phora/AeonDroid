@@ -20,6 +20,7 @@ class CheckPlanetsPosThread extends Thread {
     public CheckPlanetsPosThread(AeonDroidService aeonDroidService, int milliseconds) {
         this.aeonDroidService = aeonDroidService;
         this.sleepVal = milliseconds;
+        setUncaughtExceptionHandler(Thread.getDefaultUncaughtExceptionHandler());
     }
 
     public void run() {
@@ -30,21 +31,15 @@ class CheckPlanetsPosThread extends Thread {
                 Intent intent = new Intent();
                 intent.setAction(Events.PLANET_POS);
 
-                int count = aeonDroidService.planetsList.length;
+                int count = AeonDroidService.planetsList.length;
                 Ephemeris ephemeris = aeonDroidService.ephemeris;
                 double[] results = new double[count];
                 Date d = new Date();
                 double julified = EphemerisUtils.dateToSweDate(d).getJulDay();
 
                 for (int i = 0; i < count; i++) {
-                    results[i] = ephemeris.getBodyPos(julified, aeonDroidService.planetsList[i]);
+                    results[i] = ephemeris.getBodyPos(julified, AeonDroidService.planetsList[i]);
                 }
-
-                /*if (aeonDroidService.gatt != null) {
-                    Message message = new Message();
-                    message.obj = results;
-                    aeonDroidService.gatt.aspectHandler.sendMessage(message);
-                }*/
 
                 intent.putExtra(Events.EXTRA_PLANET_POS, results);
                 aeonDroidService.localBroadcastManager.sendBroadcast(intent);

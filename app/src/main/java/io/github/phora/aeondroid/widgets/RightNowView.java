@@ -1,16 +1,13 @@
-package io.github.phora.aeondroid.fragments;
+package io.github.phora.aeondroid.widgets;
 
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Date;
@@ -22,21 +19,11 @@ import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.PhaseUtils;
 import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.model.MoonPhase;
+import io.github.phora.aeondroid.workers.AeonDroidService;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link RightNowFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class RightNowFragment extends Fragment implements BroadcastReceivable {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class RightNowView extends LinearLayout implements BroadcastReceivable, AeonDroidServiceable {
+    private AeonDroidService mAeonDroidService;
+    private Date timeStamp = null;
 
     private List<ReceiverFilterPair> backingStore;
     private View lastView = null;
@@ -66,26 +53,12 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
     private TextView mPlutoMeasure;
     private TextView mMoonVOC;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RightNow.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static RightNowFragment newInstance(String param1, String param2) {
-        RightNowFragment fragment = new RightNowFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public RightNowFragment() {
+    public RightNowView(Context context, AeonDroidService aeonDroidService, Date date) {
         // Required empty public constructor
+        super(context);
+        View.inflate(context, R.layout.fragment_right_now, this);
+        onFinishInflate();
+
         backingStore = new LinkedList<>();
         IntentFilter intentFilter = new IntentFilter(Events.FOUND_HOUR);
         HighlightReceiver highlightReceiver = new HighlightReceiver();
@@ -102,47 +75,40 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
         IntentFilter vocFilter = new IntentFilter(Events.VOC_STATUS);
         VoCReceiver vocReceiver = new VoCReceiver();
         backingStore.add(new ReceiverFilterPair(vocReceiver, vocFilter));
+
+        timeStamp = date;
+        mAeonDroidService = aeonDroidService;
     }
+    
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    protected void onFinishInflate() {
+        super.onFinishInflate();
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_right_now, container, false);
-        mSunRow = v.findViewById(R.id.RightNow_SunRow);
-        mMoonRow = v.findViewById(R.id.RightNow_MoonRow);
-        mMercuryRow = v.findViewById(R.id.RightNow_MercuryRow);
-        mVenusRow = v.findViewById(R.id.RightNow_VenusRow);
-        mMarsRow = v.findViewById(R.id.RightNow_MarsRow);
-        mJupiterRow = v.findViewById(R.id.RightNow_JupiterRow);
-        mSaturnRow = v.findViewById(R.id.RightNow_SaturnRow);
-        mUranusRow = v.findViewById(R.id.RightNow_UranusRow);
-        mNeptuneRow = v.findViewById(R.id.RightNow_NeptuneRow);
-        mPlutoRow = v.findViewById(R.id.RightNow_PlutoRow);
+        mSunRow = findViewById(R.id.RightNow_SunRow);
+        mMoonRow = findViewById(R.id.RightNow_MoonRow);
+        mMercuryRow = findViewById(R.id.RightNow_MercuryRow);
+        mVenusRow = findViewById(R.id.RightNow_VenusRow);
+        mMarsRow = findViewById(R.id.RightNow_MarsRow);
+        mJupiterRow = findViewById(R.id.RightNow_JupiterRow);
+        mSaturnRow = findViewById(R.id.RightNow_SaturnRow);
+        mUranusRow = findViewById(R.id.RightNow_UranusRow);
+        mNeptuneRow = findViewById(R.id.RightNow_NeptuneRow);
+        mPlutoRow = findViewById(R.id.RightNow_PlutoRow);
 
-        mSunMeasure = (TextView)v.findViewById(R.id.RightNow_SunMeasure);
-        mMoonMeasure = (TextView)v.findViewById(R.id.RightNow_MoonMeasure);
-        mMercuryMeasure = (TextView)v.findViewById(R.id.RightNow_MercuryMeasure);
-        mVenusMeasure = (TextView)v.findViewById(R.id.RightNow_VenusMeasure);
-        mMarsMeasure = (TextView)v.findViewById(R.id.RightNow_MarsMeasure);
-        mJupiterMeasure = (TextView)v.findViewById(R.id.RightNow_JupiterMeasure);
-        mSaturnMeasure = (TextView)v.findViewById(R.id.RightNow_SaturnMeasure);
-        mUranusMeasure = (TextView)v.findViewById(R.id.RightNow_UranusMeasure);
-        mNeptuneMeasure = (TextView)v.findViewById(R.id.RightNow_NeptuneMeasure);
-        mPlutoMeasure = (TextView)v.findViewById(R.id.RightNow_PlutoMeasure);
+        mSunMeasure = (TextView)findViewById(R.id.RightNow_SunMeasure);
+        mMoonMeasure = (TextView)findViewById(R.id.RightNow_MoonMeasure);
+        mMercuryMeasure = (TextView)findViewById(R.id.RightNow_MercuryMeasure);
+        mVenusMeasure = (TextView)findViewById(R.id.RightNow_VenusMeasure);
+        mMarsMeasure = (TextView)findViewById(R.id.RightNow_MarsMeasure);
+        mJupiterMeasure = (TextView)findViewById(R.id.RightNow_JupiterMeasure);
+        mSaturnMeasure = (TextView)findViewById(R.id.RightNow_SaturnMeasure);
+        mUranusMeasure = (TextView)findViewById(R.id.RightNow_UranusMeasure);
+        mNeptuneMeasure = (TextView)findViewById(R.id.RightNow_NeptuneMeasure);
+        mPlutoMeasure = (TextView)findViewById(R.id.RightNow_PlutoMeasure);
         
-        mMoonPhase = (TextView)v.findViewById(R.id.RightNow_MoonPhase);
-        mMoonVOC = (TextView)v.findViewById(R.id.RightNow_MoonVOC);
-        return v;
+        mMoonPhase = (TextView)findViewById(R.id.RightNow_MoonPhase);
+        mMoonVOC = (TextView)findViewById(R.id.RightNow_MoonVOC);
     }
 
 
@@ -156,10 +122,18 @@ public class RightNowFragment extends Fragment implements BroadcastReceivable {
         return backingStore;
     }
 
+    @Override
+    public void setServiceReference(AeonDroidService aeonDroidService) {
+        mAeonDroidService = aeonDroidService;
+    }
+
     private class HighlightReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             int planetType = intent.getIntExtra(Events.EXTRA_HOUR_TYPE, -1);
+            if (mSunRow == null) {
+                return;
+            }
             if (lastView != null) {
                 lastView.setBackgroundResource(0);
             }
