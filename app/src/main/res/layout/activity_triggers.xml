@@ -10,13 +10,12 @@
                 tools:context="io.github.phora.aeondroid.activities.TriggersActivity">
 
 
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ExpandableListView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:id="@android:id/list"
-        android:entries="@array/minutes_seconds"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
+        android:choiceMode="singleChoice"
+        android:groupIndicator="@android:color/transparent" />
     <net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -27,6 +26,7 @@
         <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
             fab:fab_title="@string/TriggersActivity.AddTrigger"
             android:id="@+id/Triggers.Add"
+            android:onClick="addTrigger"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
@@ -37,6 +37,7 @@
         <net.i2p.android.ext.floatingactionbutton.FloatingActionButton
             fab:fab_title="@string/TriggersActivity.AddTriggerGroup"
             android:id="@+id/Triggers.AddGroup"
+            android:onClick="addTriggerGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu>

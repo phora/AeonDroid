@@ -72,4 +72,9 @@
     <string name="TriggersActivity.AddTrigger">Trigger</string>
     <string name="TriggersActivity.AddPrecalculated">Precalculated trigger</string>
     <string name="TriggersActivity.AddTriggerGroup">Trigger group</string>
+    <string name="Action.Delete">Delete trigger</string>
+    <string name="Action.Group">Group triggers</string>
+    <string name="TriggersActivity.RemovedTriggerGroup">Removed trigger group</string>
+    <string name="TriggersActivity.RemovedTrigger">Removed trigger</string>
+    <string name="TriggersActivity.RemovedSubtrigger">Removed trigger from trigger group</string>
 </resources>

@@ -1,4 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="io.github.phora.aeondroid.activities.TriggersActivity">
+      <item android:id="@+id/action_group"
+            android:title="@string/Action.Group"
+            android:orderInCategory="100"
+            android:showAsAction="never"/>
+      <item android:id="@+id/action_delete"
+            android:title="@string/Action.Delete"
+            android:orderInCategory="100"
+            android:showAsAction="never"/>
 </menu>

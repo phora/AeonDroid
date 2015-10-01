@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.github.phora.aeondroid.widgets.CheckableLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:background="?android:attr/activatedBackgroundIndicator"
+              android:descendantFocusability="blocksDescendants"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical">
+    <CheckBox
+        android:focusable="false"
+        android:clickable="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/TriggerItem.GroupIndicator"
+        android:src="@android:color/transparent"/>
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textAppearance="?android:attr/textAppearanceLarge"
+                  android:text="TEST"
+                  android:id="@+id/TriggerItem.Type" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView android:layout_width="0dip"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:text="TEST"
+                      android:id="@+id/TriggerItem.Argument1" />
+            <TextView android:layout_width="0dip"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:text="TEST"
+                      android:id="@+id/TriggerItem.Argument2" />
+        </LinearLayout>
+    </LinearLayout>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_menu_edit"/>
+</io.github.phora.aeondroid.widgets.CheckableLinearLayout>
