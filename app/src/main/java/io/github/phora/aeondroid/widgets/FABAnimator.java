@@ -1,4 +1,4 @@
-package io.github.phora.aeondroid;
+package io.github.phora.aeondroid.widgets;
 
 import android.content.Context;
 import android.view.View;
@@ -7,6 +7,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 
 import net.i2p.android.ext.floatingactionbutton.FloatingActionButton;
+
+import io.github.phora.aeondroid.R;
 
 /**
  * Created by phora on 9/25/15.

@@ -19,7 +19,7 @@ import net.i2p.android.ext.floatingactionbutton.FloatingActionsMenu;
 
 import io.github.phora.aeondroid.AlertTriggerType;
 import io.github.phora.aeondroid.DBHelper;
-import io.github.phora.aeondroid.FABAnimator;
+import io.github.phora.aeondroid.widgets.FABAnimator;
 import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.model.adapters.AlertTriggerCursorAdapter;
 
