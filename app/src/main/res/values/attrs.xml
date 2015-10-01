@@ -24,7 +24,7 @@
     <attr name="Aspects.Quincunx"     format="reference" />
     <attr name="Aspects.Opposition"   format="reference" />
 
-    <declare-styleable name="DateTimePreference">
+    <declare-styleable name="DateTimeWidget">
         <attr name="latitudeReference"   format="string" />
         <attr name="longitudeReference"  format="string" />
         <attr name="showToastsReference" format="string" />

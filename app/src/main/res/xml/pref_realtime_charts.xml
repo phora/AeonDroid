@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:aeon="http://schemas.android.com/apk/res/io.github.phora.aeondroid">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/PrefGroup.Aspects">
         <Preference android:title="@string/Pref.Title.Orbs"
@@ -15,9 +14,6 @@
         <io.github.phora.aeondroid.DatetimePreference
             android:key="BirthTime"
             android:title="@string/Pref.Title.BirthTime"
-            aeon:latitudeReference="BirthLoc.Latitude"
-            aeon:longitudeReference="BirthLoc.Longitude"
-            aeon:showToastsReference="showUsageToasts"
             android:hint="@string/Pref.Desc.BirthTime"
             android:defaultValue="0" />
 

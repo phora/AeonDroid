@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/DTPref.TimeZone"
+        android:id="@+id/DTWidget.TimeZone"
         android:gravity="center"
         android:textAppearance="@android:style/TextAppearance.Large"/>
 
@@ -21,7 +21,7 @@
         <DatePicker
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/DTPref.Date"
+            android:id="@+id/DTWidget.Date"
             android:layout_gravity="center"
             android:calendarViewShown="false"
             android:datePickerMode="spinner"/>
@@ -37,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:id="@+id/DTPref.Hours"
+                android:id="@+id/DTWidget.Hours"
                 android:choiceMode="singleChoice"
                 android:clickable="true"/>
             <TextView android:layout_width="wrap_content"
@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:id="@+id/DTPref.Minutes"
+                android:id="@+id/DTWidget.Minutes"
                 android:choiceMode="singleChoice"
                 android:clickable="true"/>
             <TextView android:layout_width="wrap_content"
@@ -63,7 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:id="@+id/DTPref.Seconds"
+                android:id="@+id/DTWidget.Seconds"
                 android:choiceMode="singleChoice"
                 android:clickable="true"/>
         </LinearLayout>

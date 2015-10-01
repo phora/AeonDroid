@@ -20,115 +20,27 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import io.github.phora.aeondroid.calculations.ZoneTab;
+import io.github.phora.aeondroid.widgets.DateTimePicker;
 
 /**
  * Created by phora on 9/21/15.
  */
 public class DatetimePreference extends DialogPreference {
     private static final long DEFAULT_VALUE = 0;
-    private Calendar calendar;
-    private DatePicker datePicker;
-    private ListView hoursList;
-    private ListView minutesList;
-    private ListView secondsList;
 
-    private String latRef;
-    private String lonRef;
-    private String showToastsRef;
-    private TextView tzView;
+    private DateTimePicker dtp;
 
     public DatetimePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-        TypedArray a = context.getTheme().obtainStyledAttributes(
-                attrs,
-                R.styleable.DateTimePreference,
-                0, 0);
-
-        latRef = a.getString(R.styleable.DateTimePreference_latitudeReference);
-        lonRef = a.getString(R.styleable.DateTimePreference_longitudeReference);
-        showToastsRef = a.getString(R.styleable.DateTimePreference_showToastsReference);
         setDialogLayoutResource(R.layout.preference_datetime);
     }
 
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        double lat = Double.valueOf(getSharedPreferences().getString(latRef, "0.0"));
-        double lon = Double.valueOf(getSharedPreferences().getString(lonRef, "0.0"));
-        boolean showToast = false;
-        String timezone;
-        try {
-            ZoneTab.ZoneInfo zi = ZoneTab.getInstance(getContext()).nearestTZ(lat, lon);
-            if (zi != null) {
-                timezone = zi.getTz();
-            }
-            else {
-                timezone = "UTC";
-            }
-        } catch (FileNotFoundException e) {
-            timezone = "UTC";
-        }
-        Log.d("DatetimePreference", "Found timezone " + timezone);
-        calendar = new GregorianCalendar(TimeZone.getTimeZone(timezone));
-        calendar.setTimeInMillis(getPersistedLong(DEFAULT_VALUE));
+        dtp = (DateTimePicker) view.findViewById(R.id.DTPref);
 
-        tzView = (TextView)view.findViewById(R.id.DTPref_TimeZone);
-        tzView.setText(getContext().getString(R.string.DetectedTimezone, timezone));
-        datePicker  = (DatePicker)view.findViewById(R.id.DTPref_Date);
-        hoursList   = (ListView)view.findViewById(R.id.DTPref_Hours);
-        minutesList = (ListView)view.findViewById(R.id.DTPref_Minutes);
-        secondsList = (ListView)view.findViewById(R.id.DTPref_Seconds);
-
-        final ViewFlipper viewFlipper = (ViewFlipper)view.findViewById(R.id.viewFlipper);
-        if (viewFlipper != null) {
-            showToast = getSharedPreferences().getBoolean(showToastsRef, true);
-            viewFlipper.setOnTouchListener(new View.OnTouchListener() {
-                private float firstX;
-                private float MIN_SWIPE = 10.0f;
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                        firstX = motionEvent.getX();
-                    }
-                    else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                        float lastX = motionEvent.getX();
-                        if (firstX - lastX > MIN_SWIPE) {
-                            viewFlipper.showNext();
-                            return false;
-                        }
-                        else if (lastX - firstX > MIN_SWIPE) {
-                            viewFlipper.showPrevious();
-                            return false;
-                        }
-                        else {
-                            Toast.makeText(getContext(), R.string.DTPref_Paging, Toast.LENGTH_SHORT).show();
-                            return true;
-                        }
-                    }
-                    return true;
-                }
-            });
-        }
-
-        datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), null);
-        hoursList.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_single_choice,
-                getContext().getResources().getStringArray(R.array.hours)));
-        hoursList.setItemChecked(calendar.get(Calendar.HOUR_OF_DAY), true);
-        hoursList.setSelectionFromTop(calendar.get(Calendar.HOUR_OF_DAY), hoursList.getHeight() / 2);
-
-        minutesList.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_single_choice,
-                getContext().getResources().getStringArray(R.array.minutes_seconds)));
-        minutesList.setItemChecked(calendar.get(Calendar.MINUTE), true);
-        minutesList.setSelectionFromTop(calendar.get(Calendar.MINUTE), minutesList.getHeight() / 2);
-
-        secondsList.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_single_choice,
-                getContext().getResources().getStringArray(R.array.minutes_seconds)));
-        secondsList.setItemChecked(calendar.get(Calendar.SECOND), true);
-        secondsList.setSelectionFromTop(calendar.get(Calendar.SECOND), secondsList.getHeight() / 2);
-
-        if (showToast && viewFlipper != null) {
-            Toast.makeText(getContext(), R.string.DTPref_Paging, Toast.LENGTH_SHORT).show();
-        }
+        dtp.setTimeInMillis(getPersistedLong(DEFAULT_VALUE));
     }
 
     @Override
@@ -136,14 +48,16 @@ public class DatetimePreference extends DialogPreference {
         super.onDialogClosed(positiveResult);
 
         if (positiveResult) {
+            /*
             calendar.set(Calendar.YEAR, datePicker.getYear());
             calendar.set(Calendar.MONTH, datePicker.getMonth());
             calendar.set(Calendar.DAY_OF_MONTH, datePicker.getDayOfMonth());
             calendar.set(Calendar.HOUR_OF_DAY, hoursList.getCheckedItemPosition());
             calendar.set(Calendar.MINUTE, minutesList.getCheckedItemPosition());
             calendar.set(Calendar.SECOND, secondsList.getCheckedItemPosition());
+            */
 
-            long newTime = calendar.getTimeInMillis();
+            long newTime = dtp.getTimeInMillis();
 
             if (!callChangeListener(newTime)) {
                 return;
