@@ -56,7 +56,7 @@ public class RightNowView extends LinearLayout implements BroadcastReceivable, A
     public RightNowView(Context context, AeonDroidService aeonDroidService, Date date) {
         // Required empty public constructor
         super(context);
-        View.inflate(context, R.layout.fragment_right_now, this);
+        View.inflate(context, R.layout.right_now_view, this);
         onFinishInflate();
 
         backingStore = new LinkedList<>();

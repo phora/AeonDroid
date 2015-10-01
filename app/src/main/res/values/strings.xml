@@ -5,7 +5,7 @@
 
     <string name="MainActivity.CheckingCalcs">Checking if calculations need to be refreshed, this may take a while.</string>
 
-    <string name="PlanetaryHoursFragment.LockingOntoGPS">Locking onto GPS...</string>
+    <string name="PlanetaryHoursView.LockingOntoGPS">Locking onto GPS...</string>
 
     <string name="Moon.WaxWaneFmt">%1$s %2$s Moon</string>
     <string name="Moon.NewMoon">New Moon</string>

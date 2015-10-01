@@ -3,7 +3,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              tools:context=".MainActivityFragment">
+              tools:context="io.github.phora.aeondroid.widgets.PlanetaryHoursView">
 
     <ListView
         android:layout_width="fill_parent"
@@ -13,6 +13,6 @@
     <TextView android:id="@android:id/empty"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:text="@string/PlanetaryHoursFragment.LockingOntoGPS" />
+              android:text="@string/PlanetaryHoursView.LockingOntoGPS" />
 
 </LinearLayout>

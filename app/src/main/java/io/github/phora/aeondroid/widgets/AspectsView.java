@@ -38,7 +38,7 @@ public class AspectsView extends LinearLayout implements BroadcastReceivable, Ae
     public AspectsView(Context context, AeonDroidService aeonDroidService, Date date) {
         // Required empty public constructor
         super(context);
-        View.inflate(context, R.layout.fragment_aspects, this);
+        View.inflate(context, R.layout.aspects_view, this);
         onFinishInflate();
 
         backingStore = new LinkedList<>();

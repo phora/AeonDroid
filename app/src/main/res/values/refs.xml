@@ -7,6 +7,6 @@
     For more on layout aliases, see:
     http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
     -->
-    <item name="fragment_moonphase" type="layout">@layout/fragment_moonphase_list</item>
+    <item name="moonphase_view" type="layout">@layout/moonphase_view_list</item>
 
 </resources>

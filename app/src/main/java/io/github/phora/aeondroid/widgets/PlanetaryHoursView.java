@@ -42,7 +42,7 @@ public class PlanetaryHoursView extends LinearLayout implements BroadcastReceiva
 
     public PlanetaryHoursView(Context context, AeonDroidService aeonDroidService, Date date) {
         super(context);
-        View.inflate(context, R.layout.fragment_phours, this);
+        View.inflate(context, R.layout.phours_view, this);
         onFinishInflate();
 
         backingStore = new LinkedList<>();
@@ -117,7 +117,7 @@ public class PlanetaryHoursView extends LinearLayout implements BroadcastReceiva
     private class HighlightReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("PHFragment", "Received highlight update");
+            Log.d("PHView", "Received highlight update");
             int selectedRow = intent.getIntExtra(Events.EXTRA_HOUR_INDEX, -1);
             if (_delayedRefresh && mAeonDroidService != null && mListView != null) {
                 refreshContents();
@@ -131,12 +131,12 @@ public class PlanetaryHoursView extends LinearLayout implements BroadcastReceiva
                 }
                 if (!_autoScrolledOnce && mListView != null) {
                     try {
-                        Log.d("PHFragment", "Attempting to scroll to "+selectedRow);
+                        Log.d("PHView", "Attempting to scroll to "+selectedRow);
                         mListView.setSelectionFromTop(selectedRow, mListView.getHeight() / 2);
                         _autoScrolledOnce = true;
-                        Log.d("PHFragment", "Scrolling success");
+                        Log.d("PHView", "Scrolling success");
                     } catch (IllegalStateException e) {
-                        Log.d("PHFragment", "Don't scroll yet, the view's not ready");
+                        Log.d("PHView", "Don't scroll yet, the view's not ready");
                     }
                 }
             }
@@ -147,16 +147,16 @@ public class PlanetaryHoursView extends LinearLayout implements BroadcastReceiva
         @Override
         public void onReceive(Context context, Intent intent) {
             _autoScrolledOnce = false;
-            Log.d("PHFragment", "Received refresh update");
+            Log.d("PHView", "Received refresh update");
 
             //Intent peekIntent = new Intent(context, AeonDroidService.class);
             //AeonDroidService.AeonDroidBinder adb = (AeonDroidService.AeonDroidBinder)peekService(context, peekIntent);
 
             if (mAeonDroidService != null && mListView != null) {
-                Log.d("PHFragment", "Refreshing hours succeeds!");
+                Log.d("PHView", "Refreshing hours succeeds!");
                 refreshContents();
             } else {
-                Log.d("PHFragment", "Can't get hours, binder to service is null");
+                Log.d("PHView", "Can't get hours, binder to service is null");
                 _delayedRefresh = true;
             }
         }

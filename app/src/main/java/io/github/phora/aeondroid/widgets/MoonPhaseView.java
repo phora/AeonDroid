@@ -28,9 +28,6 @@ public class MoonPhaseView extends LinearLayout implements BroadcastReceivable, 
 
     private Date timeStamp = null;
 
-    /**
-     * The fragment's ListView/GridView.
-     */
     private ListView mListView;
 
     /**
@@ -40,13 +37,9 @@ public class MoonPhaseView extends LinearLayout implements BroadcastReceivable, 
     private MoonPhaseAdapter mAdapter;
     private View mEmptyView;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public MoonPhaseView(Context context, AeonDroidService aeonDroidService, Date date) {
         super(context);
-        View.inflate(context, R.layout.fragment_moonphase, this);
+        View.inflate(context, R.layout.moonphase_view, this);
         onFinishInflate();
 
         backingStore = new LinkedList<>();
@@ -103,11 +96,11 @@ public class MoonPhaseView extends LinearLayout implements BroadcastReceivable, 
             //AeonDroidService.AeonDroidBinder adb = (AeonDroidService.AeonDroidBinder)peekService(context, peekIntent);
 
             if (mAeonDroidService != null && mListView != null) {
-                Log.d("MPFragment", "Refreshing phases succeeds!");
+                Log.d("MPView", "Refreshing phases succeeds!");
                 refreshContents();
             }
             else {
-                Log.d("MPFragment", "Can't get phases, binder to service is null");
+                Log.d("MPView", "Can't get phases, binder to service is null");
                 _delayedRefresh = true;
             }
         }
