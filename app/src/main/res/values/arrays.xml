@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="PlanetNames">
-        <item>Sun</item>
-        <item>Venus</item>
-        <item>Mercury</item>
-        <item>Moon</item>
-        <item>Saturn</item>
-        <item>Jupiter</item>
-        <item>Mars</item>
+        <item>@string/Planets.Sun</item>
+        <item>@string/Planets.Venus</item>
+        <item>@string/Planets.Mercury</item>
+        <item>@string/Planets.Moon</item>
+        <item>@string/Planets.Saturn</item>
+        <item>@string/Planets.Jupiter</item>
+        <item>@string/Planets.Mars</item>
     </string-array>
     <string-array name="PlanetDayNames">
         <item>Sun (Sunday)</item>
@@ -19,16 +19,16 @@
         <item>Saturn (Saturday)</item>
     </string-array>
     <string-array name="PlanetChartNames">
-        <item>Sun</item>
-        <item>Moon</item>
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
-        <item>Pluto</item>
+        <item>@string/Planets.Sun</item>
+        <item>@string/Planets.Moon</item>
+        <item>@string/Planets.Mercury</item>
+        <item>@string/Planets.Venus</item>
+        <item>@string/Planets.Mars</item>
+        <item>@string/Planets.Jupiter</item>
+        <item>@string/Planets.Saturn</item>
+        <item>@string/Planets.Uranus</item>
+        <item>@string/Planets.Neptune</item>
+        <item>@string/Planets.Pluto</item>
     </string-array>
     <string-array name="SignNames">
         <item>Aries</item>
