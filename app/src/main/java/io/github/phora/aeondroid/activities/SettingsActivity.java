@@ -9,6 +9,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -16,10 +17,12 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
+import android.text.InputFilter;
 import android.text.TextUtils;
 
 import java.util.List;
 
+import io.github.phora.aeondroid.MinMaxTextFilter;
 import io.github.phora.aeondroid.R;
 
 
@@ -42,6 +45,8 @@ public class SettingsActivity extends PreferenceActivity {
      * shown on tablets.
      */
     private static final boolean ALWAYS_SIMPLE_PREFS = false;
+    private static final InputFilter longitudeValidator = new MinMaxTextFilter(-180, 180, true);
+    private static final InputFilter latitudeValidator = new MinMaxTextFilter(-90, 90, true);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,15 +91,32 @@ public class SettingsActivity extends PreferenceActivity {
         // Bind the summaries of EditText/List/Dialog/Ringtone preferences to
         // their values. When their values change, their summaries are updated
         // to reflect the new value, per the Android Design guidelines.
-        bindPreferenceSummaryToValue(findPreference("CurrentLoc.Longitude"));
-        bindPreferenceSummaryToValue(findPreference("CurrentLoc.Latitude"));
+        EditTextPreference currentLocLon = (EditTextPreference) findPreference("CurrentLoc.Longitude");
+        EditTextPreference currentLocLat = (EditTextPreference) findPreference("CurrentLoc.Latitude");
+        bindPreferenceSummaryToValue(currentLocLon);
+        bindPreferenceSummaryToValue(currentLocLat);
         bindPreferenceSummaryToValue(findPreference("CurrentLoc.Altitude"));
 
         addPreferencesFromResource(R.xml.pref_realtime_charts);
-        bindPreferenceSummaryToValue(findPreference("BirthLoc.Longitude"));
-        bindPreferenceSummaryToValue(findPreference("BirthLoc.Latitude"));
+        EditTextPreference birthLocLon = (EditTextPreference) findPreference("BirthLoc.Longitude");
+        EditTextPreference birthLocLat = (EditTextPreference) findPreference("BirthLoc.Latitude");
+        bindPreferenceSummaryToValue(birthLocLon);
+        bindPreferenceSummaryToValue(birthLocLat);
         bindPreferenceSummaryToValue(findPreference("BirthLoc.Altitude"));
         //bindPreferenceSummaryToValue(findPreference("sync_frequency"));
+
+        currentLocLon.getEditText().setFilters(new InputFilter[]{
+                longitudeValidator
+        });
+        currentLocLat.getEditText().setFilters(new InputFilter[]{
+                latitudeValidator
+        });
+        birthLocLon.getEditText().setFilters(new InputFilter[] {
+                longitudeValidator
+        });
+        birthLocLat.getEditText().setFilters(new InputFilter[] {
+                latitudeValidator
+        });
     }
 
     /**
@@ -226,8 +248,19 @@ public class SettingsActivity extends PreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("CurrentLoc.Longitude"));
-            bindPreferenceSummaryToValue(findPreference("CurrentLoc.Latitude"));
+
+            EditTextPreference longitudePref = (EditTextPreference)findPreference("CurrentLoc.Longitude");
+            EditTextPreference latitudePref = (EditTextPreference)findPreference("CurrentLoc.Latitude");
+
+            longitudePref.getEditText().setFilters(new InputFilter[]{
+                    longitudeValidator
+            });
+            latitudePref.getEditText().setFilters(new InputFilter[]{
+                    latitudeValidator
+            });
+
+            bindPreferenceSummaryToValue(longitudePref);
+            bindPreferenceSummaryToValue(latitudePref);
             bindPreferenceSummaryToValue(findPreference("CurrentLoc.Altitude"));
             bindPreferenceSummaryToValue(findPreference("phoursIndicator"));
         }
@@ -248,8 +281,19 @@ public class SettingsActivity extends PreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("BirthLoc.Longitude"));
-            bindPreferenceSummaryToValue(findPreference("BirthLoc.Latitude"));
+
+            EditTextPreference longitudePref = (EditTextPreference)findPreference("BirthLoc.Longitude");
+            EditTextPreference latitudePref = (EditTextPreference)findPreference("BirthLoc.Latitude");
+
+            longitudePref.getEditText().setFilters(new InputFilter[] {
+                    longitudeValidator
+            });
+            latitudePref.getEditText().setFilters(new InputFilter[] {
+                    latitudeValidator
+            });
+
+            bindPreferenceSummaryToValue(longitudePref);
+            bindPreferenceSummaryToValue(latitudePref);
             bindPreferenceSummaryToValue(findPreference("BirthLoc.Altitude"));
         }
     }
