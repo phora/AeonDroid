@@ -20,6 +20,7 @@
         android:datePickerMode="spinner"/>
 
     <LinearLayout
+        android:id="@+id/DTWidget.Time"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

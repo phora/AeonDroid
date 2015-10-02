@@ -31,6 +31,7 @@ import io.github.phora.aeondroid.calculations.ZoneTab;
 public class DateTimePicker extends LinearLayout {
     private Calendar calendar;
     private DatePicker datePicker;
+    private View timeWrapper;
     private ListView hoursList;
     private ListView minutesList;
     private ListView secondsList;
@@ -39,7 +40,13 @@ public class DateTimePicker extends LinearLayout {
     private String lonRef;
     private String showToastsRef;
     private TextView tzView;
+    private ViewFlipper viewFlipper;
+    private OnTouchListener viewFlipperListener;
     private DatePicker.OnDateChangedListener datePickerListener;
+
+    private static final int UNLOCK_PAGES = -1;
+    private static final int    DATE_PAGE =  0;
+    private static final int    TIME_PAGE =  1;
 
     private boolean _dontDoubleFire = false;
 
@@ -56,6 +63,32 @@ public class DateTimePicker extends LinearLayout {
         lonRef = a.getString(R.styleable.DateTimeWidget_longitudeReference);
         showToastsRef = a.getString(R.styleable.DateTimeWidget_showToastsReference);
         datePickerListener = new DateChangedListener();
+        viewFlipperListener = new View.OnTouchListener() {
+            private float firstX;
+            private float MIN_SWIPE = 10.0f;
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    firstX = motionEvent.getX();
+                }
+                else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    float lastX = motionEvent.getX();
+                    if (firstX - lastX > MIN_SWIPE) {
+                        viewFlipper.showNext();
+                        return false;
+                    }
+                    else if (lastX - firstX > MIN_SWIPE) {
+                        viewFlipper.showPrevious();
+                        return false;
+                    }
+                    else {
+                        Toast.makeText(getContext(), R.string.DTPref_Paging, Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                }
+                return true;
+            }
+        };
     }
 
     @Override
@@ -64,8 +97,17 @@ public class DateTimePicker extends LinearLayout {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-        double lat = Double.valueOf(sharedPreferences.getString(latRef, "0.0"));
-        double lon = Double.valueOf(sharedPreferences.getString(lonRef, "0.0"));
+        double lat;
+        double lon;
+
+        try {
+            lat = Double.valueOf(sharedPreferences.getString(latRef, "0.0"));
+            lon = Double.valueOf(sharedPreferences.getString(lonRef, "0.0"));
+        }
+        catch (NullPointerException e) {
+            lat = 0;
+            lon = 0;
+        }
         boolean showToast = false;
         String timezone;
         try {
@@ -83,91 +125,72 @@ public class DateTimePicker extends LinearLayout {
         calendar = new GregorianCalendar(TimeZone.getTimeZone(timezone));
 
         tzView = (TextView)findViewById(R.id.DTWidget_TimeZone);
-        tzView.setText(getContext().getString(R.string.DetectedTimezone, timezone));
+        if (!isInEditMode()) {
+            tzView.setText(getContext().getString(R.string.DetectedTimezone, timezone));
+        }
         datePicker  = (DatePicker)findViewById(R.id.DTWidget_Date);
+        timeWrapper = findViewById(R.id.DTWidget_Time);
         hoursList   = (ListView)findViewById(R.id.DTWidget_Hours);
         minutesList = (ListView)findViewById(R.id.DTWidget_Minutes);
         secondsList = (ListView)findViewById(R.id.DTWidget_Seconds);
 
-        final ViewFlipper viewFlipper = (ViewFlipper)findViewById(R.id.viewFlipper);
+        viewFlipper = (ViewFlipper)findViewById(R.id.viewFlipper);
         if (viewFlipper != null) {
             showToast = sharedPreferences.getBoolean(showToastsRef, true);
-            viewFlipper.setOnTouchListener(new View.OnTouchListener() {
-                private float firstX;
-                private float MIN_SWIPE = 10.0f;
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                        firstX = motionEvent.getX();
-                    }
-                    else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                        float lastX = motionEvent.getX();
-                        if (firstX - lastX > MIN_SWIPE) {
-                            viewFlipper.showNext();
-                            return false;
-                        }
-                        else if (lastX - firstX > MIN_SWIPE) {
-                            viewFlipper.showPrevious();
-                            return false;
-                        }
-                        else {
-                            Toast.makeText(getContext(), R.string.DTPref_Paging, Toast.LENGTH_SHORT).show();
-                            return true;
-                        }
-                    }
-                    return true;
-                }
-            });
+            viewFlipper.setOnTouchListener(viewFlipperListener);
         }
 
-        datePicker.init(calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH),
-                datePickerListener);
-        hoursList.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_single_choice,
-                getContext().getResources().getStringArray(R.array.hours)));
-        hoursList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                if (_dontDoubleFire) {
-                    return;
+        if (!isInEditMode()) {
+            datePicker.init(calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH),
+                    datePickerListener);
+            hoursList.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_single_choice,
+                    getContext().getResources().getStringArray(R.array.hours)));
+            hoursList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                    if (_dontDoubleFire) {
+                        return;
+                    }
+                    Log.d("DateTimePicker", "New hour: " + pos);
+                    calendar.set(Calendar.HOUR_OF_DAY, pos);
+                    Log.d("DateTimePicker", "Current datetime: " + calendar.getTime());
                 }
-                Log.d("DateTimePicker", "New hour: " + pos);
-                calendar.set(Calendar.HOUR_OF_DAY, pos);
-                Log.d("DateTimePicker", "Current datetime: " + calendar.getTime());
-            }
-        });
+            });
 
-        minutesList.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_single_choice,
-                getContext().getResources().getStringArray(R.array.minutes_seconds)));
-        minutesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                if (_dontDoubleFire) {
-                    return;
+            minutesList.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_single_choice,
+                    getContext().getResources().getStringArray(R.array.minutes_seconds)));
+            minutesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                    if (_dontDoubleFire) {
+                        return;
+                    }
+                    Log.d("DateTimePicker", "New minute: " + pos);
+                    calendar.set(Calendar.MINUTE, pos);
+                    Log.d("DateTimePicker", "Current datetime: " + calendar.getTime());
                 }
-                Log.d("DateTimePicker", "New minute: " + pos);
-                calendar.set(Calendar.MINUTE, pos);
-                Log.d("DateTimePicker", "Current datetime: " + calendar.getTime());
-            }
-        });
+            });
 
-        secondsList.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_single_choice,
-                getContext().getResources().getStringArray(R.array.minutes_seconds)));
-        secondsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                if (_dontDoubleFire) {
-                    return;
+            secondsList.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_single_choice,
+                    getContext().getResources().getStringArray(R.array.minutes_seconds)));
+            secondsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                    if (_dontDoubleFire) {
+                        return;
+                    }
+                    Log.d("DateTimePicker", "New second: " + pos);
+                    calendar.set(Calendar.SECOND, pos);
+                    Log.d("DateTimePicker", "Current datetime: " + calendar.getTime());
                 }
-                Log.d("DateTimePicker", "New second: "+pos);
-                calendar.set(Calendar.SECOND, pos);
-                Log.d("DateTimePicker", "Current datetime: " + calendar.getTime());
-            }
-        });
+            });
 
-        if (showToast && viewFlipper != null) {
-            Toast.makeText(getContext(), R.string.DTPref_Paging, Toast.LENGTH_SHORT).show();
+            if (showToast && viewFlipper != null) {
+                Toast.makeText(getContext(), R.string.DTPref_Paging, Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 
@@ -194,6 +217,42 @@ public class DateTimePicker extends LinearLayout {
     public long getTimeInMillis() {
         Log.d("DateTimePicker", "Current datetime: "+calendar.getTime());
         return calendar.getTimeInMillis();
+    }
+
+    public void lockPage(int page) {
+        switch (page) {
+            case 0:
+                if (viewFlipper != null) {
+                    viewFlipper.setDisplayedChild(0);
+                    viewFlipper.setOnTouchListener(null);
+                }
+                else {
+                    datePicker.setVisibility(View.VISIBLE);
+                    timeWrapper.setVisibility(View.GONE);
+                }
+                break;
+            case 1:
+                if (viewFlipper != null) {
+                    viewFlipper.setDisplayedChild(1);
+                    viewFlipper.setOnTouchListener(null);
+                }
+                else {
+                    datePicker.setVisibility(View.GONE);
+                    timeWrapper.setVisibility(View.VISIBLE);
+                }
+                break;
+            case -1:
+            default:
+                if (viewFlipper != null) {
+                    viewFlipper.setDisplayedChild(0);
+                    viewFlipper.setOnTouchListener(viewFlipperListener);
+                }
+                else {
+                    datePicker.setVisibility(View.VISIBLE);
+                    timeWrapper.setVisibility(View.VISIBLE);
+                }
+                break;
+        }
     }
 
     private class DateChangedListener implements DatePicker.OnDateChangedListener {

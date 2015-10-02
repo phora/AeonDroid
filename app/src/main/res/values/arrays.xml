@@ -132,4 +132,40 @@
         <item>58</item>
         <item>59</item>
     </string-array>
+    <string-array name="TriggerTypes">
+        <item>Day type</item>
+        <item>Moon phase</item>
+        <item>Planet position</item>
+        <item>Planetary hour</item>
+        <item>Date/time</item>
+        <item>Aspect</item>
+    </string-array>
+    <string-array name="DateOrTime">
+        <item>Datetime</item>
+        <item>Date</item>
+        <item>Time</item>
+    </string-array>
+    <string-array name="QuickPickPhase">
+        <item>New</item>
+        <item>Waxing Crescent</item>
+        <item>First Quarter</item>
+        <item>Waxing Gibbous</item>
+        <item>Full</item>
+        <item>Waning Crescent</item>
+        <item>Last Quarter</item>
+        <item>Waning Gibbous</item>
+    </string-array>
+    <string-array name="AspectNames">
+        <item>@string/Aspects.Conjunction</item>
+        <item>@string/Aspects.SemiSextile</item>
+        <item>@string/Aspects.SemiSquare</item>
+        <item>@string/Aspects.Sextile</item>
+        <item>@string/Aspects.Quintile</item>
+        <item>@string/Aspects.Square</item>
+        <item>@string/Aspects.Trine</item>
+        <item>@string/Aspects.Sesquisquare</item>
+        <item>@string/Aspects.Biquintile</item>
+        <item>@string/Aspects.Quincunx</item>
+        <item>@string/Aspects.Opposition</item>
+    </string-array>
 </resources>

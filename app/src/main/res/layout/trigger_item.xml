@@ -45,5 +45,6 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/TriggerItem.EditBtn"
         android:src="@android:drawable/ic_menu_edit"/>
 </io.github.phora.aeondroid.widgets.CheckableLinearLayout>

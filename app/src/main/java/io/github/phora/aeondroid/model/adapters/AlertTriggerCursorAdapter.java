@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorTreeAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,15 +19,20 @@ import io.github.phora.aeondroid.R;
  */
 public class AlertTriggerCursorAdapter extends CursorTreeAdapter {
     private Context mContext;
+    private View.OnClickListener mEditButtonListener;
 
-    public AlertTriggerCursorAdapter(Cursor cursor, Context context) {
+    public AlertTriggerCursorAdapter(Cursor cursor, Context context,
+                                     View.OnClickListener editButtonListener) {
         super(cursor, context);
         mContext = context;
+        mEditButtonListener = editButtonListener;
     }
 
-    public AlertTriggerCursorAdapter(Cursor cursor, Context context, boolean autoRequery) {
+    public AlertTriggerCursorAdapter(Cursor cursor, Context context, boolean autoRequery,
+                                     View.OnClickListener editButtonListener) {
         super(cursor, context, autoRequery);
         mContext = context;
+        mEditButtonListener = editButtonListener;
     }
 
     @Override
@@ -67,6 +73,17 @@ public class AlertTriggerCursorAdapter extends CursorTreeAdapter {
             }
         }
 
+        ImageButton editButton = (ImageButton) view.findViewById(R.id.TriggerItem_EditBtn);
+        editButton.setTag(cursor.getPosition());
+        if (att != AlertTriggerType.ATRIGGER_GROUP) {
+            editButton.setOnClickListener(mEditButtonListener);
+            editButton.setVisibility(View.VISIBLE);
+        }
+        else {
+            editButton.setOnClickListener(null);
+            editButton.setVisibility(View.GONE);
+        }
+
         title.setText(att.toString());
     }
 
@@ -99,6 +116,7 @@ public class AlertTriggerCursorAdapter extends CursorTreeAdapter {
                 }
             }
         });
+
         return result;
     }
 }

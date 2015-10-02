@@ -29,4 +29,8 @@
         <attr name="longitudeReference"  format="string" />
         <attr name="showToastsReference" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="PlanetPositionEdit">
+        <attr name="fullDegreeInput" format="boolean" />
+    </declare-styleable>
 </resources>

@@ -171,6 +171,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return getReadableDatabase().rawQuery(TREE_SELECT, new String[]{String.valueOf(triggerId)});
     }
 
+    public Cursor getAllEnabledTriggers() {
+        String   whereClause = ATRIGGER_ENABLED+" = ?";
+        String[] whereArgs = {"1"};
+        return getReadableDatabase().query(TABLE_ALERT_TRIGGERS, null, whereClause, whereArgs,
+                null, null, null, null);
+    }
+
     public Cursor getAllTriggers() {
         return getReadableDatabase().query(TABLE_ALERT_TRIGGERS, null, null, null,
                 null, null, null, null);

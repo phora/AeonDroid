@@ -6,11 +6,11 @@ package io.github.phora.aeondroid;
 public enum AlertTriggerType {
     ATRIGGER_GROUP, //stored in the subtriggers table,            ?, ?
     DAY_TYPE,       //fields:                day type,            ?, only from sunrise
-    MOON_PHASE,     //fields:                   phase,            ?, ?
+    MOON_PHASE,     //fields:                   phase,      waxing?, ?
     PLANET_SIGN,    //fields:                  planet,     position, sloppy (just in sign)/exact
     PLANETARY_HOUR, //fields:     planetary hour type,            ?, ?
     DATETIME,       //fields:         the... datetime,            ?, and whether it's the date/time/both?
-    ASPECT;         //fields:        aspecting planet, natal planet, override orb?
+    ASPECT;         //fields:        aspecting planet, natal planet, aspect type
 
     public int atriggerTypeToInt() {
         switch (this) {

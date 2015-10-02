@@ -27,6 +27,7 @@
             android:datePickerMode="spinner"/>
 
         <LinearLayout
+            android:id="@+id/DTWidget.Time"
             android:orientation="horizontal"
             android:paddingLeft="72dip"
             android:paddingRight="72dip"

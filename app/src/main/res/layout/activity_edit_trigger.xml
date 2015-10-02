@@ -1,0 +1,182 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                xmlns:aeon="http://schemas.android.com/apk/res-auto"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="io.github.phora.aeondroid.activities.EditTriggerActivity">
+
+    <TextView
+        android:text="@string/EditTrigger.TriggerType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:textAppearanceLarge"/>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/TriggerTypes"
+        android:id="@+id/EditTrigger.Type" />
+
+    <CheckedTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:id="@+id/EditTrigger.Enabled"
+        android:text="@string/EditTriggerActivity.Enabled"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:textAppearance="?android:textAppearanceLarge"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1">
+
+            <ViewFlipper
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/EditTrigger.Args">
+                <!-- day type -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:text="Day type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:textAppearanceLarge"/>
+
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/PlanetDayNames"
+                        android:id="@+id/EditTrigger.DayType" />
+
+                    <CheckedTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Use the day type from sunrise"
+                        android:id="@+id/EditTrigger.OnlyFromSunrise"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                        android:gravity="center_vertical"/>
+                </LinearLayout>
+
+                <!-- moon phase -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/QuickPickPhase"
+                        android:id="@+id/EditTrigger.Phase" />
+                </LinearLayout>
+
+                <!-- planet position -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/PlanetChartNames"
+                        android:id="@+id/EditTrigger.Planet" />
+
+                    <io.github.phora.aeondroid.widgets.PlanetPositionEdit
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/EditTrigger.PlanetPos"
+                        aeon:fullDegreeInput="false" />
+                </LinearLayout>
+
+                <!-- planetary hour -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/EditTrigger.PlanetaryHour" />
+                </LinearLayout>
+
+                <!-- date/time -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:text="Date, time, or both?"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:textAppearanceLarge"/>
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/EditTrigger.SpecificityChoice" />
+                    <io.github.phora.aeondroid.widgets.DateTimePicker
+                        android:id="@+id/EditTrigger.DT"
+                        aeon:latitudeReference="BirthLoc.Latitude"
+                        aeon:longitudeReference="BirthLoc.Longitude"
+                        aeon:showToastsReference="showUsageToasts"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+
+                <!-- aspect -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/PlanetChartNames"
+                        android:id="@id/EditTrigger.Planet" />
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:entries="@array/PlanetChartNames"
+                        android:id="@+id/EditTrigger.NatalPlanet" />
+                    <Spinner
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/EditTrigger.AspectType"
+                        android:inputType="numberDecimal"
+                        android:maxLines="1"/>
+                </LinearLayout>
+            </ViewFlipper>
+    </ScrollView>
+
+    <LinearLayout
+        style="@android:style/ButtonBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/UploadOptions.Cancel"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:onClick="cancelEdit"
+            android:text="@string/Cancel" />
+
+        <Button
+            android:id="@+id/UploadOptions.OK"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:onClick="finishEdit"
+            android:text="@string/OK" />
+    </LinearLayout>
+</LinearLayout>

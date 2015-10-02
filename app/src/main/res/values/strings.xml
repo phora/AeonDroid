@@ -58,6 +58,17 @@
     <string name="Aspects.Quincunx">quincunx</string>
     <string name="Aspects.Opposition">opposition</string>
     <string name="Aspects.Details">Natal planet: %1$s\nNatal chart pos: %2$s\nRealtime planet: %3$s\nRealtime chart pos: %4$s</string>
+    
+    <string name="Planets.Sun">Sun</string>
+    <string name="Planets.Moon">Moon</string>
+    <string name="Planets.Mercury">Mercury</string>
+    <string name="Planets.Venus">Venus</string>
+    <string name="Planets.Mars">Mars</string>
+    <string name="Planets.Saturn">Saturn</string>
+    <string name="Planets.Jupiter">Jupiter</string>
+    <string name="Planets.Uranus">Uranus</string>
+    <string name="Planets.Neptune">Neptune</string>
+    <string name="Planets.Pluto">Pluto</string>
 
     <string name="hello_world">Hello world!</string>
 
@@ -77,4 +88,10 @@
     <string name="TriggersActivity.RemovedTriggerGroup">Removed trigger group</string>
     <string name="TriggersActivity.RemovedTrigger">Removed trigger</string>
     <string name="TriggersActivity.RemovedSubtrigger">Removed trigger from trigger group</string>
+
+    <string name="Title.Activity.EditTrigger">Edit Trigger</string>
+    <string name="EditTrigger.TriggerType">Trigger type</string>
+    <string name="EditTriggerActivity.Enabled">Enabled?</string>
+    <string name="PlanetPosEdit.MatchDegreesInSign">Match degrees in the same sign?</string>
+    <string name="PlanetPosEdit.TypeFullDegree">Type in the full degree?</string>
 </resources>
