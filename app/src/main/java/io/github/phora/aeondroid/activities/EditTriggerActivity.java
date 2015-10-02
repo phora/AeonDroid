@@ -50,8 +50,9 @@ public class EditTriggerActivity extends Activity {
     private DateTimePicker mDateTime;
     private Spinner        mDateSpecificity;
 
-    private Spinner  mNatalPlanet;
-    private Spinner  mAspectType;
+    private Spinner mAspectingPlanet;
+    private Spinner mNatalPlanet;
+    private Spinner mAspectType;
 
 
     @Override
@@ -59,6 +60,7 @@ public class EditTriggerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_trigger);
 
+        View editTypeLabel = findViewById(R.id.EditTrigger_Label);
         mEditItemType = (Spinner)findViewById(R.id.EditTrigger_Type);
         mEditArgsFlipper = (ViewFlipper)findViewById(R.id.EditTrigger_Args);
         mEditTrigEnabled = (CheckedTextView)findViewById(R.id.EditTrigger_Enabled);
@@ -100,6 +102,7 @@ public class EditTriggerActivity extends Activity {
         });
 
         mNatalPlanet = (Spinner)findViewById(R.id.EditTrigger_NatalPlanet);
+        mAspectingPlanet = (Spinner)findViewById(R.id.EditTrigger_AspectingPlanet);
         mAspectType = (Spinner)findViewById(R.id.EditTrigger_AspectType);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -112,10 +115,11 @@ public class EditTriggerActivity extends Activity {
                 // due to this, we map them to the type boxes by bumping the value down by one
                 int type = data.getIntExtra(EXTRA_TYPE, 1)-1;
                 mEditItemType.setSelection(type);
+                mEditArgsFlipper.setDisplayedChild(type);
 
-                Double arg1 = data.getDoubleExtra(EXTRA_ARG1, 0);
+                Long arg1 = data.getLongExtra(EXTRA_ARG1, 0);
                 Double arg2 = data.getDoubleExtra(EXTRA_ARG2, 0);
-                Double specificity = data.getDoubleExtra(EXTRA_SPECIFICITY, 0);
+                Long specificity = data.getLongExtra(EXTRA_SPECIFICITY, 0);
 
                 switch (type) {
                     case 0:
@@ -139,11 +143,14 @@ public class EditTriggerActivity extends Activity {
                         mDateSpecificity.setSelection(specificity.intValue());
                         break;
                     case 5:
-                        mPlanet.setSelection(arg1.intValue());
+                        mAspectingPlanet.setSelection(arg1.intValue());
                         mNatalPlanet.setSelection(arg2.intValue());
                         mAspectType.setSelection(specificity.intValue());
                         break;
                 }
+
+                mEditItemType.setVisibility(View.GONE);
+                editTypeLabel.setVisibility(View.GONE);
             }
         }
     }
@@ -171,9 +178,14 @@ public class EditTriggerActivity extends Activity {
     }
 
     public void cancelEdit(View view) {
+        setResult(RESULT_CANCELED);
+        finish();
+    }
+
+    public void finishEdit(View view) {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_ID, mItemId);
-        intent.putExtra(EXTRA_TYPE, mEditItemType.getSelectedItemPosition()+1);
+        intent.putExtra(EXTRA_TYPE, mEditItemType.getSelectedItemPosition() + 1);
         intent.putExtra(EXTRA_ENABLED, mEditTrigEnabled.isChecked());
         switch(mEditItemType.getSelectedItemPosition()) {
             case 0:
@@ -206,17 +218,12 @@ public class EditTriggerActivity extends Activity {
                 intent.putExtra(EXTRA_SPECIFICITY, (long)mDateSpecificity.getSelectedItemPosition());
                 break;
             case 5:
-                intent.putExtra(EXTRA_ARG1, (long)mPlanet.getSelectedItemPosition());
+                intent.putExtra(EXTRA_ARG1, (long)mAspectingPlanet.getSelectedItemPosition());
                 intent.putExtra(EXTRA_ARG2, (double)mNatalPlanet.getSelectedItemPosition());
                 intent.putExtra(EXTRA_SPECIFICITY, (long)mAspectType.getSelectedItemPosition());
                 break;
         }
         setResult(RESULT_OK, intent);
-        finish();
-    }
-
-    public void finishEdit(View view) {
-        setResult(RESULT_CANCELED);
         finish();
     }
 }

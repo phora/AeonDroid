@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.CursorTreeAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
@@ -44,7 +45,7 @@ public class AlertTriggerCursorAdapter extends CursorTreeAdapter {
     @Override
     protected Cursor getChildrenCursor(Cursor cursor) {
         long group_id = cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID));
-        boolean hasArg = cursor.isNull(cursor.getColumnIndex(DBHelper.ATRIGGER_ARG1));
+        boolean hasArg = !cursor.isNull(cursor.getColumnIndex(DBHelper.ATRIGGER_ARG1));
 
         if (!hasArg) {
             return DBHelper.getInstance(mContext).getSubtriggers(group_id);
@@ -80,7 +81,7 @@ public class AlertTriggerCursorAdapter extends CursorTreeAdapter {
         ImageButton editButton = (ImageButton) view.findViewById(R.id.TriggerItem_EditBtn);
         editButton.setTag(cursor.getPosition());
 
-        if (att != ATRIGGER_GROUP && !isChild) {
+        if (att != ATRIGGER_GROUP && !isChild && mEditButtonListener != null) {
             editButton.setOnClickListener(mEditButtonListener);
             editButton.setVisibility(View.VISIBLE);
         }
@@ -89,8 +90,16 @@ public class AlertTriggerCursorAdapter extends CursorTreeAdapter {
             editButton.setVisibility(View.GONE);
         }
 
+        CheckBox checkbox = (CheckBox) view.findViewById(R.id.TriggerItem_SelectBox);
+        if (isChild) {
+            checkbox.setVisibility(View.GONE);
+        }
+        else {
+            checkbox.setVisibility(View.VISIBLE);
+        }
+
         String[] typeNames = context.getResources().getStringArray(R.array.TriggerTypeNames);
-        title.setText(typeNames[att.atriggerTypeToInt()]);
+        title.setText(typeNames[att.attToInt()]);
 
         TextView argument1View = (TextView) view.findViewById(R.id.TriggerItem_Argument1);
         TextView argument2View = (TextView) view.findViewById(R.id.TriggerItem_Argument2);
@@ -160,13 +169,13 @@ public class AlertTriggerCursorAdapter extends CursorTreeAdapter {
             String[] specificityLabels = null;
             switch(att) {
                 case DAY_TYPE:
-                    specificityLabels = context.getResources().getStringArray(R.array.PlanetDayNames);
+                    specificityLabels = context.getResources().getStringArray(R.array.DayTypeSpecificityLabels);
                     break;
                 case DATETIME:
                     specificityLabels = context.getResources().getStringArray(R.array.DateOrTime);
                     break;
                 case PLANET_SIGN:
-                    specificityLabels = context.getResources().getStringArray(R.array.PlanetChartNames);
+                    specificityLabels = context.getResources().getStringArray(R.array.PlanetPosSpecificityLabels);
                     break;
                 case ASPECT:
                     specificityView.setText(AspectConfig.ASPECT_NAMES[specificity.intValue()]);
@@ -186,7 +195,7 @@ public class AlertTriggerCursorAdapter extends CursorTreeAdapter {
         ImageView groupIndicator = (ImageView) view.findViewById(R.id.TriggerItem_GroupIndicator);
 
         int triggerType = cursor.getInt(cursor.getColumnIndex(DBHelper.ATRIGGER_TYPE));
-        AlertTriggerType att = intToAtrigger(triggerType);
+        AlertTriggerType att = intToATT(triggerType);
 
         boolean hasArg1 = !cursor.isNull(cursor.getColumnIndex(DBHelper.ATRIGGER_ARG1));
         boolean hasArg2 = !cursor.isNull(cursor.getColumnIndex(DBHelper.ATRIGGER_ARG2));
@@ -215,7 +224,7 @@ public class AlertTriggerCursorAdapter extends CursorTreeAdapter {
     @Override
     protected void bindChildView(View view, Context context, Cursor cursor, boolean isLastChild) {
         int triggerType = cursor.getInt(cursor.getColumnIndex(DBHelper.ATRIGGER_TYPE));
-        AlertTriggerType att = intToAtrigger(triggerType);
+        AlertTriggerType att = intToATT(triggerType);
 
         boolean hasArg1 = !cursor.isNull(cursor.getColumnIndex(DBHelper.ATRIGGER_ARG1));
         boolean hasArg2 = !cursor.isNull(cursor.getColumnIndex(DBHelper.ATRIGGER_ARG2));

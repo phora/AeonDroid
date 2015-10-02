@@ -1,14 +1,18 @@
 package io.github.phora.aeondroid.activities;
 
+import android.app.AlertDialog;
 import android.app.ExpandableListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -26,6 +30,14 @@ public class TriggersActivity extends ExpandableListActivity {
 
     private Context context;
     private EditButtonListener mEditButtonListener;
+    private ExpandableListView.OnGroupClickListener mDontExpandOnClick = new ExpandableListView.OnGroupClickListener() {
+        @Override
+        public boolean onGroupClick(ExpandableListView expandableListView, View view, int pos, long id) {
+            expandableListView.setItemChecked(pos, !expandableListView.isItemChecked(pos));
+            //Log.d("TriggersActivity", "Selection length: " + listView.getCheckedItemCount());
+            return true;
+        }
+    };
 
     private static final int NEW_TRIGGER = 0;
     private static final int EDITING_TRIGGER = 1;
@@ -38,24 +50,18 @@ public class TriggersActivity extends ExpandableListActivity {
         context = this;
 
         final ExpandableListView listView = getExpandableListView();
+        listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         listView.setClickable(true);
         listView.setLongClickable(true);
         listView.setItemsCanFocus(false);
-        listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView expandableListView, View view, int pos, long id) {
-                listView.setItemChecked(pos, !listView.isItemChecked(pos));
-                //Log.d("TriggersActivity", "Selection length: " + listView.getCheckedItemCount());
-                return true;
-            }
-        });
+        listView.setOnGroupClickListener(mDontExpandOnClick);
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 Cursor cursor = (Cursor) listView.getItemAtPosition(pos);
                 int attInt = cursor.getInt(cursor.getColumnIndex(DBHelper.ATRIGGER_TYPE));
-                AlertTriggerType att = AlertTriggerType.intToAtrigger(attInt);
+                AlertTriggerType att = AlertTriggerType.intToATT(attInt);
 
                 int listItemType = ExpandableListView.getPackedPositionType(id);
                 long alertTriggerId = cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID));
@@ -98,14 +104,129 @@ public class TriggersActivity extends ExpandableListActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem deleteItems = menu.findItem(R.id.action_delete);
+        MenuItem groupItems = menu.findItem(R.id.action_group);
+
+        ExpandableListView expandableListView = getExpandableListView();
+        boolean moreThanOne = expandableListView.getCheckedItemCount() > 0;
+
+        deleteItems.setEnabled(moreThanOne);
+
+        SparseBooleanArray sba = expandableListView.getCheckedItemPositions();
+        boolean isOrHasChild = false;
+
+        for (int i = 0; i < sba.size(); i++) {
+            if (!sba.valueAt(i)) {
+                continue;
+            }
+            long packedPos = expandableListView.getExpandableListPosition(sba.keyAt(i));
+            int posType = ExpandableListView.getPackedPositionType(packedPos);
+            Cursor cursor = (Cursor) expandableListView.getItemAtPosition(sba.keyAt(i));
+            AlertTriggerType att = AlertTriggerType.intToATT(cursor.getInt(cursor.getColumnIndex(DBHelper.ATRIGGER_TYPE)));
+            isOrHasChild = (posType == ExpandableListView.PACKED_POSITION_TYPE_CHILD ||
+                    att == AlertTriggerType.ATRIGGER_GROUP);
+            if (isOrHasChild) {
+                break;
+            }
+        }
+
+        groupItems.setEnabled(!isOrHasChild && moreThanOne);
+
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        final ExpandableListView expandableListView = getExpandableListView();
+        final int itemCount = expandableListView.getCheckedItemCount();
+        final SparseBooleanArray sba = expandableListView.getCheckedItemPositions();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_group) {
+            //show dialog showing groups where to move
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            final ExpandableListView putInWhichGroup = new ExpandableListView(this);
+            putInWhichGroup.setGroupIndicator(null);
+            putInWhichGroup.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+            putInWhichGroup.setOnGroupClickListener(mDontExpandOnClick);
+            new AsyncTask<Void, Void, Cursor>() {
+                @Override
+                protected Cursor doInBackground(Void... voids) {
+                    return DBHelper.getInstance(context).getAllTriggerGroups();
+                }
+
+                @Override
+                protected void onPostExecute(Cursor cursor) {
+                    AlertTriggerCursorAdapter atca = new AlertTriggerCursorAdapter(cursor, context, null);
+                    putInWhichGroup.setAdapter(atca);
+                }
+            }.execute();
+            builder.setView(putInWhichGroup);
+            builder.setMessage(getString(R.string.TriggersActivity_GroupTriggersMessage, getString(R.string.AppName)));
+            builder.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int buttonId) {
+                    Long[] itemIds = new Long[itemCount];
+                    int itemIdIdx = 0;
+                    for (int i = 0; i < sba.size(); i++) {
+                        if (!sba.valueAt(i)) {
+                            continue;
+                        }
+                        Cursor cursor = (Cursor)expandableListView.getItemAtPosition(sba.keyAt(i));
+                        long itemId = cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID));
+                        itemIds[itemIdIdx] = itemId;
+                        itemIdIdx++;
+                    }
+                    //add triggers to that group
+                    //then refresh
+
+                    int groupItemPos = putInWhichGroup.getSelectedItemPosition();
+                    long groupId;
+                    if (groupItemPos != -1) {
+                        Cursor cursor = (Cursor) putInWhichGroup.getItemAtPosition(groupItemPos);
+                        groupId = cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID));
+                    }
+                    else {
+                        groupId = -1;
+                    }
+
+                    new BatchGroupTask(groupId).execute(itemIds);
+                }
+            });
+            builder.setNegativeButton(R.string.Cancel, null);
+            builder.create().show();
+            return true;
+        }
+        else if (id == R.id.action_delete) {
+            //show dialog showing confirm dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            String msg = getString(R.string.TriggersActivity_BatchDeleteConfirm, itemCount);
+            builder.setMessage(msg);
+            builder.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int buttonId) {
+                    Long[] itemIds = new Long[itemCount];
+                    int itemIdIdx = 0;
+                    for (int i = 0; i < sba.size(); i++) {
+                        if (!sba.valueAt(i)) {
+                            continue;
+                        }
+                        Cursor cursor = (Cursor)expandableListView.getItemAtPosition(sba.keyAt(i));
+                        long itemId = cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID));
+                        itemIds[itemIdIdx] = itemId;
+                        itemIdIdx++;
+                    }
+                    //then run the batch delete, which calls the refresh when done
+                    new BatchDeleteTask().execute(itemIds);
+                }
+            });
+            builder.setNegativeButton(R.string.Cancel, null);
+            builder.create().show();
             return true;
         }
 
@@ -119,7 +240,7 @@ public class TriggersActivity extends ExpandableListActivity {
                 Long arg1 = null;
                 Double arg2 = null;
                 Long specificity = null;
-                AlertTriggerType att = AlertTriggerType.intToAtrigger(data.getIntExtra(EditTriggerActivity.EXTRA_TYPE, 1));
+                AlertTriggerType att = AlertTriggerType.intToATT(data.getIntExtra(EditTriggerActivity.EXTRA_TYPE, 1));
 
                 //some of the trigger arguments maybe null
                 if (data.hasExtra(EditTriggerActivity.EXTRA_ARG1)) {
@@ -165,7 +286,7 @@ public class TriggersActivity extends ExpandableListActivity {
     }
 
     public void addTrigger(View view) {
-        Intent intent = new Intent(TriggersActivity.this, EditTriggerActivity.class);
+        Intent intent = new Intent(this, EditTriggerActivity.class);
         startActivityForResult(intent, NEW_TRIGGER);
     }
 
@@ -207,7 +328,7 @@ public class TriggersActivity extends ExpandableListActivity {
             Long specificity = cursor.getLong(cursor.getColumnIndex(DBHelper.ATRIGGER_SPECIFICITY));
             boolean enabled = cursor.getInt(cursor.getColumnIndex(DBHelper.ATRIGGER_ENABLED)) == 1;
 
-            Intent intent = new Intent(TriggersActivity.this, EditTriggerActivity.class);
+            Intent intent = new Intent(context, EditTriggerActivity.class);
 
             /* fill intent with data */
             intent.putExtra(EditTriggerActivity.EXTRA_ID, colId);
@@ -219,6 +340,54 @@ public class TriggersActivity extends ExpandableListActivity {
             /* /fill intent with data */
 
             startActivityForResult(intent, EDITING_TRIGGER);
+        }
+    }
+
+    private class BatchDeleteTask extends AsyncTask<Long,Void,Void> {
+        @Override
+        protected Void doInBackground(Long... longs) {
+            DBHelper.getInstance(context).deleteTriggers(longs);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            new LoadTriggersTask().execute();
+        }
+    }
+
+    private class BatchGroupTask extends AsyncTask<Long,Void,Boolean> {
+
+        private Long groupId;
+
+        public BatchGroupTask(Long groupId) {
+            this.groupId = groupId;
+        }
+
+        @Override
+        protected Boolean doInBackground(Long... longs) {
+            DBHelper dbHelper = DBHelper.getInstance(TriggersActivity.this);
+            if (groupId == null || groupId < 1) {
+                groupId = dbHelper.createTrigger(AlertTriggerType.ATRIGGER_GROUP, null, null, null, true);
+            }
+            if (groupId >= 1) {
+                if (longs.length == 1) {
+                    dbHelper.addTriggerToGroup(groupId, longs[0]);
+                    return true;
+                }
+                else if (longs.length > 1) {
+                    dbHelper.addTriggersToGroup(groupId, longs);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean shouldRefresh) {
+            if (shouldRefresh) {
+                new LoadTriggersTask().execute();
+            }
         }
     }
 }

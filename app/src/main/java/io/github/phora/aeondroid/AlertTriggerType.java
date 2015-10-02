@@ -12,7 +12,7 @@ public enum AlertTriggerType {
     DATETIME,       //fields:         the... datetime,            ?, and whether it's the date/time/both?
     ASPECT;         //fields:        aspecting planet, natal planet, aspect type
 
-    public int atriggerTypeToInt() {
+    public int attToInt() {
         switch (this) {
             case ATRIGGER_GROUP:
                 return 0;
@@ -33,7 +33,7 @@ public enum AlertTriggerType {
         }
     }
 
-    public static AlertTriggerType intToAtrigger(int i) {
+    public static AlertTriggerType intToATT(int i) {
         switch (i) {
             case 0:
                 return ATRIGGER_GROUP;

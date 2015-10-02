@@ -94,4 +94,17 @@
     <string name="EditTriggerActivity.Enabled">Enabled?</string>
     <string name="PlanetPosEdit.MatchDegreesInSign">Match degrees in the same sign?</string>
     <string name="PlanetPosEdit.TypeFullDegree">Type in the full degree?</string>
+    <string name="TriggersActivity.BatchDeleteConfirm">Delete %1$s triggers?</string>
+    <string name="TriggersActivity.GroupTriggersMessage">Pick a trigger group from the list.
+        \nIf you don\'t see or select any, %1$s will create a trigger group for you when you click OK.</string>
+    <string name="EditTriggerActivity.DayType">Day type</string>
+    <string name="EditTriggerActivity.DayTypeFromSunrise">Use the day type from sunrise?</string>
+
+    <string name="Phase">Phase</string>
+    <string name="PlanetaryHour">Planetary Hour</string>
+    <string name="EditTriggerActivity.DateTimeOrBoth">Date, time, or both?</string>
+    <string name="AspectingPlanet">Aspecting Planet</string>
+    <string name="NatalPlanet">Natal Planet</string>
+    <string name="AspectType">Aspect Type</string>
+    <string name="TravelingPlanet">Traveling Planet</string>
 </resources>

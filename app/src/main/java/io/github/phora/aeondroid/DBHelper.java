@@ -30,6 +30,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_ALERTS = "alerts";
     public  static final String ALERT_TYPE   = "alert_type";
+
     public enum AlertType {
         LED,     //fields: color, interval
         TEXT,    //fields: text
@@ -160,13 +161,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
     /* ALERT TRIGGER FUNCTIONS */
     public Cursor getSubtriggers(long triggerId) {
-        String TREE_SELECT = String.format("SELECT %1$s.%3$s, %4$s, %5$s, %6$s, %7$s " +
+        String TREE_SELECT = String.format("SELECT %1$s.%3$s, %4$s, %5$s, %6$s, %7$s, %8$s " +
                 "FROM %1$s " +
                 "JOIN %2$s " +
-                "ON %1$s.%3$s=%2$s.%8$s " +
-                "WHERE %2$s.%7$s=?",
+                "ON %1$s.%3$s=%2$s.%9$s " +
+                "WHERE %2$s.%8$s=?",
                 TABLE_ALERT_TRIGGERS, TABLE_SUBTRIGGERS, COLUMN_ID,
-                ATRIGGER_ARG1, ATRIGGER_ARG2, ATRIGGER_SPECIFICITY,
+                ATRIGGER_TYPE, ATRIGGER_ARG1, ATRIGGER_ARG2, ATRIGGER_SPECIFICITY,
                 SUBTRIGGER_GID, SUBTRIGGER_TID);
         return getReadableDatabase().rawQuery(TREE_SELECT, new String[]{String.valueOf(triggerId)});
     }
@@ -178,13 +179,22 @@ public class DBHelper extends SQLiteOpenHelper {
                 null, null, null, null);
     }
 
+    public Cursor getAllTriggerGroups() {
+        String   whereClause = ATRIGGER_TYPE+" = ?";
+        // this looks unnecessarily verbose since ATRIGGER_GROUP is 0, but this is just
+        // to make it more future proof
+        String[] whereArgs = {String.valueOf(AlertTriggerType.ATRIGGER_GROUP.attToInt())};
+        return getReadableDatabase().query(TABLE_ALERT_TRIGGERS, null, whereClause, whereArgs,
+                null, null, null, null);
+    }
+
     public Cursor getAllTriggers() {
         return getReadableDatabase().query(TABLE_ALERT_TRIGGERS, null, null, null,
                 null, null, null, null);
     }
 
-    public void createTrigger(AlertTriggerType att, Long argument1, Double argument2, Long specificity, boolean enabled) {
-        int attInt = att.atriggerTypeToInt();
+    public Long createTrigger(AlertTriggerType att, Long argument1, Double argument2, Long specificity, boolean enabled) {
+        int attInt = att.attToInt();
 
         ContentValues cv = new ContentValues();
         cv.put(ATRIGGER_TYPE, attInt);
@@ -192,15 +202,32 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(ATRIGGER_ARG2, argument2);
         cv.put(ATRIGGER_SPECIFICITY, specificity);
         cv.put(ATRIGGER_ENABLED, enabled);
-        getWritableDatabase().insert(TABLE_ALERT_TRIGGERS, null, cv);
+        return getWritableDatabase().insert(TABLE_ALERT_TRIGGERS, null, cv);
     }
 
-    public void addTriggerTogroup(long groupId, long alertTriggerId) {
+    public void addTriggerToGroup(long groupId, long alertTriggerId) {
         ContentValues cv = new ContentValues();
         cv.put(SUBTRIGGER_GID, groupId);
         cv.put(SUBTRIGGER_TID, alertTriggerId);
 
         getWritableDatabase().insert(TABLE_SUBTRIGGERS, null, cv);
+    }
+
+    public void addTriggersToGroup(long groupId, Long... alertTriggerIds) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+
+        sqLiteDatabase.beginTransaction();
+        try {
+            for (Long alertTriggerId: alertTriggerIds) {
+                ContentValues cv = new ContentValues();
+                cv.put(SUBTRIGGER_GID, groupId);
+                cv.put(SUBTRIGGER_TID, alertTriggerId);
+                sqLiteDatabase.insert(TABLE_SUBTRIGGERS, null, cv);
+            }
+            sqLiteDatabase.setTransactionSuccessful();
+        } finally {
+            sqLiteDatabase.endTransaction();
+        }
     }
 
     public void setTriggerEnabled(long alertTriggerId, boolean enabled) {
@@ -245,7 +272,56 @@ public class DBHelper extends SQLiteOpenHelper {
         getWritableDatabase().delete(TABLE_ALERT_TRIGGERS, whereClause, whereArgs);
     }
 
+    public void deleteTriggers(Long... alertTriggerIds) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+
+        int count = alertTriggerIds.length;
+        String whereClause = String.format("%1$s in (%2$s)", COLUMN_ID, makePlaceholders(count));
+        String[] whereArgs = new String[count];
+        String[] fields = {COLUMN_ID, ATRIGGER_TYPE};
+
+        String groupWhereClause = SUBTRIGGER_GID+" = ?";
+
+        for (int i = 0; i < count; i++) {
+            whereArgs[i]=String.valueOf(alertTriggerIds[i]);
+        }
+
+        sqLiteDatabase.beginTransaction();
+        try {
+            Cursor cursor = sqLiteDatabase.query(TABLE_ALERT_TRIGGERS, fields, whereClause, whereArgs,
+                    null, null, null, null);
+
+            while (cursor.moveToNext()) {
+                AlertTriggerType att = AlertTriggerType.intToATT(cursor.getInt(cursor.getColumnIndex(ATRIGGER_TYPE)));
+                if (att == AlertTriggerType.ATRIGGER_GROUP) {
+                    long gid = cursor.getLong(cursor.getColumnIndex(COLUMN_ID));
+                    String[] groupWhereArgs = {String.valueOf(gid)};
+                    sqLiteDatabase.delete(TABLE_SUBTRIGGERS, groupWhereClause, groupWhereArgs);
+                }
+            }
+            cursor.close();
+            sqLiteDatabase.delete(TABLE_ALERT_TRIGGERS, whereClause, whereArgs);
+            sqLiteDatabase.setTransactionSuccessful();
+        } finally {
+            sqLiteDatabase.endTransaction();
+        }
+    }
+
     /* /ALERT TRIGGER FUNCTIONS */
+
+    public static String makePlaceholders(int len) {
+        if (len < 1) {
+            // It will lead to an invalid query anyway ..
+            throw new RuntimeException("No placeholders");
+        } else {
+            StringBuilder sb = new StringBuilder(len * 2 - 1);
+            sb.append("?");
+            for (int i = 1; i < len; i++) {
+                sb.append(",?");
+            }
+            return sb.toString();
+        }
+    }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {

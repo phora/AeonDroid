@@ -8,6 +8,7 @@
 
     <TextView
         android:text="@string/EditTrigger.TriggerType"
+        android:id="@+id/EditTrigger.Label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:textAppearanceLarge"/>
@@ -27,9 +28,11 @@
         android:checkMark="?android:attr/listChoiceIndicatorMultiple"
         android:textAppearance="?android:textAppearanceLarge"/>
 
+    <!-- TODO: Adjust the text sizes and padding to make this more readable -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dip"
+        android:padding="16dip"
         android:layout_weight="1">
 
         <ViewFlipper
@@ -42,10 +45,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
-                    android:text="Day type"
+                    android:text="@string/EditTriggerActivity.DayType"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:textAppearanceLarge"/>
+                    android:textAppearance="?android:textAppearanceMedium"/>
 
                 <Spinner
                     android:layout_width="match_parent"
@@ -56,9 +59,9 @@
                 <CheckedTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Use the day type from sunrise"
+                    android:text="@string/EditTriggerActivity.DayTypeFromSunrise"
                     android:id="@+id/EditTrigger.OnlyFromSunrise"
-                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textAppearance="?android:textAppearanceMedium"
                     android:checkMark="?android:attr/listChoiceIndicatorMultiple"
                     android:gravity="center_vertical"/>
             </LinearLayout>
@@ -68,7 +71,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:text="@string/Phase"/>
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -81,6 +88,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:text="@string/TravelingPlanet"/>
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -88,7 +100,8 @@
                     android:id="@+id/EditTrigger.Planet" />
                 <io.github.phora.aeondroid.widgets.PlanetPositionEdit
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dip"
+                    android:layout_weight="1"
                     android:id="@+id/EditTrigger.PlanetPos"
                     aeon:fullDegreeInput="false" />
             </LinearLayout>
@@ -98,6 +111,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:text="@string/PlanetaryHour"/>
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -111,10 +129,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
-                    android:text="Date, time, or both?"
+                    android:text="@string/EditTriggerActivity.DateTimeOrBoth"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:textAppearanceLarge"/>
+                    android:textAppearance="?android:textAppearanceMedium"/>
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -134,16 +152,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:text="@string/AspectingPlanet"/>
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:entries="@array/PlanetChartNames"
-                    android:id="@id/EditTrigger.Planet" />
+                    android:id="@+id/EditTrigger.AspectingPlanet" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:text="@string/NatalPlanet"/>
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:entries="@array/PlanetChartNames"
                     android:id="@+id/EditTrigger.NatalPlanet" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:text="@string/AspectType"/>
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
