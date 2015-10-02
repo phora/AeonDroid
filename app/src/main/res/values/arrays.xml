@@ -9,14 +9,23 @@
         <item>Jupiter</item>
         <item>Mars</item>
     </string-array>
+    <string-array name="PlanetDayNames">
+        <item>Sun (Sunday)</item>
+        <item>Moon (Monday)</item>
+        <item>Mars (Tuesday)</item>
+        <item>Mercury (Wednesday)</item>
+        <item>Jupiter (Thursday)</item>
+        <item>Venus (Friday)</item>
+        <item>Saturn (Saturday)</item>
+    </string-array>
     <string-array name="PlanetChartNames">
         <item>Sun</item>
         <item>Moon</item>
         <item>Mercury</item>
         <item>Venus</item>
         <item>Mars</item>
-        <item>Saturn</item>
         <item>Jupiter</item>
+        <item>Saturn</item>
         <item>Uranus</item>
         <item>Neptune</item>
         <item>Pluto</item>
