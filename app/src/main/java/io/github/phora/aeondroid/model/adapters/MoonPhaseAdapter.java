@@ -58,7 +58,7 @@ public class MoonPhaseAdapter extends BaseAdapter {
         TextView phaseView = (TextView)convertView.findViewById(R.id.MoonPhase_PhaseString);
         ImageView phaseImage = (ImageView)convertView.findViewById(R.id.MoonPhase_Image);
 
-        stampView.setText(EphemerisUtils.DATE_FMT.format(mp.getTimeStamp()));
+        stampView.setText(EphemerisUtils.DATETIME_FMT.format(mp.getTimeStamp()));
         phaseView.setText(PhaseUtils.getPhaseString(mContext, mp));
         phaseImage.setImageResource(PhaseUtils.getPhaseImage(mp));
 

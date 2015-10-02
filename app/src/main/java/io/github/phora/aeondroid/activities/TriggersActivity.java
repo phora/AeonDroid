@@ -116,20 +116,20 @@ public class TriggersActivity extends ExpandableListActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == NEW_TRIGGER) {
             if (resultCode == RESULT_OK) {
-                Double arg1 = null;
+                Long arg1 = null;
                 Double arg2 = null;
-                Double specificity = null;
+                Long specificity = null;
                 AlertTriggerType att = AlertTriggerType.intToAtrigger(data.getIntExtra(EditTriggerActivity.EXTRA_TYPE, 1));
 
                 //some of the trigger arguments maybe null
                 if (data.hasExtra(EditTriggerActivity.EXTRA_ARG1)) {
-                    arg1 = data.getDoubleExtra(EditTriggerActivity.EXTRA_ARG1, 0);
+                    arg1 = data.getLongExtra(EditTriggerActivity.EXTRA_ARG1, 0);
                 }
                 if (data.hasExtra(EditTriggerActivity.EXTRA_ARG2)) {
                     arg2 = data.getDoubleExtra(EditTriggerActivity.EXTRA_ARG2, 0);
                 }
                 if (data.hasExtra(EditTriggerActivity.EXTRA_SPECIFICITY)) {
-                    specificity = data.getDoubleExtra(EditTriggerActivity.EXTRA_SPECIFICITY, 0);
+                    specificity = data.getLongExtra(EditTriggerActivity.EXTRA_SPECIFICITY, 0);
                 }
 
                 boolean enabled = data.getBooleanExtra(EditTriggerActivity.EXTRA_ENABLED, false);
@@ -140,20 +140,20 @@ public class TriggersActivity extends ExpandableListActivity {
         }
         else if (requestCode == EDITING_TRIGGER) {
             if (resultCode == RESULT_OK) {
-                Double arg1 = null;
+                Long arg1 = null;
                 Double arg2 = null;
-                Double specificity = null;
+                Long specificity = null;
 
                 long id = data.getLongExtra(EditTriggerActivity.EXTRA_ID, -1);
                 //some of the trigger arguments maybe null
                 if (data.hasExtra(EditTriggerActivity.EXTRA_ARG1)) {
-                    arg1 = data.getDoubleExtra(EditTriggerActivity.EXTRA_ARG1, 0);
+                    arg1 = data.getLongExtra(EditTriggerActivity.EXTRA_ARG1, 0);
                 }
                 if (data.hasExtra(EditTriggerActivity.EXTRA_ARG2)) {
                     arg2 = data.getDoubleExtra(EditTriggerActivity.EXTRA_ARG2, 0);
                 }
                 if (data.hasExtra(EditTriggerActivity.EXTRA_SPECIFICITY)) {
-                    specificity = data.getDoubleExtra(EditTriggerActivity.EXTRA_SPECIFICITY, 0);
+                    specificity = data.getLongExtra(EditTriggerActivity.EXTRA_SPECIFICITY, 0);
                 }
 
                 boolean enabled = data.getBooleanExtra(EditTriggerActivity.EXTRA_ENABLED, false);
@@ -200,9 +200,22 @@ public class TriggersActivity extends ExpandableListActivity {
             Cursor cursor = ((AlertTriggerCursorAdapter)getExpandableListAdapter()).getCursor();
             cursor.moveToPosition(cursorPos);
 
+            long colId = cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID));
+            int itemType = cursor.getInt(cursor.getColumnIndex(DBHelper.ATRIGGER_TYPE));
+            Long arg1 = cursor.getLong(cursor.getColumnIndex(DBHelper.ATRIGGER_ARG1));
+            Double arg2 = cursor.getDouble(cursor.getColumnIndex(DBHelper.ATRIGGER_ARG2));
+            Long specificity = cursor.getLong(cursor.getColumnIndex(DBHelper.ATRIGGER_SPECIFICITY));
+            boolean enabled = cursor.getInt(cursor.getColumnIndex(DBHelper.ATRIGGER_ENABLED)) == 1;
+
             Intent intent = new Intent(TriggersActivity.this, EditTriggerActivity.class);
 
             /* fill intent with data */
+            intent.putExtra(EditTriggerActivity.EXTRA_ID, colId);
+            intent.putExtra(EditTriggerActivity.EXTRA_TYPE, itemType);
+            intent.putExtra(EditTriggerActivity.EXTRA_ARG1, arg1);
+            intent.putExtra(EditTriggerActivity.EXTRA_ARG2, arg2);
+            intent.putExtra(EditTriggerActivity.EXTRA_SPECIFICITY, specificity);
+            intent.putExtra(EditTriggerActivity.EXTRA_ENABLED, enabled);
             /* /fill intent with data */
 
             startActivityForResult(intent, EDITING_TRIGGER);

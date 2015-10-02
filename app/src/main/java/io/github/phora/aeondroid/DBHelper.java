@@ -183,7 +183,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 null, null, null, null);
     }
 
-    public void createTrigger(AlertTriggerType att, Double argument1, Double argument2, Double specificity, boolean enabled) {
+    public void createTrigger(AlertTriggerType att, Long argument1, Double argument2, Long specificity, boolean enabled) {
         int attInt = att.atriggerTypeToInt();
 
         ContentValues cv = new ContentValues();
@@ -213,7 +213,7 @@ public class DBHelper extends SQLiteOpenHelper {
         getWritableDatabase().update(TABLE_ALERT_TRIGGERS, cv, whereClause, whereArgs);
     }
 
-    public void updateTriggerParams(long alertTriggerId, Double argument1, Double argument2, Double specificity, boolean enabled) {
+    public void updateTriggerParams(long alertTriggerId, Long argument1, Double argument2, Long specificity, boolean enabled) {
         ContentValues cv = new ContentValues();
         cv.put(ATRIGGER_ARG1, argument1);
         cv.put(ATRIGGER_ARG2, argument2);

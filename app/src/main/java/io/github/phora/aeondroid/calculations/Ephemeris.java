@@ -273,8 +273,8 @@ public class Ephemeris {
         ArrayList<PlanetaryHour> hours = new ArrayList<PlanetaryHour>();
         int dayOffset = SweDate.getDayOfWeekNr(sunrise);
         Log.d("Ephmeris", "Day offset: " + dayOffset);
-        //Log.d("Ephmeris", EphemerisUtils.DATE_FMT.format(date));
-        //Log.d("Ephmeris", EphemerisUtils.DATE_FMT.format(cal.getTime()));
+        //Log.d("Ephmeris", EphemerisUtils.DATETIME_FMT.format(date));
+        //Log.d("Ephmeris", EphemerisUtils.DATETIME_FMT.format(cal.getTime()));
 
         for (int i=0;i<12;i++) {
             double timestamp = ((double)i)*dayHourLength+sunrise;

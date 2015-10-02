@@ -235,7 +235,7 @@ public class RightNowView extends LinearLayout implements BroadcastReceivable, A
                 String fmt = context.getString(R.string.Moon_CurrentlyVOC);
 
                 Date d = new Date(intent.getLongExtra(Events.EXTRA_VOC_TO_DATE, 0));
-                String strDate = EphemerisUtils.DATE_FMT.format(d);
+                String strDate = EphemerisUtils.DATETIME_FMT.format(d);
 
                 //int sign = intent.getIntExtra(Events.EXTRA_VOC_TO, 0);
                 //String strSign = context.getResources().getStringArray(R.array.SignNames)[sign];
@@ -246,7 +246,7 @@ public class RightNowView extends LinearLayout implements BroadcastReceivable, A
                 String fmt = context.getString(R.string.Moon_PendingVOC);
 
                 Date d = new Date(intent.getLongExtra(Events.EXTRA_VOC_FROM_DATE, 0));
-                String strDate = EphemerisUtils.DATE_FMT.format(d);
+                String strDate = EphemerisUtils.DATETIME_FMT.format(d);
 
                 //int sign = intent.getIntExtra(Events.EXTRA_VOC_FROM, 0);
                 //String strSign = context.getResources().getStringArray(R.array.SignNames)[sign];

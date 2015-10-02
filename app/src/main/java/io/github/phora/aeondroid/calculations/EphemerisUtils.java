@@ -19,7 +19,9 @@ public class EphemerisUtils {
     public final static double LAST_NM = 2415021.077777778;
     public final static double SOLAR_YEAR_DAYS = 365.2421934027778;
 
-    public final static DateFormat DATE_FMT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public final static DateFormat DATETIME_FMT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public final static DateFormat DATE_FMT = new SimpleDateFormat("yyyy-MM-dd");
+    public final static DateFormat TIME_FMT = new SimpleDateFormat("HH:mm:ss");
 
     public static String degreesToSignString(Context context, double degrees) {
         String fmt = "%1$s %2$d*%3$d\"%4$d";

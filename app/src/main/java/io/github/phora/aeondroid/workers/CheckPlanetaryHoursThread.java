@@ -101,8 +101,8 @@ class CheckPlanetaryHoursThread extends Thread {
                         Date sd = SweDate.getDate(ph.getHourStamp());
                         Date ed = SweDate.getDate(ph.getHourStamp() + ph.getHourLength());
 
-                        String startsAt = String.format(startsFmt, EphemerisUtils.DATE_FMT.format(sd));
-                        String endsAt = String.format(endsFmt, EphemerisUtils.DATE_FMT.format(ed));
+                        String startsAt = String.format(startsFmt, EphemerisUtils.DATETIME_FMT.format(sd));
+                        String endsAt = String.format(endsFmt, EphemerisUtils.DATETIME_FMT.format(ed));
 
                         String finresult = String.format("%s\n%s", startsAt, endsAt);
 

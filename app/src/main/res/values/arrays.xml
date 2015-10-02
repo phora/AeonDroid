@@ -140,6 +140,23 @@
         <item>Date/time</item>
         <item>Aspect</item>
     </string-array>
+    <string-array name="TriggerTypeNames">
+        <item>Trigger group</item>
+        <item>Day type</item>
+        <item>Moon phase</item>
+        <item>Planet position</item>
+        <item>Planetary hour</item>
+        <item>Date/time</item>
+        <item>Aspect</item>
+    </string-array>
+    <string-array name="DayTypeSpecificityLabels">
+        <item>From current time</item>
+        <item>From the sunrise for that day</item>
+    </string-array>
+    <string-array name="PlanetPosSpecificityLabels">
+        <item>For only this degree</item>
+        <item>From all degrees in this sign</item>
+    </string-array>
     <string-array name="DateOrTime">
         <item>Datetime</item>
         <item>Date</item>

@@ -86,8 +86,8 @@ public class PlanetaryHoursAdapter extends BaseAdapter {
         String startsFmt = mContext.getString(R.string.PHoursAdapter_StartsAt);
         String endsFmt = mContext.getString(R.string.PHoursAdapter_EndsAt);
 
-        pHoursTime.setText(String.format(startsFmt, EphemerisUtils.DATE_FMT.format(d)));
-        pHoursTimeEnd.setText(String.format(endsFmt, EphemerisUtils.DATE_FMT.format(ed)));
+        pHoursTime.setText(String.format(startsFmt, EphemerisUtils.DATETIME_FMT.format(d)));
+        pHoursTimeEnd.setText(String.format(endsFmt, EphemerisUtils.DATETIME_FMT.format(ed)));
         pHoursName.setText(planets[ph.getPlanetType()]);
         //Log.d("PlanetaryHoursAdapter", "Is night?: " + ph.isNight());
         if (!ph.isNight()) {

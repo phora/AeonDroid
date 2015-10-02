@@ -50,6 +50,7 @@
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:entries="@array/PlanetDayNames"
                     android:id="@+id/EditTrigger.DayType" />
 
                 <CheckedTextView
@@ -83,6 +84,7 @@
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:entries="@array/PlanetChartNames"
                     android:id="@+id/EditTrigger.Planet" />
                 <io.github.phora.aeondroid.widgets.PlanetPositionEdit
                     android:layout_width="match_parent"
@@ -99,6 +101,7 @@
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:entries="@array/PlanetNames"
                     android:id="@+id/EditTrigger.PlanetaryHour" />
             </LinearLayout>
 
@@ -134,14 +137,17 @@
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:entries="@array/PlanetChartNames"
                     android:id="@id/EditTrigger.Planet" />
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:entries="@array/PlanetChartNames"
                     android:id="@+id/EditTrigger.NatalPlanet" />
                 <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:entries="@array/AspectNames"
                     android:id="@+id/EditTrigger.AspectType"
                     android:inputType="numberDecimal"
                     android:maxLines="1"/>

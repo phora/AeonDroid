@@ -32,125 +32,127 @@
         android:layout_height="0dip"
         android:layout_weight="1">
 
-            <ViewFlipper
+        <ViewFlipper
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/EditTrigger.Args">
+            <!-- day type -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/EditTrigger.Args">
-                <!-- day type -->
-                <LinearLayout
+                android:orientation="vertical">
+                <TextView
+                    android:text="Day type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceLarge"/>
+
+                <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <TextView
-                        android:text="Day type"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceLarge"/>
+                    android:entries="@array/PlanetDayNames"
+                    android:id="@+id/EditTrigger.DayType" />
 
-                    <Spinner
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:entries="@array/PlanetDayNames"
-                        android:id="@+id/EditTrigger.DayType" />
-
-                    <CheckedTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Use the day type from sunrise"
-                        android:id="@+id/EditTrigger.OnlyFromSunrise"
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-                        android:gravity="center_vertical"/>
-                </LinearLayout>
-
-                <!-- moon phase -->
-                <LinearLayout
+                <CheckedTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:text="Use the day type from sunrise"
+                    android:id="@+id/EditTrigger.OnlyFromSunrise"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                    android:gravity="center_vertical"/>
+            </LinearLayout>
 
-                    <Spinner
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:entries="@array/QuickPickPhase"
-                        android:id="@+id/EditTrigger.Phase" />
-                </LinearLayout>
+            <!-- moon phase -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <!-- planet position -->
-                <LinearLayout
+                <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <Spinner
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:entries="@array/PlanetChartNames"
-                        android:id="@+id/EditTrigger.Planet" />
+                    android:entries="@array/QuickPickPhase"
+                    android:id="@+id/EditTrigger.Phase" />
+            </LinearLayout>
 
-                    <io.github.phora.aeondroid.widgets.PlanetPositionEdit
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/EditTrigger.PlanetPos"
-                        aeon:fullDegreeInput="false" />
-                </LinearLayout>
-
-                <!-- planetary hour -->
-                <LinearLayout
+            <!-- planet position -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <Spinner
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/EditTrigger.PlanetaryHour" />
-                </LinearLayout>
-
-                <!-- date/time -->
-                <LinearLayout
+                    android:entries="@array/PlanetChartNames"
+                    android:id="@+id/EditTrigger.Planet" />
+                <io.github.phora.aeondroid.widgets.PlanetPositionEdit
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <TextView
-                        android:text="Date, time, or both?"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceLarge"/>
-                    <Spinner
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/EditTrigger.SpecificityChoice" />
-                    <io.github.phora.aeondroid.widgets.DateTimePicker
-                        android:id="@+id/EditTrigger.DT"
-                        aeon:latitudeReference="BirthLoc.Latitude"
-                        aeon:longitudeReference="BirthLoc.Longitude"
-                        aeon:showToastsReference="showUsageToasts"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                </LinearLayout>
+                    android:id="@+id/EditTrigger.PlanetPos"
+                    aeon:fullDegreeInput="false" />
+            </LinearLayout>
 
-                <!-- aspect -->
-                <LinearLayout
+            <!-- planetary hour -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <Spinner
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-                    <Spinner
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:entries="@array/PlanetChartNames"
-                        android:id="@id/EditTrigger.Planet" />
-                    <Spinner
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:entries="@array/PlanetChartNames"
-                        android:id="@+id/EditTrigger.NatalPlanet" />
-                    <Spinner
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/EditTrigger.AspectType"
-                        android:inputType="numberDecimal"
-                        android:maxLines="1"/>
-                </LinearLayout>
-            </ViewFlipper>
+                    android:entries="@array/PlanetNames"
+                    android:id="@+id/EditTrigger.PlanetaryHour" />
+            </LinearLayout>
+
+            <!-- date/time -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:text="Date, time, or both?"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:textAppearanceLarge"/>
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/DateOrTime"
+                    android:id="@+id/EditTrigger.SpecificityChoice" />
+                <io.github.phora.aeondroid.widgets.DateTimePicker
+                    android:id="@+id/EditTrigger.DT"
+                    aeon:latitudeReference="BirthLoc.Latitude"
+                    aeon:longitudeReference="BirthLoc.Longitude"
+                    aeon:showToastsReference="showUsageToasts"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+
+            <!-- aspect -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/PlanetChartNames"
+                    android:id="@id/EditTrigger.Planet" />
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/PlanetChartNames"
+                    android:id="@+id/EditTrigger.NatalPlanet" />
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/AspectNames"
+                    android:id="@+id/EditTrigger.AspectType"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1"/>
+            </LinearLayout>
+        </ViewFlipper>
     </ScrollView>
 
     <LinearLayout

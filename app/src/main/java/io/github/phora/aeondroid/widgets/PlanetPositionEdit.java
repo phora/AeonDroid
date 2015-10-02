@@ -60,6 +60,7 @@ public class PlanetPositionEdit extends LinearLayout {
             ((View)fullDegreeCheck).setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    fullDegreeCheck.toggle();
                     fullDegreeInput = fullDegreeCheck.isChecked();
                     if (fullDegreeInput) {
                         viewFlipper.setDisplayedChild(1);
@@ -73,9 +74,15 @@ public class PlanetPositionEdit extends LinearLayout {
 
             signSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
                     if (!fullDegreeInput) {
-
+                        double smallDegree = 0;
+                        try {
+                            smallDegree=Double.valueOf(smallDegreeEdit.getText().toString());
+                        } catch (NumberFormatException e) {
+                        }
+                        double value = pos * 30 + smallDegree;
+                        fullDegreeEdit.setText(String.valueOf(value));
                     }
                 }
 
@@ -94,7 +101,11 @@ public class PlanetPositionEdit extends LinearLayout {
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     if (!fullDegreeInput) {
-                        double smallDegree = Double.valueOf(charSequence.toString());
+                        double smallDegree = 0;
+                        try {
+                            smallDegree=Double.valueOf(charSequence.toString());
+                        } catch (NumberFormatException e) {
+                        }
                         double value = signSpinner.getSelectedItemPosition() * 30 + smallDegree;
                         fullDegreeEdit.setText(String.valueOf(value));
                     }

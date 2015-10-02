@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Checkable;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.ViewFlipper;
@@ -33,6 +34,7 @@ public class EditTriggerActivity extends Activity {
     /* Type selector + pager for args for type*/
     private Spinner     mEditItemType;
     private ViewFlipper mEditArgsFlipper;
+    private CheckedTextView mEditTrigEnabled;
 
     /* Trigger argument widgets */
     private Spinner   mDayType;
@@ -51,6 +53,7 @@ public class EditTriggerActivity extends Activity {
     private Spinner  mNatalPlanet;
     private Spinner  mAspectType;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +61,7 @@ public class EditTriggerActivity extends Activity {
 
         mEditItemType = (Spinner)findViewById(R.id.EditTrigger_Type);
         mEditArgsFlipper = (ViewFlipper)findViewById(R.id.EditTrigger_Args);
+        mEditTrigEnabled = (CheckedTextView)findViewById(R.id.EditTrigger_Enabled);
 
         mEditItemType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -170,40 +174,41 @@ public class EditTriggerActivity extends Activity {
         Intent intent = new Intent();
         intent.putExtra(EXTRA_ID, mItemId);
         intent.putExtra(EXTRA_TYPE, mEditItemType.getSelectedItemPosition()+1);
+        intent.putExtra(EXTRA_ENABLED, mEditTrigEnabled.isChecked());
         switch(mEditItemType.getSelectedItemPosition()) {
             case 0:
-                intent.putExtra(EXTRA_ARG1, (double) mDayType.getSelectedItemPosition());
+                intent.putExtra(EXTRA_ARG1, (long) mDayType.getSelectedItemPosition());
                 if (mOnlyFromSunrise.isChecked()) {
-                    intent.putExtra(EXTRA_SPECIFICITY, 1.);
+                    intent.putExtra(EXTRA_SPECIFICITY, 1L);
                 }
                 else {
-                    intent.putExtra(EXTRA_SPECIFICITY, 0.);
+                    intent.putExtra(EXTRA_SPECIFICITY, 0L);
                 }
                 break;
             case 1:
-                intent.putExtra(EXTRA_ARG1, (double)mPhase.getSelectedItemPosition());
+                intent.putExtra(EXTRA_ARG1, (long)mPhase.getSelectedItemPosition());
                 break;
             case 2:
-                intent.putExtra(EXTRA_ARG1, (double)mPlanet.getSelectedItemPosition());
+                intent.putExtra(EXTRA_ARG1, (long)mPlanet.getSelectedItemPosition());
                 intent.putExtra(EXTRA_ARG2, mPlanetPos.degreeValue());
                 if (mPlanetPos.isSloppy()) {
-                    intent.putExtra(EXTRA_SPECIFICITY, 1.);
+                    intent.putExtra(EXTRA_SPECIFICITY, 1L);
                 }
                 else {
-                    intent.putExtra(EXTRA_SPECIFICITY, 0.);
+                    intent.putExtra(EXTRA_SPECIFICITY, 0L);
                 }
                 break;
             case 3:
-                intent.putExtra(EXTRA_ARG1, (double)mPlanetHour.getSelectedItemPosition());
+                intent.putExtra(EXTRA_ARG1, (long)mPlanetHour.getSelectedItemPosition());
                 break;
             case 4:
-                intent.putExtra(EXTRA_ARG1, (double)mDateTime.getTimeInMillis());
-                intent.putExtra(EXTRA_SPECIFICITY, (double)mDateSpecificity.getSelectedItemPosition());
+                intent.putExtra(EXTRA_ARG1, mDateTime.getTimeInMillis());
+                intent.putExtra(EXTRA_SPECIFICITY, (long)mDateSpecificity.getSelectedItemPosition());
                 break;
             case 5:
-                intent.putExtra(EXTRA_ARG1, (double)mPlanet.getSelectedItemPosition());
+                intent.putExtra(EXTRA_ARG1, (long)mPlanet.getSelectedItemPosition());
                 intent.putExtra(EXTRA_ARG2, (double)mNatalPlanet.getSelectedItemPosition());
-                intent.putExtra(EXTRA_SPECIFICITY, (double)mAspectType.getSelectedItemPosition());
+                intent.putExtra(EXTRA_SPECIFICITY, (long)mAspectType.getSelectedItemPosition());
                 break;
         }
         setResult(RESULT_OK, intent);
