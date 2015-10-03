@@ -25,8 +25,7 @@
     <attr name="Aspects.Opposition"   format="reference" />
 
     <declare-styleable name="DateTimeWidget">
-        <attr name="latitudeReference"   format="string" />
-        <attr name="longitudeReference"  format="string" />
+        <attr name="timezoneReference"   format="string" />
         <attr name="showToastsReference" format="string" />
     </declare-styleable>
 

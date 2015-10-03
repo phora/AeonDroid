@@ -139,8 +139,7 @@
                     android:id="@+id/EditTrigger.SpecificityChoice" />
                 <io.github.phora.aeondroid.widgets.DateTimePicker
                     android:id="@+id/EditTrigger.DT"
-                    aeon:latitudeReference="BirthLoc.Latitude"
-                    aeon:longitudeReference="BirthLoc.Longitude"
+                    aeon:timezoneReference="CurrentLoc.Timezone"
                     aeon:showToastsReference="showUsageToasts"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />

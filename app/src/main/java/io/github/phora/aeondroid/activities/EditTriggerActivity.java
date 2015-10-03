@@ -77,6 +77,8 @@ public class EditTriggerActivity extends Activity {
             }
         });
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         mDayType = (Spinner)findViewById(R.id.EditTrigger_DayType);
         mOnlyFromSunrise = (Checkable)findViewById(R.id.EditTrigger_OnlyFromSunrise);
 
@@ -84,10 +86,14 @@ public class EditTriggerActivity extends Activity {
 
         mPlanet = (Spinner)findViewById(R.id.EditTrigger_Planet);
         mPlanetPos = (PlanetPositionEdit)findViewById(R.id.EditTrigger_PlanetPos);
+        mPlanetPos.setFullDegreeInput(sharedPreferences.getBoolean("UseFullDegreeInput", false));
 
         mPlanetHour = (Spinner)findViewById(R.id.EditTrigger_PlanetaryHour);
 
         mDateTime = (DateTimePicker)findViewById(R.id.EditTrigger_DT);
+        if (sharedPreferences.getBoolean("CurrentLoc.Auto", false)) {
+            mDateTime.setTzRef("AutoLoc.Timezone");
+        }
         mDateSpecificity = (Spinner)findViewById(R.id.EditTrigger_SpecificityChoice);
         mDateSpecificity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -104,8 +110,6 @@ public class EditTriggerActivity extends Activity {
         mNatalPlanet = (Spinner)findViewById(R.id.EditTrigger_NatalPlanet);
         mAspectingPlanet = (Spinner)findViewById(R.id.EditTrigger_AspectingPlanet);
         mAspectType = (Spinner)findViewById(R.id.EditTrigger_AspectType);
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (getIntent() != null) {
             Intent data = getIntent();
@@ -131,7 +135,6 @@ public class EditTriggerActivity extends Activity {
                         break;
                     case 2:
                         mPlanet.setSelection(arg1.intValue());
-                        mPlanetPos.setFullDegreeInput(sharedPreferences.getBoolean("UseFullDegreeInput", false));
                         mPlanetPos.setSloppy(specificity.intValue() == 1);
                         mPlanetPos.setDegreeValue(arg2);
                         break;

@@ -36,8 +36,7 @@ public class DateTimePicker extends LinearLayout {
     private ListView minutesList;
     private ListView secondsList;
 
-    private String latRef;
-    private String lonRef;
+    private String tzRef;
     private String showToastsRef;
     private TextView tzView;
     private ViewFlipper viewFlipper;
@@ -59,8 +58,7 @@ public class DateTimePicker extends LinearLayout {
                 R.styleable.DateTimeWidget,
                 0, 0);
 
-        latRef = a.getString(R.styleable.DateTimeWidget_latitudeReference);
-        lonRef = a.getString(R.styleable.DateTimeWidget_longitudeReference);
+        tzRef = a.getString(R.styleable.DateTimeWidget_timezoneReference);
         showToastsRef = a.getString(R.styleable.DateTimeWidget_showToastsReference);
         datePickerListener = new DateChangedListener();
         viewFlipperListener = new View.OnTouchListener() {
@@ -97,30 +95,8 @@ public class DateTimePicker extends LinearLayout {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-        double lat;
-        double lon;
-
-        try {
-            lat = Double.valueOf(sharedPreferences.getString(latRef, "0.0"));
-            lon = Double.valueOf(sharedPreferences.getString(lonRef, "0.0"));
-        }
-        catch (NullPointerException e) {
-            lat = 0;
-            lon = 0;
-        }
         boolean showToast = false;
-        String timezone;
-        try {
-            ZoneTab.ZoneInfo zi = ZoneTab.getInstance(getContext()).nearestTZ(lat, lon);
-            if (zi != null) {
-                timezone = zi.getTz();
-            }
-            else {
-                timezone = "UTC";
-            }
-        } catch (FileNotFoundException e) {
-            timezone = "UTC";
-        }
+        String timezone = sharedPreferences.getString(tzRef, "UTC");
         Log.d("DatetimePicker", "Found timezone " + timezone);
         calendar = new GregorianCalendar(TimeZone.getTimeZone(timezone));
 
@@ -192,6 +168,17 @@ public class DateTimePicker extends LinearLayout {
             }
 
         }
+    }
+
+    public void setTzRef(String tzRef) {
+        this.tzRef = tzRef;
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String timezone = sharedPreferences.getString(tzRef, "UTC");
+        long currentMillis = calendar.getTimeInMillis();
+
+        calendar = new GregorianCalendar(TimeZone.getTimeZone(timezone));
+        tzView.setText(getContext().getString(R.string.DetectedTimezone, timezone));
+        setTimeInMillis(currentMillis);
     }
 
     public void setTimeInMillis(long ms) {

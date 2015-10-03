@@ -6,8 +6,7 @@
               android:layout_height="match_parent">
     <io.github.phora.aeondroid.widgets.DateTimePicker
         android:id="@+id/DTPref"
-        aeon:latitudeReference="BirthLoc.Latitude"
-        aeon:longitudeReference="BirthLoc.Longitude"
+        aeon:timezoneReference="BirthLoc.Timezone"
         aeon:showToastsReference="showUsageToasts"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

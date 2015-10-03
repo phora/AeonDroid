@@ -20,6 +20,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -29,6 +30,7 @@ import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.activities.MainActivity;
 import io.github.phora.aeondroid.calculations.Ephemeris;
 import io.github.phora.aeondroid.calculations.EphemerisUtils;
+import io.github.phora.aeondroid.calculations.ZoneTab;
 import io.github.phora.aeondroid.model.MoonPhase;
 import io.github.phora.aeondroid.model.PlanetaryHour;
 import swisseph.SweConst;
@@ -65,6 +67,10 @@ public class AeonDroidService extends Service {
 
     PendingIntent contentIntent;
     private boolean _firstRun = true;
+    private boolean _currentTZNotCached = false;
+
+    private UpdateTimezoneListener currentLocListener;
+    private UpdateTimezoneListener birthLocListener;
 
     public double[] getNatalChart() {
         return natalChart;
@@ -147,6 +153,14 @@ public class AeonDroidService extends Service {
 
         new CopyAssetFiles(".*\\.se1", "ephe", getApplicationContext()).copy();
         new CopyAssetFiles("zone\\.tab", "", getApplicationContext()).copy();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        currentLocListener = new UpdateTimezoneListener(this, "CurrentLoc.Longitude", "CurrentLoc.Latitude",
+                "CurrentLoc.Timezone", new RefreshManualLocationListener());
+        birthLocListener = new UpdateTimezoneListener(this, "BirthLoc.Longitude", "BirthLoc.Latitude",
+                "BirthLoc.Timezone", null);
+
+        sharedPreferences.registerOnSharedPreferenceChangeListener(currentLocListener);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(birthLocListener);
 
         notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -207,6 +221,21 @@ public class AeonDroidService extends Service {
             double latitude = Double.valueOf(preferences.getString("CurrentLoc.Latitude", "0"));
             double altitude = Double.valueOf(preferences.getString("CurrentLoc.Altitude", "0"));
 
+            String timezone = preferences.getString("CurrentLoc.Timezone", null);
+            if (timezone == null) {
+                Log.d("AeonDroidService", "First time CurrentLoc.Timezone was introduced, calculating...");
+                try {
+                    _currentTZNotCached = true;
+                    ZoneTab.ZoneInfo zi = ZoneTab.getInstance(this).nearestTZ(latitude, longitude);
+                    if (zi != null) {
+                        timezone = zi.getTz();
+                        preferences.edit().putString("CurrentLoc.Timezone", timezone).commit();
+                    }
+                } catch (FileNotFoundException e) {
+
+                }
+            }
+
             Thread dummy = cpht;
             cpht = new CheckPlanetaryHoursThread(this, 1000);
             if (dummy != null) {
@@ -217,7 +246,7 @@ public class AeonDroidService extends Service {
             double[] curObv = ephemeris.getObserver();
             observerDifferent = (curObv[0] != longitude) || (curObv[1] != latitude) || (curObv[2] != altitude);
 
-            ephemeris.setObserver(longitude, latitude, altitude);
+            ephemeris.setObserver(longitude, latitude, altitude, timezone);
             refreshPlanetaryHours();
 
             if ((usingGPS != prevUsingGPS) || observerDifferent || _firstRun) {
@@ -228,13 +257,28 @@ public class AeonDroidService extends Service {
             }
 
             cpht.start();
+            _currentTZNotCached = false;
         }
     }
 
     public void recheckBirthplace() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        //double longitude = Double.valueOf(preferences.getString("BirthLoc.Longitude", "0.0"));
-        //double latitude = Double.valueOf(preferences.getString("BirthLoc.Latitude", "0.0"));
+        double longitude = Double.valueOf(preferences.getString("BirthLoc.Longitude", "0.0"));
+        double latitude = Double.valueOf(preferences.getString("BirthLoc.Latitude", "0.0"));
+
+        String timezone = preferences.getString("BirthLoc.Timezone", null);
+        if (timezone == null) {
+            Log.d("AeonDroidService", "First time BirthLoc.Timezone was introduced, calculating...");
+            try {
+                ZoneTab.ZoneInfo zi = ZoneTab.getInstance(this).nearestTZ(latitude, longitude);
+                if (zi != null) {
+                    timezone = zi.getTz();
+                    preferences.edit().putString("BirthLoc.Timezone", timezone).commit();
+                }
+            } catch (FileNotFoundException e) {
+
+            }
+        }
 
         long birthday_ms = preferences.getLong("BirthTime", 0);
         double birthday_days = EphemerisUtils.dateToSweDate(new Date(birthday_ms)).getJulDay();
@@ -311,7 +355,9 @@ public class AeonDroidService extends Service {
         public void onLocationChanged(Location location) {
             Log.d("LocUpdater", "New location, refreshing displayed data");
             Toast.makeText(AeonDroidService.this, "New location, refreshing displayed data", Toast.LENGTH_SHORT).show();
-            ephemeris.setObserver(location.getLongitude(), location.getLatitude(), 0);
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+            ephemeris.setObserver(longitude, latitude, 0);
 
             Thread dummy = cpht;
             cpht = new CheckPlanetaryHoursThread(AeonDroidService.this, 1000);
@@ -326,6 +372,10 @@ public class AeonDroidService extends Service {
             localBroadcastManager.sendBroadcast(intent);
 
             cpht.start();
+
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(AeonDroidService.this).edit();
+            editor.putString("AutoLoc.Timezone", ephemeris.getTimezone());
+            editor.commit();
         }
 
         @Override
@@ -347,4 +397,12 @@ public class AeonDroidService extends Service {
         }
     }
 
+    private class RefreshManualLocationListener implements PostTimezoneUpdateListener {
+        @Override
+        public void onTimezoneUpdate() {
+            if (!_currentTZNotCached) {
+                recheckGps();
+            }
+        }
+    }
 }

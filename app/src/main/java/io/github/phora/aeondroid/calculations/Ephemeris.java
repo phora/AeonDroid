@@ -49,12 +49,7 @@ public class Ephemeris {
             zt = null;
         }
         this.observer = new double[]{longitude, latitude, height};
-        if (zt != null) {
-            ZoneTab.ZoneInfo zi = zt.nearestTZ(this.observer[1], this.observer[2]);
-            if (zi != null) {
-                timezone = zi.getTz();
-            }
-        }
+        guessTimezone();
     }
 
     public Ephemeris(String searchPath, Context context, double[] observer) {
@@ -72,12 +67,7 @@ public class Ephemeris {
         else {
             this.observer = new double[]{0, 0, 0};
         }
-        if (zt != null) {
-            ZoneTab.ZoneInfo zi = zt.nearestTZ(this.observer[1], this.observer[2]);
-            if (zi != null) {
-                timezone = zi.getTz();
-            }
-        }
+        guessTimezone();
     }
 
     public double[] getObserver() {
@@ -86,11 +76,21 @@ public class Ephemeris {
 
     public void setObserver(double longitude, double latitude, double height) {
         this.observer = new double[]{longitude, latitude, height};
+        guessTimezone();
+    }
+
+    private void guessTimezone() {
         if (zt != null) {
             ZoneTab.ZoneInfo zi = zt.nearestTZ(this.observer[1], this.observer[2]);
             if (zi != null) {
                 timezone = zi.getTz();
             }
+            else {
+                timezone = "UTC";
+            }
+        }
+        else {
+            timezone = "UTC";
         }
     }
 
