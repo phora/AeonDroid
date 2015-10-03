@@ -217,8 +217,22 @@ public class AeonDroidService extends Service {
         else {
             locationManager.removeUpdates(locUpdater);
             Log.d("AeonDroidService", "Using manually entered location");
-            double longitude = Double.valueOf(preferences.getString("CurrentLoc.Longitude", "0"));
-            double latitude = Double.valueOf(preferences.getString("CurrentLoc.Latitude", "0"));
+            double longitude;
+            double latitude;
+
+
+            try {
+                longitude = Double.valueOf(preferences.getString("CurrentLoc.Longitude", "0"));
+            } catch (NumberFormatException e) {
+                longitude = 0.0;
+            }
+
+            try {
+                latitude = Double.valueOf(preferences.getString("CurrentLoc.Latitude", "0"));
+            } catch (NumberFormatException e) {
+                latitude = 0.0;
+            }
+
             double altitude = Double.valueOf(preferences.getString("CurrentLoc.Altitude", "0"));
 
             String timezone = preferences.getString("CurrentLoc.Timezone", null);

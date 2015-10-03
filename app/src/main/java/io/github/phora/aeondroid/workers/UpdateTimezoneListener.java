@@ -33,8 +33,19 @@ class UpdateTimezoneListener implements SharedPreferences.OnSharedPreferenceChan
             return;
         }
         else if (key.equals(longitudePref) || key.equals(latitudePref)) {
-            Double longitude = Double.valueOf(sharedPreferences.getString(longitudePref, "0.0"));
-            Double latitude = Double.valueOf(sharedPreferences.getString(latitudePref, "0.0"));
+            Double longitude;
+            Double latitude;
+            try {
+                longitude = Double.valueOf(sharedPreferences.getString(longitudePref, "0.0"));
+            } catch (NumberFormatException e) {
+                longitude = 0.0;
+            }
+
+            try {
+                latitude = Double.valueOf(sharedPreferences.getString(latitudePref, "0.0"));
+            } catch (NumberFormatException e) {
+                latitude = 0.0;
+            }
 
             try {
                 String currentTimezone = sharedPreferences.getString(timezonePref, "");

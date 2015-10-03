@@ -23,18 +23,20 @@ public class MinMaxTextFilter implements InputFilter {
     @Override
     public CharSequence filter(CharSequence source, int start, int end,
                                Spanned dest, int dStart, int dEnd) {
-        try {
-            String newVal = dest.toString().substring(0, dStart) + dest.toString().substring(dEnd, dest.toString().length());
-            // Add the new string in
-            newVal = newVal.substring(0, dStart) + source.toString() + newVal.substring(dStart, newVal.length());
+        String newVal = dest.toString().substring(0, dStart) + dest.toString().substring(dEnd, dest.toString().length());
+        // Add the new string in
+        newVal = newVal.substring(0, dStart) + source.toString() + newVal.substring(dStart, newVal.length());
 
+        try {
             double input = Double.valueOf(newVal);
             if (isInRange(input)) {
                 return null;
             }
         }
         catch (NumberFormatException e) {
-
+            if (newVal.equals("-")) {
+                return null;
+            }
         }
         return "";
     }
