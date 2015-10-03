@@ -24,11 +24,13 @@ public class Ephemeris {
     private ZoneTab zt;
     private ZoneTab.ZoneInfo zi;
     private double[] observer;
+    private Context context;
 
     public Ephemeris(String search_path, Context context) {
+        this.context = context.getApplicationContext();
         sw = new SwissEph(search_path);
         try {
-            zt = ZoneTab.getInstance(context);
+            zt = ZoneTab.getInstance(this.context);
         } catch (FileNotFoundException e) {
             zt = null;
         }
@@ -39,9 +41,10 @@ public class Ephemeris {
     }
 
     public Ephemeris(String searchPath, Context context, double longitude, double latitude, double height) {
+        this.context = context.getApplicationContext();
         sw = new SwissEph(searchPath);
         try {
-            zt = ZoneTab.getInstance(context);
+            zt = ZoneTab.getInstance(this.context);
         } catch (FileNotFoundException e) {
             zt = null;
         }
@@ -52,9 +55,10 @@ public class Ephemeris {
     }
 
     public Ephemeris(String searchPath, Context context, double[] observer) {
+        this.context = context;
         sw = new SwissEph(searchPath);
         try {
-            zt = ZoneTab.getInstance(context);
+            zt = ZoneTab.getInstance(this.context);
         } catch (FileNotFoundException e) {
             zt = null;
         }
@@ -192,40 +196,9 @@ public class Ephemeris {
             return dblobj.val;
     }
 
-    public synchronized SunsetSunriseInfo getSunriseandSunset(Date date) {
-        SweDate sd = EphemerisUtils.dateToSweDate(date, zi.getTz(), 12);
-
-        return getSunriseandSunset(sd);
-    }
-
-    public synchronized SunsetSunriseInfo getSunriseandSunset(SweDate sd) {
-        Double sunrise = getBodyRise(sd.getJulDay() - 1, SweConst.SE_SUN);
-        Double sunset       = getBodySet(sd.getJulDay(), SweConst.SE_SUN);
-        Double nextSunrise = getBodyRise(sd.getJulDay(), SweConst.SE_SUN);
-
-        /*if (sunset > nextSunrise) {
-            sunset = getBodySet(sd.getJulDay()-1, SweConst.SE_SUN);
-        }*/
-
-        //double[] sortme = new double[]{sunrise, sunset, nextSunrise};
-
-        //Log.d("Sortme before", sortme[0] + " " + sortme[1] + " " + sortme[2]);
-
-        //Arrays.sort(sortme);
-
-        //Log.d("Sortme after", sortme[0]+" "+sortme[1]+" "+sortme[2]);
-
-        return new SunsetSunriseInfo(sunrise, sunset, nextSunrise, sd);
-    }
-
-    public synchronized ArrayList<PlanetaryHour> getPlanetaryHours(Date date) {
-        /* Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
-        cal.setTime(date);
-        cal.add(Calendar.DAY_OF_YEAR, 1); */
-        //cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-1);
-
-        Double sunrise, sunset, nextSunrise;
-        SunsetSunriseInfo ssi = getSunriseandSunset(date);
+    public synchronized SunsetSunriseInfo getSunriseandSunset(Date date, String timezone) {
+        SweDate sd = EphemerisUtils.dateToSweDate(date, timezone, 12);
+        SunsetSunriseInfo ssi = getSunriseandSunset(sd);
 
         double julified = EphemerisUtils.dateToSweDate(date).getJulDay();
         double calcTime = ssi.getCalcTime().getJulDay();
@@ -234,33 +207,32 @@ public class Ephemeris {
 
         if (julified <= ssi.getSunrise()) {
             Log.d("Ephemeris", "Date before sunrise, getting yesterday");
-            SweDate sd = new SweDate(calcTime-1, SweDate.SE_GREG_CAL);
+            sd = new SweDate(calcTime-1, SweDate.SE_GREG_CAL);
             ssi = getSunriseandSunset(sd);
         }
         else if (julified >= ssi.getNextSunrise()) {
             Log.d("Ephemeris", "Date after next sunrise, getting tomorrow");
-            SweDate sd = new SweDate(calcTime+1, SweDate.SE_GREG_CAL);
+            sd = new SweDate(calcTime+1, SweDate.SE_GREG_CAL);
             ssi = getSunriseandSunset(sd);
         }
+
+        return ssi;
+    }
+
+    public synchronized SunsetSunriseInfo getSunriseandSunset(SweDate sd) {
+        Double sunrise = getBodyRise(sd.getJulDay() - 1, SweConst.SE_SUN);
+        Double sunset       = getBodySet(sd.getJulDay(), SweConst.SE_SUN);
+        Double nextSunrise = getBodyRise(sd.getJulDay(), SweConst.SE_SUN);
+
+        return new SunsetSunriseInfo(sunrise, sunset, nextSunrise, sd);
+    }
+
+    public synchronized ArrayList<PlanetaryHour> getPlanetaryHours(SunsetSunriseInfo ssi) {
+        Double sunrise, sunset, nextSunrise;
 
         sunrise = ssi.getSunrise();
         sunset = ssi.getSunset();
         nextSunrise = ssi.getNextSunrise();
-
-        //sunrise = getBodyRise(observerdate, SweConst.SE_SUN);
-        /* if (date.compareTo(SweDate.getDate(sunrise)) <= 0) {
-            Log.d("Ephmeris", "Getting the hours for the day before, sun didn't rise yet");
-            //cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR)-1);
-            cal.add(Calendar.DAY_OF_YEAR, -2);
-            nextSunrise = sunrise;
-            sunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
-            sunset = getBodySet(cal.getTime(), SweConst.SE_SUN);
-        }
-        else {
-            Log.d("Ephmeris", "Getting the hours for the current day, sun rose");
-            sunset = getBodySet(date, SweConst.SE_SUN);
-            nextSunrise = getBodyRise(cal.getTime(), SweConst.SE_SUN);
-        } */
 
         double dayLength = sunset - sunrise;
         double nightLength = nextSunrise - sunset;
@@ -300,6 +272,12 @@ public class Ephemeris {
         }
 
         return hours;
+    }
+
+    public synchronized ArrayList<PlanetaryHour> getPlanetaryHours(Date date) {
+        SunsetSunriseInfo ssi = getSunriseandSunset(date, zi.getTz());
+
+        return getPlanetaryHours(ssi);
     }
 
     public synchronized MoonPhase makeMoonPhaseForDate(Date date) {
