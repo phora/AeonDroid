@@ -22,7 +22,7 @@ import swisseph.SwissEph;
 public class Ephemeris {
     private SwissEph sw;
     private ZoneTab zt;
-    private ZoneTab.ZoneInfo zi;
+    private String timezone;
     private double[] observer;
     private Context context;
 
@@ -37,7 +37,7 @@ public class Ephemeris {
     }
 
     public String getTimezone() {
-        return zi.getTz();
+        return timezone;
     }
 
     public Ephemeris(String searchPath, Context context, double longitude, double latitude, double height) {
@@ -50,7 +50,10 @@ public class Ephemeris {
         }
         this.observer = new double[]{longitude, latitude, height};
         if (zt != null) {
-            zi = zt.nearestTZ(this.observer[1], this.observer[2]);
+            ZoneTab.ZoneInfo zi = zt.nearestTZ(this.observer[1], this.observer[2]);
+            if (zi != null) {
+                timezone = zi.getTz();
+            }
         }
     }
 
@@ -70,7 +73,10 @@ public class Ephemeris {
             this.observer = new double[]{0, 0, 0};
         }
         if (zt != null) {
-            zi = zt.nearestTZ(this.observer[1], this.observer[2]);
+            ZoneTab.ZoneInfo zi = zt.nearestTZ(this.observer[1], this.observer[2]);
+            if (zi != null) {
+                timezone = zi.getTz();
+            }
         }
     }
 
@@ -80,7 +86,17 @@ public class Ephemeris {
 
     public void setObserver(double longitude, double latitude, double height) {
         this.observer = new double[]{longitude, latitude, height};
-        zi = zt.nearestTZ(latitude, longitude);
+        if (zt != null) {
+            ZoneTab.ZoneInfo zi = zt.nearestTZ(this.observer[1], this.observer[2]);
+            if (zi != null) {
+                timezone = zi.getTz();
+            }
+        }
+    }
+
+    public void setObserver(double longitude, double latitude, double height, String timezone) {
+        this.observer = new double[]{longitude, latitude, height};
+        this.timezone = timezone;
     }
 
     public synchronized Double getBodyPos(double day, int celestial_body) {
@@ -275,7 +291,7 @@ public class Ephemeris {
     }
 
     public synchronized ArrayList<PlanetaryHour> getPlanetaryHours(Date date) {
-        SunsetSunriseInfo ssi = getSunriseandSunset(date, zi.getTz());
+        SunsetSunriseInfo ssi = getSunriseandSunset(date, timezone);
 
         return getPlanetaryHours(ssi);
     }

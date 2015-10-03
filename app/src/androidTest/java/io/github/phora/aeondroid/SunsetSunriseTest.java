@@ -68,17 +68,17 @@ public class SunsetSunriseTest extends ApplicationTestCase<Application> {
         day3 = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         day3.set(Calendar.YEAR, 2015);
         day3.set(Calendar.MONTH, Calendar.SEPTEMBER);
-        day3.set(Calendar.DAY_OF_MONTH, 20);
-        day3.set(Calendar.HOUR_OF_DAY, 23);
+        day3.set(Calendar.DAY_OF_MONTH, 21);
+        day3.set(Calendar.HOUR_OF_DAY, 0);
         day3.set(Calendar.MINUTE, 39);
     }
 
     public void testGMT0() {
-        ephemeris.setObserver(greenwich[0], greenwich[1], greenwich[2]);
-        SweDate sd = EphemerisUtils.dateToSweDate(day0.getTime(), ephemeris.getTimezone(), 12);
+        ephemeris.setObserver(greenwich[0], greenwich[1], greenwich[2], "Africa/Accra");
+        SweDate sd = EphemerisUtils.dateToSweDate(day0.getTime(), "Africa/Accra", 12);
 
         SunsetSunriseInfo ssi = new SunsetSunriseInfo(2457282.743877315, 2457283.248611111, 2457283.7436226853, sd);
-        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(sd);
+        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(day0.getTime(), "Africa/Accra");
 
         assertEquals(ssi.getSunrise(), test_ssi.getSunrise(), 1E-4);
         assertEquals(ssi.getSunset(), test_ssi.getSunset(), 1E-4);
@@ -86,11 +86,11 @@ public class SunsetSunriseTest extends ApplicationTestCase<Application> {
     }
 
     public void testGMT1() {
-        ephemeris.setObserver(greenwich[0], greenwich[1], greenwich[2]);
-        SweDate sd = EphemerisUtils.dateToSweDate(day1.getTime(), ephemeris.getTimezone(), 12);
+        ephemeris.setObserver(greenwich[0], greenwich[1], greenwich[2], "Africa/Accra");
+        SweDate sd = EphemerisUtils.dateToSweDate(day1.getTime(), "Africa/Accra", 12);
 
         SunsetSunriseInfo ssi = new SunsetSunriseInfo(2457283.7436226853, 2457284.2483680556, 2457284.7433796297, sd);
-        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(sd);
+        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(day1.getTime(), "Africa/Accra");
 
         assertEquals(ssi.getSunrise(), test_ssi.getSunrise(), 1E-4);
         assertEquals(ssi.getSunset(), test_ssi.getSunset(), 1E-4);
@@ -98,11 +98,11 @@ public class SunsetSunriseTest extends ApplicationTestCase<Application> {
     }
 
     public void testGMT2() {
-        ephemeris.setObserver(greenwich[0], greenwich[1], greenwich[2]);
-        SweDate sd = EphemerisUtils.dateToSweDate(day2.getTime(), ephemeris.getTimezone(), 12);
+        ephemeris.setObserver(greenwich[0], greenwich[1], greenwich[2], "Africa/Accra");
+        SweDate sd = EphemerisUtils.dateToSweDate(day2.getTime(), "Africa/Accra", 12);
 
         SunsetSunriseInfo ssi = new SunsetSunriseInfo(2457284.7433796297, 2457285.248125, 2457285.743136574, sd);
-        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(sd);
+        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(day2.getTime(), "Africa/Accra");
 
         assertEquals(ssi.getSunrise(), test_ssi.getSunrise(), 1E-4);
         assertEquals(ssi.getSunset(), test_ssi.getSunset(), 1E-4);
@@ -110,11 +110,11 @@ public class SunsetSunriseTest extends ApplicationTestCase<Application> {
     }
 
     public void testGMT3() {
-        ephemeris.setObserver(greenwich[0], greenwich[1], greenwich[2]);
-        SweDate sd = EphemerisUtils.dateToSweDate(day3.getTime(), ephemeris.getTimezone(), 12);
+        ephemeris.setObserver(greenwich[0], greenwich[1], greenwich[2], "Africa/Accra");
+        SweDate sd = EphemerisUtils.dateToSweDate(day3.getTime(), "Africa/Accra", 12);
 
         SunsetSunriseInfo ssi = new SunsetSunriseInfo(2457285.743136574, 2457286.2478703703, 2457286.7428935184, sd);
-        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(sd);
+        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(day3.getTime(), "Africa/Accra");
 
         assertEquals(ssi.getSunrise(), test_ssi.getSunrise(), 1E-4);
         assertEquals(ssi.getSunset(), test_ssi.getSunset(), 1E-4);
@@ -122,11 +122,11 @@ public class SunsetSunriseTest extends ApplicationTestCase<Application> {
     }
 
     public void testPST0() {
-        ephemeris.setObserver(seattle[0], seattle[1], seattle[2]);
-        SweDate sd = EphemerisUtils.dateToSweDate(day0.getTime(), ephemeris.getTimezone(), 12);
+        ephemeris.setObserver(seattle[0], seattle[1], seattle[2], "America/Vancouver");
+        SweDate sd = EphemerisUtils.dateToSweDate(day0.getTime(), "America/Vancouver", 12);
 
         SunsetSunriseInfo ssi = new SunsetSunriseInfo(2457283.075625, 2457283.5957060186, 2457284.076550926, sd);
-        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(sd);
+        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(day0.getTime(), "America/Vancouver");
 
         assertEquals(ssi.getSunrise(), test_ssi.getSunrise(), 1E-4);
         assertEquals(ssi.getSunset(), test_ssi.getSunset(), 1E-4);
@@ -134,11 +134,11 @@ public class SunsetSunriseTest extends ApplicationTestCase<Application> {
     }
 
     public void testPST1() {
-        ephemeris.setObserver(seattle[0], seattle[1], seattle[2]);
-        SweDate sd = EphemerisUtils.dateToSweDate(day1.getTime(), ephemeris.getTimezone(), 12);
+        ephemeris.setObserver(seattle[0], seattle[1], seattle[2], "America/Vancouver");
+        SweDate sd = EphemerisUtils.dateToSweDate(day1.getTime(), "America/Vancouver", 12);
 
         SunsetSunriseInfo ssi = new SunsetSunriseInfo(2457284.076550926, 2457284.5942824073, 2457285.077488426, sd);
-        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(sd);
+        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(day1.getTime(), "America/Vancouver");
 
         assertEquals(ssi.getSunrise(), test_ssi.getSunrise(), 1E-4);
         assertEquals(ssi.getSunset(), test_ssi.getSunset(), 1E-4);
@@ -146,11 +146,11 @@ public class SunsetSunriseTest extends ApplicationTestCase<Application> {
     }
 
     public void testPST2() {
-        ephemeris.setObserver(seattle[0], seattle[1], seattle[2]);
-        SweDate sd = EphemerisUtils.dateToSweDate(day2.getTime(), ephemeris.getTimezone(), 12);
+        ephemeris.setObserver(seattle[0], seattle[1], seattle[2], "America/Vancouver");
+        SweDate sd = EphemerisUtils.dateToSweDate(day2.getTime(), "America/Vancouver", 12);
 
         SunsetSunriseInfo ssi = new SunsetSunriseInfo(2457285.077488426, 2457285.5928587965, 2457286.078425926, sd);
-        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(sd);
+        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(day2.getTime(), "America/Vancouver");
 
         assertEquals(ssi.getSunrise(), test_ssi.getSunrise(), 1E-4);
         assertEquals(ssi.getSunset(), test_ssi.getSunset(), 1E-4);
@@ -158,14 +158,33 @@ public class SunsetSunriseTest extends ApplicationTestCase<Application> {
     }
 
     public void testPST3() {
-        ephemeris.setObserver(seattle[0], seattle[1], seattle[2]);
-        SweDate sd = EphemerisUtils.dateToSweDate(day3.getTime(), ephemeris.getTimezone(), 12);
+        ephemeris.setObserver(seattle[0], seattle[1], seattle[2], "America/Vancouver");
+        SweDate sd = EphemerisUtils.dateToSweDate(day3.getTime(), "America/Vancouver", 12);
 
         SunsetSunriseInfo ssi = new SunsetSunriseInfo(2457286.078425926, 2457286.591423611, 2457287.0793634257, sd);
-        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(sd);
+        SunsetSunriseInfo test_ssi = ephemeris.getSunriseandSunset(day3.getTime(), "America/Vancouver");
 
         assertEquals(ssi.getSunrise(), test_ssi.getSunrise(), 1E-4);
         assertEquals(ssi.getSunset(), test_ssi.getSunset(), 1E-4);
         assertEquals(ssi.getNextSunrise(), test_ssi.getNextSunrise(), 1E-4);
+    }
+
+    public void testQuickCalcHour() {
+        SweDate sd = EphemerisUtils.dateToSweDate(day3.getTime(), "America/Vancouver", 12);
+        SunsetSunriseInfo ssi = new SunsetSunriseInfo(2457286.078425926, 2457286.591423611, 2457287.0793634257, sd);
+
+        assertEquals(ssi.calculatePlanetHourNum(ssi.getSunrise()-0.1), -2);
+        assertEquals(ssi.calculatePlanetHourNum(ssi.getNextSunrise()+0.1), -1);
+
+        double startTime = ssi.getSunrise();
+        for (int i = 0; i < 48; i++) {
+            assertEquals(ssi.calculatePlanetHourNum(startTime), i / 4);
+            startTime += ssi.getDayHourLength() / 4;
+        }
+        startTime = ssi.getSunset();
+        for (int i = 0; i < 48; i++) {
+            assertEquals(ssi.calculatePlanetHourNum(startTime), i / 4 + 12);
+            startTime += ssi.getNightHourLength() / 4;
+        }
     }
 }
