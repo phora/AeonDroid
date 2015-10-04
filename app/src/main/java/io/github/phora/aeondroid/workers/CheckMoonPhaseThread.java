@@ -89,7 +89,7 @@ class CheckMoonPhaseThread extends Thread {
 
                 intent = new Intent();
                 intent.setAction(Events.PHASE_DETAILS);
-                MoonPhase now = aeonDroidService.ephemeris.makeMoonPhaseForDate(d, moonPhases.get(4).getTimeStamp());
+                MoonPhase now = aeonDroidService.ephemeris.makeMoonPhaseForDate(d);
                 intent.putExtra(Events.EXTRA_LPHASE_TYPE, PhaseUtils.phaseToInt(now.getPhaseType()));
                 intent.putExtra(Events.EXTRA_LPHASE_WAXING, now.isWaxing());
                 aeonDroidService.localBroadcastManager.sendBroadcast(intent);

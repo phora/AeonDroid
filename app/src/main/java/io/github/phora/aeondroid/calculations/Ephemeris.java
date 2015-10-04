@@ -3,6 +3,7 @@ package io.github.phora.aeondroid.calculations;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,29 +27,38 @@ public class Ephemeris {
     private double[] observer;
     private Context context;
 
+    //this is the ephemeris that is used across the app
+    //dependent on current location
+    private static Ephemeris sInstance = null;
+
+    public synchronized static Ephemeris getDefaultEphemeris(Context context) {
+        if (sInstance == null) {
+            context = context.getApplicationContext();
+            sInstance = new Ephemeris(context.getFilesDir() + File.separator + "ephe", context);
+        }
+        return sInstance;
+    }
+
     public Ephemeris(String search_path, Context context) {
         this.context = context.getApplicationContext();
         sw = new SwissEph(search_path);
+        this.observer = new double[]{0., 0., 0.};
         try {
             zt = ZoneTab.getInstance(this.context);
         } catch (FileNotFoundException e) {
             zt = null;
         }
-    }
-
-    public String getTimezone() {
-        return timezone;
     }
 
     public Ephemeris(String searchPath, Context context, double longitude, double latitude, double height) {
         this.context = context.getApplicationContext();
         sw = new SwissEph(searchPath);
+        this.observer = new double[]{longitude, latitude, height};
         try {
             zt = ZoneTab.getInstance(this.context);
         } catch (FileNotFoundException e) {
             zt = null;
         }
-        this.observer = new double[]{longitude, latitude, height};
         guessTimezone();
     }
 
@@ -77,6 +87,10 @@ public class Ephemeris {
     public void setObserver(double longitude, double latitude, double height) {
         this.observer = new double[]{longitude, latitude, height};
         guessTimezone();
+    }
+
+    public String getTimezone() {
+        return timezone;
     }
 
     private void guessTimezone() {
@@ -297,10 +311,6 @@ public class Ephemeris {
     }
 
     public synchronized MoonPhase makeMoonPhaseForDate(Date date) {
-        return makeMoonPhaseForDate(date, predictMoonPhase(date, 0, 180));
-    }
-
-    public synchronized MoonPhase makeMoonPhaseForDate(Date date, Date fullMoon) {
         StringBuffer sb = new StringBuffer();
         double[] resarray = new double[20];
         double julday = EphemerisUtils.dateToSweDate(date).getJulDay();
@@ -310,9 +320,9 @@ public class Ephemeris {
                 resarray,
                 sb);
         if (retcode == SweConst.OK) {
-            boolean waxing = date.compareTo(fullMoon) <= 0;
             double illumination = resarray[1]*100;
             double elongation = resarray[2];
+            boolean waxing = 0 > EphemerisUtils.angleSubtract(getBodyPos(julday, SweConst.SE_SUN), getBodyPos(julday, SweConst.SE_MOON));
 
             MoonPhase.PhaseType pt;
 
@@ -420,7 +430,7 @@ public class Ephemeris {
         ArrayList<MoonPhase> output = new ArrayList<>();
 
         for (Date d: tmp) {
-            MoonPhase mp = makeMoonPhaseForDate(d, fullMoon);
+            MoonPhase mp = makeMoonPhaseForDate(d);
             if (mp != null) {
                 output.add(mp);
             }
