@@ -13,6 +13,7 @@ import io.github.phora.aeondroid.R;
 import io.github.phora.aeondroid.calculations.EphemerisUtils;
 import io.github.phora.aeondroid.drawables.PlanetIndicator;
 import io.github.phora.aeondroid.model.PlanetaryHour;
+import io.github.phora.aeondroid.model.SunsetSunriseInfo;
 import swisseph.SweDate;
 
 /**
@@ -41,56 +42,37 @@ class CheckPlanetaryHoursThread extends Thread {
                 boolean foundHour = false;
                 boolean hourDifferent = false;
                 Intent intent = new Intent();
+                Double julified = EphemerisUtils.dateToSweDate(d).getJulDay();
 
-                ArrayList<PlanetaryHour> planetaryHours = aeonDroidService.planetaryHours;
+                //ArrayList<PlanetaryHour> planetaryHours = aeonDroidService.planetaryHours;
+                SunsetSunriseInfo ssi = aeonDroidService.sunsetSunriseInfo;
 
-                if (planetaryHours == null) {
+                if (ssi == null) {
                     lastIndex = -1;
                     intent.setAction(Events.REFRESH_HOURS);
-                    aeonDroidService.refreshPlanetaryHours(d);
-                    aeonDroidService.localBroadcastManager.sendBroadcastSync(intent);
+                    aeonDroidService.refreshSunsetSunriseInfo(d);
+                    aeonDroidService.localBroadcastManager.sendBroadcast(intent);
                     continue;
                 }
-                int itemCount = planetaryHours.size();
+                //int itemCount = planetaryHours.size();
 
-                if (lastIndex == -1) {
-                    for (int i = 0; i < itemCount; i++) {
-                        PlanetaryHour ph = planetaryHours.get(i);
-                        Date hourD = SweDate.getDate(ph.getHourStamp());
-                        Date hourEndD = SweDate.getDate(ph.getHourStamp() + ph.getHourLength());
-                        if (hourD.compareTo(d) <= 0 && hourEndD.compareTo(d) >= 0) {
-                            hourDifferent = (lastIndex != i);
-                            lastIndex = i;
-                            foundHour = true;
-                            break;
-                        }
-                    }
-                } else {
-                    for (int i = lastIndex; i < itemCount; i++) {
-                        PlanetaryHour ph = planetaryHours.get(i);
-                        Date hourD = SweDate.getDate(ph.getHourStamp());
-                        Date hourEndD = SweDate.getDate(ph.getHourStamp() + ph.getHourLength());
-                        if (hourD.compareTo(d) <= 0 && hourEndD.compareTo(d) >= 0) {
-                            hourDifferent = (lastIndex != i);
-                            lastIndex = i;
-                            foundHour = true;
-                            break;
-                        }
-                    }
-                }
+                int tmpIndex = ssi.calculatePlanetHourNum(julified);
+                foundHour = tmpIndex >= 0;
+                hourDifferent = (lastIndex != tmpIndex);
 
                 if (!foundHour) {
                     lastIndex = -1;
                     intent.setAction(Events.REFRESH_HOURS);
-                    aeonDroidService.refreshPlanetaryHours(d);
+                    aeonDroidService.refreshSunsetSunriseInfo(d);
                     aeonDroidService.localBroadcastManager.sendBroadcast(intent);
                 } else {
                     intent.setAction(Events.FOUND_HOUR);
 
-                    PlanetaryHour ph = planetaryHours.get(lastIndex);
+                    PlanetaryHour ph = ssi.calculatePlanetHour(d);
                     int planetType = ph.getPlanetType();
 
                     if (hourDifferent) {
+                        lastIndex = tmpIndex;
                         String[] planets = aeonDroidService.getResources().getStringArray(R.array.PlanetNames);
                         String planetname = planets[planetType];
                         String contentText = String.format(aeonDroidService.getString(R.string.ADService_PHourIs), planetname);
@@ -126,7 +108,7 @@ class CheckPlanetaryHoursThread extends Thread {
                             notifyBuilder.setSmallIcon(pi.getPlanetNoti(planetType));
                         }
 
-                        aeonDroidService.getNotificationManager().notify(AeonDroidService.NOTIFICATION_ID, notifyBuilder.build());
+                        aeonDroidService.notificationManager.notify(AeonDroidService.NOTIFICATION_ID, notifyBuilder.build());
                     }
                     intent.putExtra(Events.EXTRA_HOUR_TYPE, planetType);
                     intent.putExtra(Events.EXTRA_HOUR_INDEX, lastIndex);

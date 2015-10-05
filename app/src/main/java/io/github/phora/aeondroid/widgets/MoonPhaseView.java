@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.phora.aeondroid.calculations.Ephemeris;
 import io.github.phora.aeondroid.model.MoonPhase;
 import io.github.phora.aeondroid.workers.AeonDroidService;
 import io.github.phora.aeondroid.Events;
@@ -63,13 +64,14 @@ public class MoonPhaseView extends LinearLayout implements BroadcastReceivable, 
     }
 
     private void refreshContents() {
+        Context context = getContext();
         if (timeStamp != null) {
-            ArrayList<MoonPhase> mpl = mAeonDroidService.getEphemeris().getMoonCycle(timeStamp);
-            mAdapter = new MoonPhaseAdapter(getContext(), mpl);
+            ArrayList<MoonPhase> mpl = Ephemeris.getDefaultEphemeris(context).getMoonCycle(timeStamp);
+            mAdapter = new MoonPhaseAdapter(context, mpl);
         }
         else {
             ArrayList<MoonPhase> mpl = mAeonDroidService.getMoonPhases();
-            mAdapter = new MoonPhaseAdapter(getContext(), mpl);
+            mAdapter = new MoonPhaseAdapter(context, mpl);
         }
         mListView.setAdapter(mAdapter);
     }

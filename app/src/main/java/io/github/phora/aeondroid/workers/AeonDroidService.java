@@ -19,7 +19,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,14 +32,17 @@ import io.github.phora.aeondroid.calculations.EphemerisUtils;
 import io.github.phora.aeondroid.calculations.ZoneTab;
 import io.github.phora.aeondroid.model.MoonPhase;
 import io.github.phora.aeondroid.model.PlanetaryHour;
+import io.github.phora.aeondroid.model.SunsetSunriseInfo;
 import swisseph.SweConst;
 
 public class AeonDroidService extends Service {
 
     Ephemeris ephemeris = null;
     volatile ArrayList<PlanetaryHour> planetaryHours = null;
+    volatile SunsetSunriseInfo sunsetSunriseInfo = null;
     volatile ArrayList<MoonPhase> moonPhases;
     volatile double[] natalChart;
+    volatile double[] planetPos;
 
     private int lastIndex = -1;
     private boolean usingGPS;
@@ -138,6 +140,21 @@ public class AeonDroidService extends Service {
         return localBroadcastManager;
     }
 
+    public synchronized SunsetSunriseInfo getSunsetSunriseInfo() {
+        if (sunsetSunriseInfo == null) {
+            refreshSunsetSunriseInfo();
+        }
+        return sunsetSunriseInfo;
+    }
+
+    public synchronized void refreshSunsetSunriseInfo() {
+        sunsetSunriseInfo = ephemeris.getSunriseandSunset(new Date(), ephemeris.getTimezone());
+    }
+
+    public synchronized void refreshSunsetSunriseInfo(Date d) {
+        sunsetSunriseInfo = ephemeris.getSunriseandSunset(d, ephemeris.getTimezone());
+    }
+
     public class AeonDroidBinder extends Binder {
         public AeonDroidService getService() {
             return AeonDroidService.this;
@@ -166,9 +183,7 @@ public class AeonDroidService extends Service {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         localBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
 
-        ephemeris = new Ephemeris(getApplicationContext().getFilesDir() + File.separator + "ephe",
-                this,
-                0, 0, 0);
+        ephemeris = Ephemeris.getDefaultEphemeris(this);
         locUpdater = new LocUpdater();
 
         cmpt = new CheckMoonPhaseThread(this, 1000);
@@ -261,7 +276,7 @@ public class AeonDroidService extends Service {
             observerDifferent = (curObv[0] != longitude) || (curObv[1] != latitude) || (curObv[2] != altitude);
 
             ephemeris.setObserver(longitude, latitude, altitude, timezone);
-            refreshPlanetaryHours();
+            refreshSunsetSunriseInfo();
 
             if ((usingGPS != prevUsingGPS) || observerDifferent || _firstRun) {
                 _firstRun = false;
@@ -379,7 +394,7 @@ public class AeonDroidService extends Service {
                 dummy.interrupt();
             }
 
-            refreshPlanetaryHours();
+            refreshSunsetSunriseInfo();
 
             Intent intent = new Intent();
             intent.setAction(Events.REFRESH_HOURS);

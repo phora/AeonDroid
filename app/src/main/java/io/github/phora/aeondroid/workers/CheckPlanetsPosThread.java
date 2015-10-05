@@ -33,7 +33,10 @@ class CheckPlanetsPosThread extends Thread {
 
                 int count = AeonDroidService.planetsList.length;
                 Ephemeris ephemeris = aeonDroidService.ephemeris;
-                double[] results = new double[count];
+                if (aeonDroidService.planetPos == null) {
+                    aeonDroidService.planetPos = new double[count];
+                }
+                double[] results = aeonDroidService.planetPos;
                 Date d = new Date();
                 double julified = EphemerisUtils.dateToSweDate(d).getJulDay();
 

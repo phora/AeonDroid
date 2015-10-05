@@ -16,6 +16,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.github.phora.aeondroid.calculations.Ephemeris;
+import io.github.phora.aeondroid.model.SunsetSunriseInfo;
 import io.github.phora.aeondroid.workers.AeonDroidService;
 import io.github.phora.aeondroid.Events;
 import io.github.phora.aeondroid.model.PlanetaryHour;
@@ -84,13 +86,15 @@ public class PlanetaryHoursView extends LinearLayout implements BroadcastReceiva
     }
 
     private void refreshContents() {
+        Context context = getContext();
         if (timeStamp != null) {
-            ArrayList<PlanetaryHour> phl = mAeonDroidService.getEphemeris().getPlanetaryHours(timeStamp);
-            pha = new PlanetaryHoursAdapter(getContext(), phl);
+            ArrayList<PlanetaryHour> phl = Ephemeris.getDefaultEphemeris(context).getPlanetaryHours(timeStamp);
+            pha = new PlanetaryHoursAdapter(context, phl);
         }
         else {
-            ArrayList<PlanetaryHour> phl = mAeonDroidService.getPlanetaryHours();
-            pha = new PlanetaryHoursAdapter(getContext(), phl);
+            SunsetSunriseInfo ssi = mAeonDroidService.getSunsetSunriseInfo();
+            ArrayList<PlanetaryHour> phl = Ephemeris.getDefaultEphemeris(context).getPlanetaryHours(ssi);
+            pha = new PlanetaryHoursAdapter(context, phl);
         }
         mListView.setAdapter(pha);
         if (_styleLateSet) {
