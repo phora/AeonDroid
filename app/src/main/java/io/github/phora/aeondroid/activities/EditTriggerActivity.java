@@ -38,7 +38,7 @@ public class EditTriggerActivity extends Activity {
 
     /* Trigger argument widgets */
     private Spinner   mDayType;
-    private Checkable mOnlyFromSunrise;
+    private CheckedTextView mOnlyFromSunrise;
 
     private Spinner mPhase;
 
@@ -54,6 +54,13 @@ public class EditTriggerActivity extends Activity {
     private Spinner mNatalPlanet;
     private Spinner mAspectType;
 
+    private View.OnClickListener mCheckMeListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            ((CheckedTextView)view).toggle();
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +71,7 @@ public class EditTriggerActivity extends Activity {
         mEditItemType = (Spinner)findViewById(R.id.EditTrigger_Type);
         mEditArgsFlipper = (ViewFlipper)findViewById(R.id.EditTrigger_Args);
         mEditTrigEnabled = (CheckedTextView)findViewById(R.id.EditTrigger_Enabled);
+        mEditTrigEnabled.setOnClickListener(mCheckMeListener);
 
         mEditItemType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -80,7 +88,8 @@ public class EditTriggerActivity extends Activity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         mDayType = (Spinner)findViewById(R.id.EditTrigger_DayType);
-        mOnlyFromSunrise = (Checkable)findViewById(R.id.EditTrigger_OnlyFromSunrise);
+        mOnlyFromSunrise = (CheckedTextView)findViewById(R.id.EditTrigger_OnlyFromSunrise);
+        mOnlyFromSunrise.setOnClickListener(mCheckMeListener);
 
         mPhase = (Spinner)findViewById(R.id.EditTrigger_Phase);
 

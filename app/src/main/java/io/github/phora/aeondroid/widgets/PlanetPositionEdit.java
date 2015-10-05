@@ -72,6 +72,13 @@ public class PlanetPositionEdit extends LinearLayout {
             });
             fullDegreeCheck.setChecked(fullDegreeInput);
 
+            ((View)fullSloppyCheck).setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    fullSloppyCheck.toggle();
+                }
+            });
+
             signSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
