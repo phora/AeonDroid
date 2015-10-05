@@ -80,7 +80,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return sInstance;
     }
 
-    private DBHelper(Context context) {
+    DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

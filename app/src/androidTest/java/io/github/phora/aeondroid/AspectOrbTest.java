@@ -3,6 +3,7 @@ package io.github.phora.aeondroid;
 import android.app.Application;
 import android.content.Context;
 import android.test.ApplicationTestCase;
+import android.test.RenamingDelegatingContext;
 import android.util.SparseArray;
 
 import io.github.phora.aeondroid.model.AspectConfig;
@@ -11,6 +12,8 @@ import io.github.phora.aeondroid.model.AspectConfig;
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
 public class AspectOrbTest extends ApplicationTestCase<Application> {
+    private static final String TEST_FILE_PREFIX = "test_";
+
     public AspectOrbTest() {
         super(Application.class);
     }
@@ -23,10 +26,10 @@ public class AspectOrbTest extends ApplicationTestCase<Application> {
         super.setUp();
         createApplication();
 
-        Context appContext = getContext().getApplicationContext();
-        dbHelper = DBHelper.getInstance(appContext);
+        //Context appContext = getContext().getApplicationContext();
+        RenamingDelegatingContext appContext = new RenamingDelegatingContext(getContext().getApplicationContext(), TEST_FILE_PREFIX);
+        dbHelper = new DBHelper(appContext);
         orbsConfig = dbHelper.getOrbs();
-        // this test assumes a stock configuration
     }
 
     public void testClosestOrb() {
