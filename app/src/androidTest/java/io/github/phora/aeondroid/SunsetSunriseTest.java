@@ -41,8 +41,7 @@ public class SunsetSunriseTest extends ApplicationTestCase<Application> {
         new CopyAssetFiles("zone\\.tab", "", appContext).copy();
 
         ephemeris = new Ephemeris(appContext.getFilesDir() + File.separator + "ephe",
-                appContext,
-                greenwich);
+                appContext);
 
         day0 = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         day0.set(Calendar.YEAR, 2015);

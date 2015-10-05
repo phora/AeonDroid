@@ -43,33 +43,18 @@ public class Ephemeris {
         this.context = context.getApplicationContext();
         sw = new SwissEph(search_path);
         this.observer = new double[]{0., 0., 0.};
-        try {
-            zt = ZoneTab.getInstance(this.context);
-        } catch (FileNotFoundException e) {
-            zt = null;
-        }
     }
 
     public Ephemeris(String searchPath, Context context, double longitude, double latitude, double height) {
         this.context = context.getApplicationContext();
         sw = new SwissEph(searchPath);
         this.observer = new double[]{longitude, latitude, height};
-        try {
-            zt = ZoneTab.getInstance(this.context);
-        } catch (FileNotFoundException e) {
-            zt = null;
-        }
         guessTimezone();
     }
 
     public Ephemeris(String searchPath, Context context, double[] observer) {
         this.context = context;
         sw = new SwissEph(searchPath);
-        try {
-            zt = ZoneTab.getInstance(this.context);
-        } catch (FileNotFoundException e) {
-            zt = null;
-        }
 
         if (observer != null && observer.length == 3) {
             this.observer = observer;
@@ -94,6 +79,11 @@ public class Ephemeris {
     }
 
     private void guessTimezone() {
+        try {
+            zt = ZoneTab.getInstance(this.context);
+        } catch (FileNotFoundException e) {
+            zt = null;
+        }
         if (zt != null) {
             ZoneTab.ZoneInfo zi = zt.nearestTZ(this.observer[1], this.observer[2]);
             if (zi != null) {
