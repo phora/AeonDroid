@@ -1,5 +1,6 @@
 package io.github.phora.aeondroid.model;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import io.github.phora.aeondroid.calculations.EphemerisUtils;
@@ -17,12 +18,12 @@ public class SunsetSunriseInfo {
     private Double nextSunrise;
     private int dayOffset;
 
-    public SunsetSunriseInfo(Double sunrise, Double sunset, Double nextSunrise, SweDate calcTime) {
+    public SunsetSunriseInfo(Double sunrise, Double sunset, Double nextSunrise, String origTimezone, SweDate calcTime) {
         this.sunset = sunset;
         this.sunrise = sunrise;
         this.nextSunrise = nextSunrise;
         this.calcTime = calcTime;
-        this.dayOffset = SweDate.getDayOfWeekNr(sunrise);
+        this.dayOffset = EphemerisUtils.julianToTZCal(sunrise, origTimezone).get(Calendar.DAY_OF_WEEK)-1;
 
         this.dayHourLength = (sunset - sunrise)/12;
         this.nightHourLength = (nextSunrise - sunset)/12;

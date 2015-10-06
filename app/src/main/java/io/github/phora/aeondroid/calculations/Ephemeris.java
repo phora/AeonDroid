@@ -218,7 +218,7 @@ public class Ephemeris {
 
     public synchronized SunsetSunriseInfo getSunriseandSunset(Date date, String timezone) {
         SweDate sd = EphemerisUtils.dateToSweDate(date, timezone, 12);
-        SunsetSunriseInfo ssi = getSunriseandSunset(sd);
+        SunsetSunriseInfo ssi = getSunriseandSunset(sd, timezone);
 
         double julified = EphemerisUtils.dateToSweDate(date).getJulDay();
         double calcTime = ssi.getCalcTime().getJulDay();
@@ -228,23 +228,23 @@ public class Ephemeris {
         if (julified <= ssi.getSunrise()) {
             Log.d("Ephemeris", "Date before sunrise, getting yesterday");
             sd = new SweDate(calcTime-1, SweDate.SE_GREG_CAL);
-            ssi = getSunriseandSunset(sd);
+            ssi = getSunriseandSunset(sd, timezone);
         }
         else if (julified >= ssi.getNextSunrise()) {
             Log.d("Ephemeris", "Date after next sunrise, getting tomorrow");
             sd = new SweDate(calcTime+1, SweDate.SE_GREG_CAL);
-            ssi = getSunriseandSunset(sd);
+            ssi = getSunriseandSunset(sd, timezone);
         }
 
         return ssi;
     }
 
-    public synchronized SunsetSunriseInfo getSunriseandSunset(SweDate sd) {
+    public synchronized SunsetSunriseInfo getSunriseandSunset(SweDate sd, String timezone) {
         Double sunrise = getBodyRise(sd.getJulDay() - 1, SweConst.SE_SUN);
         Double sunset       = getBodySet(sd.getJulDay(), SweConst.SE_SUN);
         Double nextSunrise = getBodyRise(sd.getJulDay(), SweConst.SE_SUN);
 
-        return new SunsetSunriseInfo(sunrise, sunset, nextSunrise, sd);
+        return new SunsetSunriseInfo(sunrise, sunset, nextSunrise, timezone, sd);
     }
 
     public synchronized ArrayList<PlanetaryHour> getPlanetaryHours(SunsetSunriseInfo ssi) {
@@ -263,7 +263,7 @@ public class Ephemeris {
         Log.d("Ephmeris", String.format("Hours details: %.5f %.5f %.5f", sunrise, sunset, nextSunrise));
 
         ArrayList<PlanetaryHour> hours = new ArrayList<PlanetaryHour>();
-        int dayOffset = SweDate.getDayOfWeekNr(sunrise);
+        int dayOffset = ssi.getDayOffset();
         Log.d("Ephmeris", "Day offset: " + dayOffset);
         //Log.d("Ephmeris", EphemerisUtils.DATETIME_FMT.format(date));
         //Log.d("Ephmeris", EphemerisUtils.DATETIME_FMT.format(cal.getTime()));

@@ -37,6 +37,14 @@ public class EphemerisUtils {
         return String.format(fmt, signs[sign], subdegrees, minutesAsInt, seconds);
     }
 
+    public static Calendar julianToTZCal(double julianDay, String timezone) {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(timezone));
+        Date tmpDate = SweDate.getDate(julianDay);
+        cal.setTimeInMillis(tmpDate.getTime());
+
+        return cal;
+    }
+
     public static SweDate dateToSweDate(Date d) {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         cal.setTimeInMillis(d.getTime());
