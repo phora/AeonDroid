@@ -102,7 +102,7 @@ public class AeonDroidService extends Service {
         this.usingGPS = usingGPS;
     }
 
-    public synchronized ArrayList<PlanetaryHour> getPlanetaryHours() {
+    /*public synchronized ArrayList<PlanetaryHour> getPlanetaryHours() {
         if (planetaryHours == null) {
             refreshPlanetaryHours();
         }
@@ -115,7 +115,7 @@ public class AeonDroidService extends Service {
 
     public synchronized void refreshPlanetaryHours() {
         planetaryHours = ephemeris.getPlanetaryHours(new Date());
-    }
+    }*/
 
     public synchronized ArrayList<MoonPhase> getMoonPhases() {
         if (moonPhases == null) {
