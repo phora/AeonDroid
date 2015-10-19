@@ -45,6 +45,12 @@ public class AlertsCRUDActivity extends ExpandableListActivity {
             int pos = (Integer)view.getTag();
             c.move(pos);
 
+            long alertId = c.getLong(c.getColumnIndex(DBHelper.COLUMN_ID));
+            String alertName = c.getString(c.getColumnIndex(DBHelper.ALERT_LABEL));
+
+            intent.putExtra(AlertEditActivity.EXTRA_ALERT_ID, alertId);
+            intent.putExtra(AlertEditActivity.EXTRA_ALERT_NAME, alertName);
+
             startActivityForResult(intent, EDITED_ALERT_AND_STEPS);
         }
     };
