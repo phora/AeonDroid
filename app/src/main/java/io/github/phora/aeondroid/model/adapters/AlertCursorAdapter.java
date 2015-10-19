@@ -5,7 +5,10 @@ import android.database.Cursor;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorTreeAdapter;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
+import io.github.phora.aeondroid.DBHelper;
 import io.github.phora.aeondroid.R;
 
 /**
@@ -41,7 +44,8 @@ public class AlertCursorAdapter extends CursorTreeAdapter {
 
     @Override
     protected Cursor getChildrenCursor(Cursor cursor) {
-        return null;
+        long alertId = cursor.getLong(cursor.getColumnIndex(DBHelper.COLUMN_ID));
+        return DBHelper.getInstance(mContext).stepsForAlert(alertId);
     }
 
     @Override
@@ -51,7 +55,17 @@ public class AlertCursorAdapter extends CursorTreeAdapter {
 
     @Override
     protected void bindGroupView(View view, Context context, Cursor cursor, boolean isExpanded) {
+        TextView alertName = (TextView) view.findViewById(R.id.AlarmItem_Name);
+        ImageButton editAlert = (ImageButton) view.findViewById(R.id.AlarmItem_Edit);
+        ImageButton linkTriggers = (ImageButton) view.findViewById(R.id.AlarmItem_Link);
 
+        editAlert.setTag(cursor.getPosition());
+        linkTriggers.setTag(cursor.getPosition());
+
+        alertName.setText(cursor.getString(cursor.getColumnIndex(DBHelper.ALERT_LABEL)));
+
+        editAlert.setOnClickListener(editButtonListener);
+        linkTriggers.setOnClickListener(linkButtonListener);
     }
 
     @Override
@@ -61,6 +75,10 @@ public class AlertCursorAdapter extends CursorTreeAdapter {
 
     @Override
     protected void bindChildView(View view, Context context, Cursor cursor, boolean isLastChild) {
+        ImageButton editStep = (ImageButton)view.findViewById(R.id.StepItem_Edit);
 
+        editStep.setTag(0, cursor);
+        editStep.setTag(1, cursor.getPosition());
+        editStep.setOnClickListener(stepEditButtonListener);
     }
 }
