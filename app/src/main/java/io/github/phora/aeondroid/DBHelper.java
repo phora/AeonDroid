@@ -359,12 +359,12 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public Cursor stepsForAlert(Long alertId) {
-        String selectSteps = String.format("SELECT *, %2$s.%5$s FROM  %1$s " +
+        String selectSteps = String.format("SELECT *, %2$s.%5$s, %2$s.%6$s FROM  %1$s " +
                         "JOIN %2$s " +
                         "ON %2$s.%3$s=%1$s.%4$s " +
-                        "WHERE %2$s.%5$s=?",
+                        "WHERE %2$s.%5$s=? ORDER BY %2$s.%6$s",
                 TABLE_ALERT_TRIGGERS, TABLE_LINKED_STEPS,
-                LINKED_STEP, COLUMN_ID, LINKED_ALERT);
+                LINKED_STEP, COLUMN_ID, LINKED_ALERT, LINKED_STEP_ORDER);
         return getReadableDatabase().rawQuery(selectSteps, new String[]{String.valueOf(alertId)});
     }
 
