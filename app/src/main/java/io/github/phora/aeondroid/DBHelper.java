@@ -359,7 +359,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public Cursor stepsForAlert(Long alertId) {
-        String selectSteps = String.format("SELECT * FROM  %1$s " +
+        String selectSteps = String.format("SELECT *, %2$s.%5$s FROM  %1$s " +
                         "JOIN %2$s " +
                         "ON %2$s.%3$s=%1$s.%4$s " +
                         "WHERE %2$s.%5$s=?",
