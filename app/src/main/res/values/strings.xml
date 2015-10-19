@@ -32,6 +32,10 @@
     <string name="ContentDescriptionDivider">divider</string>
     <string name="OK">OK</string>
     <string name="Cancel">Cancel</string>
+    <string name="Repetitions">Repetitions</string>
+    <string name="URL">URL</string>
+    <string name="Color">Color</string>
+    <string name="Description">Description</string>
 
     <string name="Moon.CurrentlyVOC">Currently void, exiting at %1$s</string>
     <string name="Moon.PendingVOC">Pending void, entering at %1$s</string>
@@ -70,8 +74,6 @@
     <string name="Planets.Neptune">Neptune</string>
     <string name="Planets.Pluto">Pluto</string>
 
-    <string name="hello_world">Hello world!</string>
-
     <string name="Title.Activity.Orbs">Configure Orbs</string>
     <string name="Action.Reset">Reset to default</string>
     <string name="OrbDialog.TitleFmt">Orb for %1$s</string>
@@ -100,6 +102,9 @@
     <string name="EditTriggerActivity.DayType">Day type</string>
     <string name="EditTriggerActivity.DayTypeFromSunrise">Use the day type from sunrise?</string>
 
+    <string name="Title.Activity.AlertsEdit">AlertsEditActivity</string>
+    <string name="AlertsEditActivity.NameAlert">Alert name?</string>
+
     <string name="Phase">Phase</string>
     <string name="PlanetaryHour">Planetary Hour</string>
     <string name="EditTriggerActivity.DateTimeOrBoth">Date, time, or both?</string>
@@ -107,4 +112,8 @@
     <string name="NatalPlanet">Natal Planet</string>
     <string name="AspectType">Aspect Type</string>
     <string name="TravelingPlanet">Traveling Planet</string>
+    <string name="title_activity_alert_edit">AlertEditActivity</string>
+    <string name="title_activity_step_edit">StepEditActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="ChooseImage">Choose image</string>
 </resources>

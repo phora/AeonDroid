@@ -55,6 +55,26 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.github.phora.aeondroid.activities.TriggersActivity" />
         </activity>
+        <activity
+            android:name=".activities.AlertsCRUDActivity"
+            android:label="@string/Title.Activity.AlertsEdit" >
+        </activity>
+        <activity
+            android:name=".activities.AlertEditActivity"
+            android:label="@string/title_activity_alert_edit"
+            android:parentActivityName=".activities.AlertsCRUDActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.AlertsCRUDActivity" />
+        </activity>
+        <activity
+            android:name=".activities.StepEditActivity"
+            android:label="@string/title_activity_step_edit"
+            android:parentActivityName=".activities.AlertsCRUDActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="io.github.phora.aeondroid.activities.AlertsCRUDActivity" />
+        </activity>
     </application>
 
 </manifest>

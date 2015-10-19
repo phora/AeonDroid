@@ -29,19 +29,48 @@ public class DBHelper extends SQLiteOpenHelper {
         + ORB_VISIBLE + " INT)";
 
     private static final String TABLE_ALERTS = "alerts";
-    public  static final String ALERT_TYPE   = "alert_type";
+    public  static final String ALERT_LABEL   = "label";
+    public  static final String ALERT_ENABLED   = "enabled";
+    private static final String ALERTS_CREATE = "CREATE TABLE " + TABLE_ALERTS +
+            " ( " + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + ALERT_LABEL + " TEXT NOT NULL, "
+            + ALERT_ENABLED + "INT)";
 
-    public enum AlertType {
-        LED,     //fields: color, interval
-        TEXT,    //fields: text
-        NOTI,    //fields: ticker, text
-        VIBRATE, //fields: durations, repeat @ index
-        RING     //fields: ringtone
-    }
+    private static final String TABLE_ALERT_STEPS = "alert_steps";
+    // can be a link to a file, will attempt to display data inline
+    // if image or plaintext that isn't a URL
+    public  static final String STEP_LINK = "uri";
+    // an image stored in the database
+    public  static final String STEP_IMAGE = "image";
+    // text stored in the database
+    public  static final String STEP_DESCRIPTION = "description";
+    // any color that's needed for reference in the step
+    public  static final String STEP_COLOR = "color";
+    public  static final String STEP_REPITITIONS = "reps";
+    private static final String ALERT_STEPS_CREATE = "CREATE TABLE "+TABLE_ALERT_STEPS+
+            " ( " + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + STEP_LINK + " TEXT, "
+            + STEP_IMAGE + " TEXT, "
+            + STEP_DESCRIPTION + " TEXT, "
+            + STEP_COLOR + " INT, "
+            + STEP_REPITITIONS + " INT)";
+
+    private static final String TABLE_LINKED_STEPS = "linked_steps";
+    public  static final String LINKED_ALERT          = "_alert_id";
+    public  static final String LINKED_STEP = "_step_id";
+    public  static final String LINKED_STEP_ORDER = "step_order";
+    private static final String LINKED_STEPS_CREATE = "CREATE TABLE "+TABLE_LINKED_STEPS+
+            " ( " + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + LINKED_ALERT + " INTEGER NOT NULL, "
+            + LINKED_STEP + " INTEGER NOT NULL, "
+            + LINKED_STEP_ORDER + " INTEGER)";
 
     private static final String TABLE_LINKED_TRIGGERS = "linked_triggers";
-    public  static final String LINKED_ALERT          = "_alert_id";
     public  static final String LINKED_TRIGGER        = "_trigger_id";
+    private static final String LINKED_TRIGGERS_CREATE = "CREATE TABLE " + TABLE_LINKED_TRIGGERS +
+            " ( " + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + LINKED_ALERT + " INTEGER NOT NULL, "
+            + LINKED_TRIGGER + " INTEGER NOT NULL)";
 
     private static final String TABLE_ALERT_TRIGGERS = "alert_triggers";
     public  static final String ATRIGGER_TYPE = "atrigger_type";
@@ -99,6 +128,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(ATRIGGER_CREATE);
         sqLiteDatabase.execSQL(SUBTRIGGERS_CREATE);
+
+        //sqLiteDatabase.execSQL(ALERTS_CREATE);
+        //sqLiteDatabase.execSQL(LINKED_TRIGGERS_CREATE);
+        //sqLiteDatabase.execSQL(ALERT_STEPS_CREATE);
+        //sqLiteDatabase.execSQL(LINKED_STEPS_CREATE);
     }
 
     /* ORB FUNCTIONS */
@@ -306,8 +340,94 @@ public class DBHelper extends SQLiteOpenHelper {
             sqLiteDatabase.endTransaction();
         }
     }
-
     /* /ALERT TRIGGER FUNCTIONS */
+
+    /* ALERT+STEP FUNCTIONS */
+    public Cursor allAlerts() {
+        return getReadableDatabase().query(TABLE_ALERTS, null, null, null,
+                null, null, null, null);
+    }
+
+    public Cursor triggersForAlert(Long alertId) {
+        String selectTriggers = String.format("SELECT * FROM  %1$s " +
+                "JOIN %2$s " +
+                "ON %2$s.%3$s=%1$s.%4$s " +
+                "WHERE %2$s.%5$s=?",
+                TABLE_ALERT_TRIGGERS, TABLE_LINKED_TRIGGERS,
+                LINKED_TRIGGER, COLUMN_ID, LINKED_ALERT);
+        return getReadableDatabase().rawQuery(selectTriggers, new String[]{String.valueOf(alertId)});
+    }
+
+    public Cursor stepsForAlert(Long alertId) {
+        String selectSteps = String.format("SELECT * FROM  %1$s " +
+                        "JOIN %2$s " +
+                        "ON %2$s.%3$s=%1$s.%4$s " +
+                        "WHERE %2$s.%5$s=?",
+                TABLE_ALERT_TRIGGERS, TABLE_LINKED_STEPS,
+                LINKED_STEP, COLUMN_ID, LINKED_ALERT);
+        return getReadableDatabase().rawQuery(selectSteps, new String[]{String.valueOf(alertId)});
+    }
+
+    public long createAlert(String label) {
+        ContentValues cv = new ContentValues();
+        cv.put(ALERT_LABEL, label);
+        return getWritableDatabase().insert(TABLE_ALERTS, null, cv);
+    }
+
+    public void renameAlert(long alertId, String label) {
+        String   whereClause = COLUMN_ID+" = ?";
+        String[] whereArgs = new String[]{String.valueOf(alertId)};
+
+        ContentValues cv = new ContentValues();
+        cv.put(ALERT_LABEL, label);
+
+        getWritableDatabase().update(TABLE_ALERTS, cv, whereClause, whereArgs);
+    }
+
+    public long createAlertStep(String uri, String imageUri, String description, Integer color,
+                                Integer repetitions) {
+        ContentValues cv = new ContentValues();
+
+        cv.put(STEP_LINK, uri);
+        cv.put(STEP_IMAGE, imageUri);
+        cv.put(STEP_DESCRIPTION, description);
+        cv.put(STEP_COLOR, color);
+        cv.put(STEP_REPITITIONS, repetitions);
+
+        return getWritableDatabase().insert(TABLE_ALERT_STEPS, null, cv);
+    }
+
+    public void updateAlertStep(long stepId, String uri, String imageUri, String description,
+                                Integer color, Integer repetitions) {
+        String   whereClause = COLUMN_ID+" = ?";
+        String[] whereArgs = new String[]{String.valueOf(stepId)};
+
+        ContentValues cv = new ContentValues();
+
+        cv.put(STEP_LINK, uri);
+        cv.put(STEP_IMAGE, imageUri);
+        cv.put(STEP_DESCRIPTION, description);
+        cv.put(STEP_COLOR, color);
+        cv.put(STEP_REPITITIONS, repetitions);
+
+        getWritableDatabase().update(TABLE_ALERT_STEPS, cv, whereClause, whereArgs);
+    }
+
+    public long linkAlertStep(long alertId, long stepId, Integer stepOrder) {
+        ContentValues cv = new ContentValues();
+        cv.put(LINKED_ALERT, alertId);
+        cv.put(LINKED_STEP, stepId);
+        cv.put(LINKED_STEP_ORDER, stepOrder);
+        return getWritableDatabase().insert(TABLE_LINKED_STEPS, null, cv);
+    }
+
+    public void unlinkAlertStep(long stepAlertPairId) {
+        String   whereClause = COLUMN_ID+" = ?";
+        String[] whereArgs = new String[]{String.valueOf(stepAlertPairId)};
+
+        getWritableDatabase().delete(TABLE_LINKED_STEPS, whereClause, whereArgs);
+    }
+    /* /ALERT+STEP FUNCTIONS */
 
     public static String makePlaceholders(int len) {
         if (len < 1) {
@@ -328,6 +448,12 @@ public class DBHelper extends SQLiteOpenHelper {
         if (oldVersion < 2) {
             sqLiteDatabase.execSQL(ATRIGGER_CREATE);
             sqLiteDatabase.execSQL(SUBTRIGGERS_CREATE);
+        }
+        if (oldVersion < 3) {
+            sqLiteDatabase.execSQL(ALERTS_CREATE);
+            sqLiteDatabase.execSQL(LINKED_TRIGGERS_CREATE);
+            sqLiteDatabase.execSQL(ALERT_STEPS_CREATE);
+            sqLiteDatabase.execSQL(LINKED_STEPS_CREATE);
         }
     }
 }
