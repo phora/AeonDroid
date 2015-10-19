@@ -2,10 +2,12 @@ package io.github.phora.aeondroid.model.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorTreeAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import io.github.phora.aeondroid.DBHelper;
@@ -75,10 +77,31 @@ public class AlertCursorAdapter extends CursorTreeAdapter {
 
     @Override
     protected void bindChildView(View view, Context context, Cursor cursor, boolean isLastChild) {
+        ImageView stepImage = (ImageView) view.findViewById(R.id.StepItem_Image);
+        View colorPreview = view.findViewById(R.id.StepItem_Color);
         ImageButton editStep = (ImageButton)view.findViewById(R.id.StepItem_Edit);
+        TextView stepUri = (TextView) view.findViewById(R.id.StepItem_Uri);
+        TextView descPreview = (TextView) view.findViewById(R.id.StepItem_Desc);
 
         editStep.setTag(0, cursor);
         editStep.setTag(1, cursor.getPosition());
         editStep.setOnClickListener(stepEditButtonListener);
+
+        Uri imageUri = Uri.parse(cursor.getString(cursor.getColumnIndex(DBHelper.STEP_IMAGE)));
+        String otherUri = cursor.getString(cursor.getColumnIndex(DBHelper.STEP_LINK));
+        String desc = cursor.getString(cursor.getColumnIndex(DBHelper.STEP_DESCRIPTION));
+        int color = cursor.getInt(cursor.getColumnIndex(DBHelper.STEP_COLOR));
+
+        stepImage.setImageURI(imageUri);
+        stepUri.setText(otherUri);
+        colorPreview.setBackgroundColor(color);
+        if (desc.length() > 50) {
+            String genPreview = String.format("%s ... %s", desc.substring(0, 25),
+                    desc.substring(desc.length()-25));
+            descPreview.setText(genPreview);
+        }
+        else {
+            descPreview.setText(desc.substring(0, 50));
+        }
     }
 }
