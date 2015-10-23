@@ -359,12 +359,15 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public Cursor stepsForAlert(Long alertId) {
-        String selectSteps = String.format("SELECT *, %2$s.%5$s, %2$s.%6$s FROM  %1$s " +
+        String selectSteps = String.format("SELECT %1$s.%3$s, %1$s.%4$s, %1$s.%5$s, %1$s.%6$s, %1$s.%7$s, " +
+                        "%2$s.%8$s, %2$s.%10$s, %2$s.%9$s, " +
+                        "%2$s.%11$s FROM %1$s " +
                         "JOIN %2$s " +
-                        "ON %2$s.%3$s=%1$s.%4$s " +
-                        "WHERE %2$s.%5$s=? ORDER BY %2$s.%6$s",
-                TABLE_ALERT_TRIGGERS, TABLE_LINKED_STEPS,
-                LINKED_STEP, COLUMN_ID, LINKED_ALERT, LINKED_STEP_ORDER);
+                        "ON %2$s.%10$s=%1$s.%8$s " +
+                        "WHERE %2$s.%9$s=? ORDER BY %2$s.%11$s",
+                TABLE_ALERT_STEPS, TABLE_LINKED_STEPS, //tables
+                STEP_LINK, STEP_IMAGE, STEP_DESCRIPTION, STEP_COLOR, STEP_REPITITIONS, //step fields
+                COLUMN_ID, LINKED_ALERT, LINKED_STEP, LINKED_STEP_ORDER /* step linkage fields */);
         return getReadableDatabase().rawQuery(selectSteps, new String[]{String.valueOf(alertId)});
     }
 
@@ -419,6 +422,25 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(LINKED_STEP, stepId);
         cv.put(LINKED_STEP_ORDER, stepOrder);
         return getWritableDatabase().insert(TABLE_LINKED_STEPS, null, cv);
+    }
+
+    public void updateLinkAlertStepOrders(long[] ids, int[] orders) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+
+        sqLiteDatabase.beginTransaction();
+        try {
+            int numChanges = ids.length;
+            String whereClause = COLUMN_ID + " = ?";
+            for (int i = 0; i < numChanges; i++) {
+                ContentValues cv = new ContentValues();
+                cv.put(LINKED_STEP_ORDER, orders[i]);
+                String[] whereArgs = new String[]{String.valueOf(ids[i])};
+                sqLiteDatabase.update(TABLE_SUBTRIGGERS, cv, whereClause, whereArgs);
+            }
+            sqLiteDatabase.setTransactionSuccessful();
+        } finally {
+            sqLiteDatabase.endTransaction();
+        }
     }
 
     public void unlinkAlertStep(long stepAlertPairId) {

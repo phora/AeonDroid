@@ -27,6 +27,10 @@ public class StepReorderAdapter extends CursorAdapter {
         pendingStepChanges = new LongSparseArray<>();
     }
 
+    public LongSparseArray<int[]> getPendingStepChanges() {
+        return pendingStepChanges;
+    }
+
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
         return View.inflate(context, R.layout.step_reorder_item, null);
