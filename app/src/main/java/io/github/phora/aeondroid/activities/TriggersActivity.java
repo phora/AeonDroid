@@ -28,6 +28,9 @@ import io.github.phora.aeondroid.model.adapters.AlertTriggerCursorAdapter;
 
 public class TriggersActivity extends ExpandableListActivity {
 
+    public static final String EXTRA_ALERT_ID = "EXTRA_ALERT_ID";
+    private long alertId = -1;
+
     private Context context;
     private EditButtonListener mEditButtonListener;
     private ExpandableListView.OnGroupClickListener mDontExpandOnClick = new ExpandableListView.OnGroupClickListener() {
@@ -56,6 +59,11 @@ public class TriggersActivity extends ExpandableListActivity {
         listView.setItemsCanFocus(false);
         listView.setOnGroupClickListener(mDontExpandOnClick);
 
+        if (getIntent() != null) {
+            alertId = getIntent().getLongExtra(EXTRA_ALERT_ID, -1);
+        }
+        new LoadTriggersTask().execute(alertId);
+
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
@@ -82,7 +90,7 @@ public class TriggersActivity extends ExpandableListActivity {
                     DBHelper.getInstance(context).removeSubtrigger(groupId, alertTriggerId);
                     Toast.makeText(context, R.string.TriggersActivity_RemovedSubtrigger, Toast.LENGTH_SHORT).show();
                 }
-                new LoadTriggersTask().execute();
+                new LoadTriggersTask().execute(alertId);
                 return true;
             }
         });
@@ -92,8 +100,6 @@ public class TriggersActivity extends ExpandableListActivity {
         listView.setOnScrollListener(new FABAnimator(context, fab));
 
         mEditButtonListener = new EditButtonListener();
-
-        new LoadTriggersTask().execute();
     }
 
     @Override
@@ -255,8 +261,12 @@ public class TriggersActivity extends ExpandableListActivity {
 
                 boolean enabled = data.getBooleanExtra(EditTriggerActivity.EXTRA_ENABLED, false);
 
-                DBHelper.getInstance(this).createTrigger(att, arg1, arg2, specificity, enabled);
-                new LoadTriggersTask().execute();
+                long triggerId = DBHelper.getInstance(this).createTrigger(att, arg1, arg2, specificity, enabled);
+                if (alertId != -1) {
+                    DBHelper.getInstance(this).linkTrigger(alertId, triggerId);
+                    //create link here
+                }
+                new LoadTriggersTask().execute(alertId);
             }
         }
         else if (requestCode == EDITING_TRIGGER) {
@@ -280,7 +290,7 @@ public class TriggersActivity extends ExpandableListActivity {
                 boolean enabled = data.getBooleanExtra(EditTriggerActivity.EXTRA_ENABLED, false);
 
                 DBHelper.getInstance(this).updateTriggerParams(id, arg1, arg2, specificity, enabled);
-                new LoadTriggersTask().execute();
+                new LoadTriggersTask().execute(alertId);
             }
         }
     }
@@ -295,10 +305,15 @@ public class TriggersActivity extends ExpandableListActivity {
         new LoadTriggersTask().execute();
     }
 
-    private class LoadTriggersTask extends AsyncTask<Void, Void, Cursor> {
+    private class LoadTriggersTask extends AsyncTask<Long, Void, Cursor> {
         @Override
-        protected Cursor doInBackground(Void... voids) {
-            return DBHelper.getInstance(context).getAllTriggers();
+        protected Cursor doInBackground(Long... longs) {
+            if (longs.length == 0 || longs[0] == -1) {
+                return DBHelper.getInstance(context).getAllTriggers();
+            }
+            else {
+                return DBHelper.getInstance(context).triggersForAlert(longs[0]);
+            }
         }
 
         @Override
@@ -346,7 +361,15 @@ public class TriggersActivity extends ExpandableListActivity {
     private class BatchDeleteTask extends AsyncTask<Long,Void,Void> {
         @Override
         protected Void doInBackground(Long... longs) {
-            DBHelper.getInstance(context).deleteTriggers(longs);
+            if (alertId != -1)
+            {
+                // if editing the triggers for a specific alert, only unlink!
+                DBHelper.getInstance(context).unlinkTriggers(alertId, longs);
+            }
+            else
+            {
+                DBHelper.getInstance(context).deleteTriggers(longs);
+            }
             return null;
         }
 
@@ -371,6 +394,9 @@ public class TriggersActivity extends ExpandableListActivity {
                 groupId = dbHelper.createTrigger(AlertTriggerType.ATRIGGER_GROUP, null, null, null, true);
             }
             if (groupId >= 1) {
+                if (alertId != -1) {
+                    dbHelper.linkTrigger(alertId, groupId);
+                }
                 if (longs.length == 1) {
                     dbHelper.addTriggerToGroup(groupId, longs[0]);
                     return true;
