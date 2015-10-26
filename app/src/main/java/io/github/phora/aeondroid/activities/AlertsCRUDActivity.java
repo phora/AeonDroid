@@ -118,14 +118,52 @@ public class AlertsCRUDActivity extends ExpandableListActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == EDITED_ALERT_AND_STEPS) {
             if (resultCode == RESULT_OK) {
-                new LoadAlertsTask().execute();
+                long alertId = data.getLongExtra(AlertEditActivity.EXTRA_ALERT_ID, -1);
+                String name = data.getStringExtra(AlertEditActivity.EXTRA_ALERT_NAME);
+                long[] ids = data.getLongArrayExtra(AlertEditActivity.EXTRA_STEP_PAIR_IDS);
+                int[] orders = data.getIntArrayExtra(AlertEditActivity.EXTRA_STEP_PAIR_ORDERS);
+                new UpdateAlertAndStepOrdersTask(alertId, name, ids, orders).execute();
             }
         }
         else if (requestCode == EDITED_STEP) {
             if (resultCode == RESULT_OK) {
+                long stepId = data.getLongExtra(StepEditActivity.EXTRA_STEP_ID, -1);
+                int reps = data.getIntExtra(StepEditActivity.EXTRA_REPS, 0);
+                String url = data.getStringExtra(StepEditActivity.EXTRA_URL);
+                String desc = data.getStringExtra(StepEditActivity.EXTRA_DESC);
+                String img = data.getStringExtra(StepEditActivity.EXTRA_IMAGE);
+                int color = data.getIntExtra(StepEditActivity.EXTRA_COLOR, 0);
 
-                new LoadAlertsTask().execute();
+                new UpdateStepTask(stepId, url, img, desc, color, reps).execute();
             }
+        }
+    }
+
+
+
+    private class UpdateAlertAndStepOrdersTask extends AsyncTask<Void, Void, Void> {
+        private final long[] ids;
+        private final int[] orders;
+        private final String name;
+        private final long alertId;
+
+        public UpdateAlertAndStepOrdersTask(long alertId, String name, long[] ids, int[] orders) {
+            this.name = name;
+            this.alertId = alertId;
+            this.ids = ids;
+            this.orders = orders;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            DBHelper.getInstance(context).renameAlert(alertId, name);
+            DBHelper.getInstance(context).updateLinkAlertStepOrders(ids, orders);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            new LoadAlertsTask().execute();
         }
     }
 
@@ -158,6 +196,35 @@ public class AlertsCRUDActivity extends ExpandableListActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             DBHelper.getInstance(context).createAlert(alertName);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            new LoadAlertsTask().execute();
+        }
+    }
+
+    private class UpdateStepTask extends AsyncTask<Void, Void, Void> {
+        private final long id;
+        private final int reps;
+        private final String url;
+        private final String desc;
+        private final String img;
+        private final int color;
+
+        public UpdateStepTask(long id, String url, String img, String desc, int color, int reps) {
+            this.id = id;
+            this.reps = reps;
+            this.url = url;
+            this.desc = desc;
+            this.img = img;
+            this.color = color;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            DBHelper.getInstance(context).updateAlertStep(id, url, img, desc, color, reps);
             return null;
         }
 
