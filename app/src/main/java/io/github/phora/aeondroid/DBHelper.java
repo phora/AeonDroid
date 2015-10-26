@@ -426,6 +426,24 @@ public class DBHelper extends SQLiteOpenHelper {
         return getWritableDatabase().insert(TABLE_ALERT_STEPS, null, cv);
     }
 
+    //TODO: This implies that we have a UI for managing steps independent of alerts, need to do that later
+    public void deleteStep(long stepId) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+
+        sqLiteDatabase.beginTransaction();
+        try {
+            String linkedWhereClause = LINKED_STEP + " = ?";
+            String whereClause = COLUMN_ID + " = ?";
+            String[] whereArgs = {String.valueOf(stepId)};
+            sqLiteDatabase.delete(TABLE_LINKED_STEPS, linkedWhereClause, whereArgs);
+            sqLiteDatabase.delete(TABLE_ALERT_STEPS, whereClause, whereArgs);
+            sqLiteDatabase.setTransactionSuccessful();
+        }
+        finally {
+            sqLiteDatabase.endTransaction();
+        }
+    }
+
     public void updateAlertStep(long stepId, String uri, String imageUri, String description,
                                 Integer color, Integer repetitions) {
         String   whereClause = COLUMN_ID+" = ?";
