@@ -122,6 +122,7 @@ public class AlertsCRUDActivity extends ExpandableListActivity {
                 String name = data.getStringExtra(AlertEditActivity.EXTRA_ALERT_NAME);
                 long[] ids = data.getLongArrayExtra(AlertEditActivity.EXTRA_STEP_PAIR_IDS);
                 int[] orders = data.getIntArrayExtra(AlertEditActivity.EXTRA_STEP_PAIR_ORDERS);
+
                 new UpdateAlertAndStepOrdersTask(alertId, name, ids, orders).execute();
             }
         }
@@ -170,7 +171,7 @@ public class AlertsCRUDActivity extends ExpandableListActivity {
     private class LoadAlertsTask extends AsyncTask<Void, Void, Cursor> {
         @Override
         protected Cursor doInBackground(Void... voids) {
-            return null;
+            return DBHelper.getInstance(context).allAlerts();
         }
 
         @Override
