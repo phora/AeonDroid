@@ -315,6 +315,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String[] fields = {COLUMN_ID, ATRIGGER_TYPE};
 
         String groupWhereClause = SUBTRIGGER_GID+" = ?";
+        String triggerWhereClause = LINKED_TRIGGER+" = ?";
 
         for (int i = 0; i < count; i++) {
             whereArgs[i]=String.valueOf(alertTriggerIds[i]);
@@ -327,11 +328,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
             while (cursor.moveToNext()) {
                 AlertTriggerType att = AlertTriggerType.intToATT(cursor.getInt(cursor.getColumnIndex(ATRIGGER_TYPE)));
+                long id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID));
+                String[] triggerWhereArgs = {String.valueOf(id)};
                 if (att == AlertTriggerType.ATRIGGER_GROUP) {
-                    long gid = cursor.getLong(cursor.getColumnIndex(COLUMN_ID));
-                    String[] groupWhereArgs = {String.valueOf(gid)};
-                    sqLiteDatabase.delete(TABLE_SUBTRIGGERS, groupWhereClause, groupWhereArgs);
+                    sqLiteDatabase.delete(TABLE_SUBTRIGGERS, groupWhereClause, triggerWhereArgs);
                 }
+                sqLiteDatabase.delete(TABLE_LINKED_TRIGGERS, triggerWhereClause, triggerWhereArgs);
             }
             cursor.close();
             sqLiteDatabase.delete(TABLE_ALERT_TRIGGERS, whereClause, whereArgs);
@@ -356,6 +358,30 @@ public class DBHelper extends SQLiteOpenHelper {
                 TABLE_ALERT_TRIGGERS, TABLE_LINKED_TRIGGERS,
                 LINKED_TRIGGER, COLUMN_ID, LINKED_ALERT);
         return getReadableDatabase().rawQuery(selectTriggers, new String[]{String.valueOf(alertId)});
+    }
+
+    public void linkTrigger(long alertId, long triggerId) {
+        ContentValues cv = new ContentValues();
+        cv.put(LINKED_ALERT, alertId);
+        cv.put(LINKED_TRIGGER, triggerId);
+        getWritableDatabase().insert(TABLE_LINKED_TRIGGERS, null, cv);
+    }
+
+    public void unlinkTriggers(long alertId, Long... triggerIds) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+
+        sqLiteDatabase.beginTransaction();
+        try {
+            String whereClause = LINKED_ALERT + " = ? AND " + LINKED_TRIGGER + " = ?";
+            for (Long triggerId: triggerIds) {
+                String[] whereArgs = new String[]{String.valueOf(alertId),
+                        String.valueOf(triggerId)};
+                sqLiteDatabase.delete(TABLE_LINKED_TRIGGERS, whereClause, whereArgs);
+            }
+            sqLiteDatabase.setTransactionSuccessful();
+        } finally {
+            sqLiteDatabase.endTransaction();
+        }
     }
 
     public Cursor stepsForAlert(Long alertId) {
