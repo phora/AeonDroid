@@ -21,6 +21,7 @@
             android:id="@+id/AlertEdit.Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dip"
@@ -28,7 +29,7 @@
             <ListView
                 android:id="@android:id/list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent" />
             <net.i2p.android.ext.floatingactionbutton.AddFloatingActionButton
                 android:id="@+id/fab"
                 android:onClick="addStep"
@@ -40,14 +41,23 @@
     </LinearLayout>
 
 
+    <ImageView
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/ContentDescriptionDivider"
+        android:scaleType="fitXY"
+        android:src="?android:attr/dividerHorizontal" />
+
     <LinearLayout
-        style="@android:style/ButtonBar"
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
         <Button
             android:id="@+id/UploadOptions.Cancel"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
@@ -58,6 +68,7 @@
 
         <Button
             android:id="@+id/UploadOptions.OK"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
