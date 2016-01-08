@@ -156,7 +156,7 @@ public class MainActivity extends FragmentActivity {
         if (!isBound) {
             Intent bindIntent = new Intent(this, AeonDroidService.class);
             isBound = bindService(bindIntent, myConnection,
-                    Context.BIND_AUTO_CREATE|Context.BIND_ABOVE_CLIENT);
+                    Context.BIND_AUTO_CREATE|Context.BIND_IMPORTANT);
         }
     }
 
@@ -280,6 +280,10 @@ public class MainActivity extends FragmentActivity {
             return true;
         } else if (id == R.id.action_triggers) {
             Intent i = new Intent(this, TriggersActivity.class);
+            startActivity(i);
+            return true;
+        } else if (id == R.id.action_alerts) {
+            Intent i = new Intent(this, AlertsCRUDActivity.class);
             startActivity(i);
             return true;
         } else if (id == R.id.action_about) {

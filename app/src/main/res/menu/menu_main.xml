@@ -5,7 +5,11 @@
         android:id="@+id/action_triggers"
         android:title="@string/Title.Activity.Triggers"
         android:orderInCategory="100"
-        android:visible="false"
+        android:showAsAction="never" />
+    <item
+        android:id="@+id/action_alerts"
+        android:title="@string/Title.Activity.AlertsCRUD"
+        android:orderInCategory="100"
         android:showAsAction="never" />
     <item
         android:id="@+id/action_settings"
