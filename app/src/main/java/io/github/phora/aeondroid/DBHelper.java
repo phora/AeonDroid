@@ -129,10 +129,10 @@ public class DBHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(ATRIGGER_CREATE);
         sqLiteDatabase.execSQL(SUBTRIGGERS_CREATE);
 
-        //sqLiteDatabase.execSQL(ALERTS_CREATE);
-        //sqLiteDatabase.execSQL(LINKED_TRIGGERS_CREATE);
-        //sqLiteDatabase.execSQL(ALERT_STEPS_CREATE);
-        //sqLiteDatabase.execSQL(LINKED_STEPS_CREATE);
+        sqLiteDatabase.execSQL(ALERTS_CREATE);
+        sqLiteDatabase.execSQL(LINKED_TRIGGERS_CREATE);
+        sqLiteDatabase.execSQL(ALERT_STEPS_CREATE);
+        sqLiteDatabase.execSQL(LINKED_STEPS_CREATE);
     }
 
     /* ORB FUNCTIONS */
