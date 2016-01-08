@@ -75,5 +75,6 @@ public class StepReorderAdapter extends CursorAdapter {
         }
         editOrder.setTag(id);
         editOrder.addTextChangedListener(new BackedOrderWatcher(editOrder, pendingStepChanges));
+        editOrder.setText(String.valueOf(step));
     }
 }
