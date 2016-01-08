@@ -90,10 +90,15 @@ public class AlertsCRUDActivity extends ExpandableListActivity {
         context = this;
 
         final ExpandableListView listView = getExpandableListView();
+        listView.setClickable(true);
+        listView.setLongClickable(true);
+        listView.setItemsCanFocus(false);
 
         AddFloatingActionButton fab = (AddFloatingActionButton) findViewById(R.id.fab);
 
         listView.setOnScrollListener(new FABAnimator(context, fab));
+
+        new LoadAlertsTask().execute();
     }
 
     public void addAlert(View view) {
