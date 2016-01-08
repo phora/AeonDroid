@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".AeonDroidApplication"
@@ -57,11 +58,11 @@
         </activity>
         <activity
             android:name=".activities.AlertsCRUDActivity"
-            android:label="@string/Title.Activity.AlertsEdit" >
+            android:label="@string/Title.Activity.AlertsCRUD" >
         </activity>
         <activity
             android:name=".activities.AlertEditActivity"
-            android:label="@string/title_activity_alert_edit"
+            android:label="@string/Title.Activity.AlertEdit"
             android:parentActivityName=".activities.AlertsCRUDActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -69,7 +70,7 @@
         </activity>
         <activity
             android:name=".activities.StepEditActivity"
-            android:label="@string/title_activity_step_edit"
+            android:label="@string/Title.Activity.StepEdit"
             android:parentActivityName=".activities.AlertsCRUDActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
