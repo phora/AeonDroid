@@ -63,13 +63,15 @@ public class StepReorderAdapter extends CursorAdapter {
         stepImage.setImageURI(imageUri);
         stepUri.setText(otherUri);
         colorPreview.setBackgroundColor(color);
-        if (desc.length() > 50) {
+
+        int descLength = desc.length();
+        if (descLength > 50) {
             String genPreview = String.format("%s ... %s", desc.substring(0, 25),
-                    desc.substring(desc.length()-25));
+                    desc.substring(descLength-25));
             descPreview.setText(genPreview);
         }
         else {
-            descPreview.setText(desc.substring(0, 50));
+            descPreview.setText(desc.substring(0, Math.min(50, descLength)));
         }
         editOrder.setTag(id);
         editOrder.addTextChangedListener(new BackedOrderWatcher(editOrder, pendingStepChanges));
