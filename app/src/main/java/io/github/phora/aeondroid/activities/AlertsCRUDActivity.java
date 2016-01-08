@@ -43,7 +43,7 @@ public class AlertsCRUDActivity extends ExpandableListActivity {
             Intent intent = new Intent(AlertsCRUDActivity.this, AlertEditActivity.class);
             Cursor c = ((AlertCursorAdapter)getExpandableListAdapter()).getCursor();
             int pos = (Integer)view.getTag();
-            c.move(pos);
+            c.moveToPosition(pos);
 
             long alertId = c.getLong(c.getColumnIndex(DBHelper.COLUMN_ID));
             String alertName = c.getString(c.getColumnIndex(DBHelper.ALERT_LABEL));
@@ -60,9 +60,9 @@ public class AlertsCRUDActivity extends ExpandableListActivity {
             //take us to the step edit activity, where we actually edit the parameters
             Intent intent = new Intent(AlertsCRUDActivity.this, StepEditActivity.class);
             AlertCursorAdapter aca = (AlertCursorAdapter)getExpandableListAdapter();
-            Cursor c = (Cursor) view.getTag(0);
-            int pos = (Integer) view.getTag(1);
-            c.move(pos);
+            Cursor c = (Cursor) view.getTag(R.id.AlertCursorAdapter_ChildCursor);
+            int pos = (Integer) view.getTag(R.id.AlertCursorAdapter_ChildCursorPos);
+            c.moveToPosition(pos);
 
             long stepId = c.getLong(c.getColumnIndex(DBHelper.COLUMN_ID));
             int repetitions = c.getInt(c.getColumnIndex(DBHelper.STEP_REPITITIONS));

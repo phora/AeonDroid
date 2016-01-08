@@ -83,8 +83,8 @@ public class AlertCursorAdapter extends CursorTreeAdapter {
         TextView stepUri = (TextView) view.findViewById(R.id.StepItem_Uri);
         TextView descPreview = (TextView) view.findViewById(R.id.StepItem_Desc);
 
-        editStep.setTag(0, cursor);
-        editStep.setTag(1, cursor.getPosition());
+        editStep.setTag(R.id.AlertCursorAdapter_ChildCursor, cursor);
+        editStep.setTag(R.id.AlertCursorAdapter_ChildCursorPos, cursor.getPosition());
         editStep.setOnClickListener(stepEditButtonListener);
 
         Uri imageUri = Uri.parse(cursor.getString(cursor.getColumnIndex(DBHelper.STEP_IMAGE)));
