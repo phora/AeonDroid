@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorTreeAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -60,6 +61,7 @@ public class AlertCursorAdapter extends CursorTreeAdapter {
         TextView alertName = (TextView) view.findViewById(R.id.AlarmItem_Name);
         ImageButton editAlert = (ImageButton) view.findViewById(R.id.AlarmItem_Edit);
         ImageButton linkTriggers = (ImageButton) view.findViewById(R.id.AlarmItem_Link);
+        ImageView groupIndicator = (ImageView) view.findViewById(R.id.AlarmItem_GroupIndicator);
 
         editAlert.setTag(cursor.getPosition());
         linkTriggers.setTag(cursor.getPosition());
@@ -68,6 +70,33 @@ public class AlertCursorAdapter extends CursorTreeAdapter {
 
         editAlert.setOnClickListener(editButtonListener);
         linkTriggers.setOnClickListener(linkButtonListener);
+
+        if (isExpanded) {
+            groupIndicator.setImageResource(R.drawable.base_chakra);
+        }
+        else {
+            groupIndicator.setImageResource(R.drawable.crown_chakra);
+        }
+    }
+
+    @Override
+    public View getGroupView(final int groupPosition, final boolean isExpanded, View convertView, final ViewGroup parent) {
+        View result = super.getGroupView(groupPosition, isExpanded, convertView, parent);
+        ImageView groupIndicator = (ImageView) result.findViewById(R.id.AlarmItem_GroupIndicator);
+        groupIndicator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View btn) {
+                ExpandableListView elv = (ExpandableListView)parent;
+                if (isExpanded) {
+                    elv.collapseGroup(groupPosition);
+                }
+                else {
+                    elv.expandGroup(groupPosition);
+                }
+            }
+        });
+
+        return result;
     }
 
     @Override
