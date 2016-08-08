@@ -225,12 +225,12 @@ public class Ephemeris {
 
         Log.d("Ephemeris", ssi.getSunrise()+" < "+julified+" < "+ssi.getNextSunrise());
 
-        if (julified <= ssi.getSunrise()) {
+        if (julified < ssi.getSunrise()) {
             Log.d("Ephemeris", "Date before sunrise, getting yesterday");
             sd = new SweDate(calcTime-1, SweDate.SE_GREG_CAL);
             ssi = getSunriseandSunset(sd, timezone);
         }
-        else if (julified >= ssi.getNextSunrise()) {
+        else if (julified > ssi.getNextSunrise()) {
             Log.d("Ephemeris", "Date after next sunrise, getting tomorrow");
             sd = new SweDate(calcTime+1, SweDate.SE_GREG_CAL);
             ssi = getSunriseandSunset(sd, timezone);
@@ -241,8 +241,8 @@ public class Ephemeris {
 
     public synchronized SunsetSunriseInfo getSunriseandSunset(SweDate sd, String timezone) {
         Double sunrise = getBodyRise(sd.getJulDay() - 1, SweConst.SE_SUN);
-        Double sunset       = getBodySet(sd.getJulDay(), SweConst.SE_SUN);
-        Double nextSunrise = getBodyRise(sd.getJulDay(), SweConst.SE_SUN);
+        Double sunset = getBodySet(sunrise, SweConst.SE_SUN);
+        Double nextSunrise = getBodyRise(sunset, SweConst.SE_SUN);
 
         return new SunsetSunriseInfo(sunrise, sunset, nextSunrise, timezone, sd);
     }
