@@ -11,6 +11,8 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -66,6 +68,7 @@ public class MainActivity extends FragmentActivity {
     private class RecheckGPSTask extends AsyncTask<Void, Void, Void> {
         ProgressDialog pd;
         boolean doRefresh;
+        private Handler mHandler = new Handler(Looper.getMainLooper());
 
         public RecheckGPSTask(boolean doRefresh) {
             this.doRefresh = doRefresh;
@@ -73,7 +76,12 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            serviceReference.recheckGps();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    serviceReference.recheckGps();
+                }
+            });
             serviceReference.recheckBirthplace();
             return null;
         }
