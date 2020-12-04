@@ -167,6 +167,7 @@ public class SettingsActivity extends PreferenceActivity {
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
+            Context context = preference.getContext();
             String stringValue = value.toString();
 
             if (preference instanceof ListPreference) {
@@ -206,7 +207,12 @@ public class SettingsActivity extends PreferenceActivity {
             } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
-                preference.setSummary(stringValue);
+                if (preference.getKey().endsWith("Altitude")) {
+                    String s = context.getResources().getString(R.string.Fmt_Altitude, Float.parseFloat(stringValue));
+                    preference.setSummary(s);
+                } else {
+                    preference.setSummary(stringValue);
+                }
             }
             return true;
         }

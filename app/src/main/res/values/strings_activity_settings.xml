@@ -45,6 +45,8 @@
     <string name="Pref.Title.Altitude">Altitude</string>
     <string name="Pref.Desc.Altitude">(Optional) meters above mean sea level</string>
 
+    <string name="Fmt.Altitude">%.03f m</string>
+
     <string name="PrefHeader.RealtimeCharts">Realtime Charts</string>
     <string name="PrefGroup.Aspects">Aspects</string>
     <string name="Pref.Title.Orbs">Configure aspect orbs</string>
