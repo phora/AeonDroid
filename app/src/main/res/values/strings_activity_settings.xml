@@ -39,11 +39,11 @@
     <string name="Pref.Title.LocationAuto">Retrieve location from GPS?</string>
     <string name="Pref.Desc.LocationAuto">The below values will be used if this is turned off and/or if service is unavailable</string>
     <string name="Pref.Title.Longitude">Longitude</string>
-    <string name="Pref.Summary.Longitude">- means west, + means east</string>
+    <string name="Pref.Desc.Longitude">- means west, + means east</string>
     <string name="Pref.Title.Latitude">Latitude</string>
-    <string name="Pref.Summary.Latitude">+ means north, - means south</string>
+    <string name="Pref.Desc.Latitude">+ means north, - means south</string>
     <string name="Pref.Title.Altitude">Altitude</string>
-    <string name="Pref.Summary.Altitude">(Optional) meters above mean sea level</string>
+    <string name="Pref.Desc.Altitude">(Optional) meters above mean sea level</string>
 
     <string name="PrefHeader.RealtimeCharts">Realtime Charts</string>
     <string name="PrefGroup.Aspects">Aspects</string>

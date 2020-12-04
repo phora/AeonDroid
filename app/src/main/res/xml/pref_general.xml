@@ -41,34 +41,42 @@
             android:defaultValue="false" />
 
         <EditTextPreference
+            android:defaultValue="0.0"
+            android:dialogMessage="@string/Pref.Desc.Longitude"
+            android:dialogTitle="@string/Pref.Title.Longitude"
+            android:hint="@string/Pref.Desc.Longitude"
+            android:inputType="numberDecimal|numberSigned"
             android:key="CurrentLoc.Longitude"
-            android:title="@string/Pref.Title.Longitude"
-            android:hint="@string/Pref.Summary.Longitude"
-            android:defaultValue="0.0"
+            android:maxLines="1"
             android:selectAllOnFocus="true"
-            android:inputType="numberDecimal|numberSigned"
             android:singleLine="true"
-            android:maxLines="1" />
+            android:summary="@string/Pref.Desc.Longitude"
+            android:title="@string/Pref.Title.Longitude" />
 
         <EditTextPreference
+            android:defaultValue="0.0"
+            android:dialogMessage="@string/Pref.Desc.Latitude"
+            android:dialogTitle="@string/Pref.Title.Latitude"
+            android:hint="@string/Pref.Desc.Latitude"
+            android:inputType="numberDecimal|numberSigned"
             android:key="CurrentLoc.Latitude"
-            android:title="@string/Pref.Title.Latitude"
-            android:hint="@string/Pref.Summary.Latitude"
-            android:defaultValue="0.0"
+            android:maxLines="1"
             android:selectAllOnFocus="true"
-            android:inputType="numberDecimal|numberSigned"
             android:singleLine="true"
-            android:maxLines="1" />
+            android:summary="@string/Pref.Desc.Latitude"
+            android:title="@string/Pref.Title.Latitude" />
 
         <EditTextPreference
-            android:key="CurrentLoc.Altitude"
-            android:title="@string/Pref.Title.Altitude"
-            android:summary="@string/Pref.Summary.Altitude"
             android:defaultValue="0.0"
-            android:selectAllOnFocus="true"
+            android:dialogMessage="@string/Pref.Desc.Altitude"
+            android:dialogTitle="@string/Pref.Title.Altitude"
             android:inputType="numberDecimal|numberSigned"
+            android:key="CurrentLoc.Altitude"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:maxLines="1" />
+            android:summary="@string/Pref.Desc.Altitude"
+            android:title="@string/Pref.Title.Altitude" />
 
     </PreferenceCategory>
 
